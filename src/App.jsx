@@ -67,10 +67,12 @@ function App() {
     };
 
     try {
-      const response = await axios.post('http://localhost:1000/api/orders', orderData);
+    //  const response = await axios.post('http://localhost:1000/api/orders', orderData);
+     const response = await axios.post('https://leostrend-backend.onrender.com/api/orders', orderData);
 
       // Send email notification with all customer and T-shirt details
-      await axios.post('http://localhost:1000/api/send-notification', {
+   // await axios.post('http://localhost:1000/api/send-notification', {
+       await axios.post('https://leostrend-backend.onrender.com/api/send-notification', {
         customer: order.customer,
         items: cart,
         phone: order.phone,
