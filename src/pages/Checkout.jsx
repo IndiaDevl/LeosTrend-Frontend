@@ -2,6 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL;
+import '../App.css';
 
 
 
@@ -49,7 +50,7 @@ function Checkout({ cart, order, setOrder, calculateTotal }) {
   };
 
   return (
-    <div>
+    <div className="checkout-section">
       <h2>Checkout</h2>
       <form onSubmit={handleSubmit} className="order-form">
         <div className="form-group">
