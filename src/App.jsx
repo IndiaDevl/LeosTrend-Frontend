@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { FaTshirt, FaShoppingCart } from 'react-icons/fa';
 import Home from './pages/Home';
 import ProductDetails from './pages/ProductDetails';
@@ -26,14 +25,14 @@ function App() {
 
   // Sample T-Shirts Data
   const sampleTshirts = [
-    { id: 1, name: "Om LeosTrend T-Shirt", price: 2499, image: "./Black-T-shirt.webp", sizes: ["S", "M", "L", "XL"] },
-    { id: 2, name: "Sri LeosTrend T-Shirt", price: 2999, image: "./Design image.webp", sizes: ["S", "M", "L", "XL"] },
-    { id: 3, name: "Ganesh LeosTrend T-Shirt", price: 2799, image: "./dragon-embroidered.webp", sizes: ["S", "M", "L"] },
-    { id: 4, name: "Shiva LeosTrend T-Shirt", price: 2699, image: "./white.webp", sizes: ["M", "L", "XL"] },
-        { id: 5, name: "Om LeosTrend T-Shirt", price: 2499, image: "./Black-T-shirt.webp", sizes: ["S", "M", "L", ] },
-    { id: 6, name: "Sri LeosTrend T-Shirt", price: 2999, image: "./Design image.webp", sizes: ["S", "M", "L", ] },
-        { id: 7, name: "Ganesh LeosTrend T-Shirt", price: 2799, image: "./dragon-embroidered.webp", sizes: ["S", "M", "L"] },
-    { id: 8, name: "Shiva LeosTrend T-Shirt", price: 2699, image: "./white.webp", sizes: ["M", "L", "XL"] }
+    { id: 1, name: "Om LeosTrend T-Shirt", price: 2, image: "./Black-T-shirt.webp", sizes: ["S", "M", "L", "XL"] },
+    { id: 2, name: "Sri LeosTrend T-Shirt", price: 1, image: "./Design image.webp", sizes: ["S", "M", "L", "XL"] },
+    { id: 3, name: "Ganesh LeosTrend T-Shirt", price: 2, image: "./dragon-embroidered.webp", sizes: ["S", "M", "L"] },
+    { id: 4, name: "Shiva LeosTrend T-Shirt", price: 2, image: "./white.webp", sizes: ["M", "L", "XL"] },
+        { id: 5, name: "Om LeosTrend T-Shirt", price: 2, image: "./Black-T-shirt.webp", sizes: ["S", "M", "L", ] },
+    { id: 6, name: "Sri LeosTrend T-Shirt", price: 2, image: "./Design image.webp", sizes: ["S", "M", "L", ] },
+        { id: 7, name: "Ganesh LeosTrend T-Shirt", price: 2, image: "./dragon-embroidered.webp", sizes: ["S", "M", "L"] },
+    { id: 8, name: "Shiva LeosTrend T-Shirt", price: 2, image: "./white.webp", sizes: ["M", "L", "XL"] }
   ];
 
   useEffect(() => {
@@ -98,6 +97,20 @@ function App() {
               <Route path="/terms" element={<Terms />} />
             </Routes>
           </main>
+
+          {/* Products Grid - Moved from Home component */}
+          <div className="products-grid">
+            {tshirts.map(tshirt => (
+              <div key={tshirt.id} className="product-card">
+                <img src={tshirt.image} alt={tshirt.name} className="product-image" />
+                <div className="product-info">
+                  <h3>{tshirt.name}</h3>
+                  <p className="price">₹{tshirt.price.toLocaleString('en-IN')}</p>
+                  <Link to={`/product/${tshirt.id}`} className="details-btn">View Details</Link>
+                </div>
+              </div>
+            ))}
+          </div>
 
           {/* Footer */}
           <footer className="footer">

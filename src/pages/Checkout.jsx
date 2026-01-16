@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 const API_URL = import.meta.env.VITE_API_URL;
@@ -11,48 +10,94 @@ function Checkout({ cart, order, setOrder, calculateTotal }) {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+
+  // Razorpay Key ID (replace with your actual key)
+  const RAZORPAY_KEY_ID = "rzp_live_S4WMDIdyYilfTV";
+
+  // Dynamically load Razorpay script if not present
+  React.useEffect(() => {
+    if (!window.Razorpay) {
+      const script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.async = true;
+      document.body.appendChild(script);
+    }
+  }, []);
+
+  const handlePayment = async (e) => {
+    if (e) e.preventDefault();
     setLoading(true);
     setError('');
     try {
-      // 1. Place order (save in backend)
-      await fetch(`${API_URL}/api/orders`, {
+      // 1. Get order details from backend
+    //  const res = await fetch('http://localhost:1000/api/create-order', {
+      const res = await fetch('https://leostrend-backend.onrender.com/api/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer: order.customer,
-          phone: order.phone,
-          email: order.email,
-          shippingAddress: order.shippingAddress,
-          items: cart,
-          total: cart.reduce((total, item) => total + (item.price * item.quantity), 0)
-        })
+        body: JSON.stringify({ amount: calculateTotal(), currency: "INR" })
       });
-      // 2. Send notification emails
-      await fetch(`${API_URL}/api/send-notification`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          customer: order.customer,
-          phone: order.phone,
-          email: order.email,
-          shippingAddress: order.shippingAddress,
-          items: cart
-        })
-      });
-      setLoading(false);
-      navigate('/order-success');
+      const data = await res.json();
+      if (!data.orderId) {
+        alert('Failed to create order');
+        setLoading(false);
+        return;
+      }
+
+      // 2. Open Razorpay Checkout
+      const options = {
+        key: data.key,
+        amount: data.amount,
+        currency: data.currency,
+        name: "LeosTrend",
+        description: "T-Shirt Order",
+        order_id: data.orderId,
+        handler: async function (response) {
+          // 3. On payment success, place order and send notification
+          const orderRes = await fetch('https://leostrend-backend.onrender.com/api/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              customer: order.customer,
+              items: cart,
+              total: calculateTotal(),
+              shippingAddress: order.shippingAddress,
+              phone: order.phone,
+              email: order.email
+            })
+          });
+          if (orderRes.ok) {
+            await fetch('https://leostrend-backend.onrender.com/api/send-notification', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                customer: order.customer,
+                items: cart,
+                phone: order.phone,
+                email: order.email,
+                shippingAddress: order.shippingAddress
+              })
+            });
+            // Redirect or show success
+            navigate('/order-success');
+          } else {
+            alert('Order placement failed');
+          }
+          setLoading(false);
+        },
+        prefill: { name: order.customer, email: order.email, contact: order.phone }
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err) {
       setLoading(false);
-      setError('Order failed. Please try again.');
+      setError('Payment failed. Please try again.');
     }
   };
 
   return (
     <div className="checkout-section">
       <h2>Checkout</h2>
-      <form onSubmit={handleSubmit} className="order-form">
+      <form className="order-form">
         <div className="form-group">
           <label>Full Name *</label>
           <input type="text" value={order.customer} onChange={e => setOrder({ ...order, customer: e.target.value })} required />
@@ -73,7 +118,7 @@ function Checkout({ cart, order, setOrder, calculateTotal }) {
           <strong>Total: ₹{calculateTotal()}</strong>
         </div>
         {error && <div style={{ color: 'red', marginBottom: 10 }}>{error}</div>}
-        <button type="submit" className="submit-order-btn" disabled={loading}>{loading ? 'Placing Order...' : 'Place Order'}</button>
+        <button type="button" onClick={handlePayment} className="submit-order-btn" disabled={loading}>{loading ? 'Placing Order...' : 'Place Order'}</button>
       </form>
     </div>
   );
