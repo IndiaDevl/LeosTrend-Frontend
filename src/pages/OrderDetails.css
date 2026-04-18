@@ -1,0 +1,258 @@
+.order-details-page {
+  padding: 24px 0 38px;
+  width: 100%;
+  position: relative;
+  overflow-x: clip;
+}
+
+.order-details-page::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 8%, rgba(56, 189, 248, 0.12), transparent 32%),
+    radial-gradient(circle at 90% 18%, rgba(251, 113, 133, 0.12), transparent 34%);
+}
+
+.order-details-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.order-details-breadcrumb {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.order-details-breadcrumb a {
+  color: #334155;
+  text-decoration: none;
+}
+
+.order-details-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.order-details-kicker {
+  margin: 0 0 6px;
+  display: inline-flex;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 6px 10px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.order-details-head h1 {
+  margin: 0;
+  font-size: clamp(30px, 4vw, 46px);
+  line-height: 1.04;
+  font-family: "Syne", sans-serif;
+}
+
+.order-details-head p {
+  margin: 8px 0 0;
+  color: #64748b;
+}
+
+.order-status {
+  border-radius: 999px;
+  padding: 7px 11px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  border: 1px solid transparent;
+}
+
+.status-pending {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.status-confirmed {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.status-shipped {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-delivered {
+  background: #ede9fe;
+  color: #5b21b6;
+}
+
+.status-cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 14px;
+}
+
+.order-panel {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.09);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.order-panel h3 {
+  margin: 0 0 12px;
+}
+
+.order-items {
+  display: grid;
+  gap: 10px;
+}
+
+.order-item-row {
+  display: grid;
+  grid-template-columns: 64px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.order-item-row img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.order-item-row h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.order-item-row p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #475569;
+}
+
+.order-total-row {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #cbd5e1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+}
+
+.order-timeline {
+  margin-top: 14px;
+}
+
+.timeline-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.timeline-row p {
+  margin: 0;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.timeline-row small {
+  color: #64748b;
+}
+
+.order-details-btn {
+  margin-top: 16px;
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #020617, #1e293b);
+  color: #fff;
+  font-weight: 700;
+}
+
+.order-details-empty {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.09);
+  padding: 20px;
+}
+
+@media (max-width: 1024px) {
+  .order-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 920px) {
+  .order-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .order-details-breadcrumb {
+    flex-wrap: wrap;
+    row-gap: 5px;
+  }
+
+  .order-details-head {
+    flex-direction: column;
+  }
+
+  .order-item-row {
+    grid-template-columns: 52px 1fr;
+    align-items: start;
+  }
+
+  .order-item-row img {
+    width: 52px;
+    height: 52px;
+  }
+
+  .order-item-row strong {
+    grid-column: 2;
+  }
+}
+
+
+
+
+
+
+
+

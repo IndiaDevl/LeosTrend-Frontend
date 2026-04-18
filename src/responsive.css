@@ -1,0 +1,311 @@
+/* Shared responsive rules for all screens */
+
+:root {
+  --container-padding: 40px;
+  --navbar-height: 138px;
+}
+
+.container {
+  padding-left: var(--container-padding);
+  padding-right: var(--container-padding);
+}
+
+/* Ultra wide screens */
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1500px;
+  }
+
+  .hero-text h1 {
+    font-size: 78px;
+  }
+}
+
+/* Large laptops and small desktops */
+@media (max-width: 1200px) {
+  :root {
+    --container-padding: 28px;
+  }
+
+  .carousel {
+    height: 540px;
+  }
+
+  .hero-text h1 {
+    font-size: 58px;
+  }
+
+  .collection-layout {
+    grid-template-columns: 220px 1fr;
+    gap: 28px;
+  }
+}
+
+/* Tablets */
+@media (max-width: 992px) {
+  :root {
+    --container-padding: 22px;
+  }
+
+  .navbar {
+    --navbar-height: 62px;
+    min-height: 62px;
+    height: auto;
+  }
+
+  .main {
+    padding-top: 0;
+  }
+
+  .hero {
+    margin-top: 0;
+  }
+
+  .carousel {
+    height: 460px;
+    border-radius: 16px;
+  }
+
+  .hero-text h1 {
+    font-size: 48px;
+    letter-spacing: 1px;
+  }
+
+  .hero-text p {
+    font-size: 18px;
+  }
+
+  .brand-text {
+    font-size: 29px;
+    letter-spacing: 0.9px;
+  }
+
+  .nav-right {
+    gap: 10px;
+  }
+
+}
+
+
+/* Mobile landscape / large phones */
+@media (max-width: 768px) {
+  :root {
+    --container-padding: 16px;
+  }
+
+  .section-title {
+    font-size: 30px;
+    margin-bottom: 36px;
+  }
+
+  .hero {
+    margin-top: 74px;
+  }
+
+  .carousel {
+    height: 380px;
+    border-radius: 14px;
+  }
+
+  .hero-text h1 {
+    font-size: 36px;
+    line-height: 1.05;
+  }
+
+  .hero-text p {
+    font-size: 16px;
+    margin: 10px 0 18px;
+  }
+
+  .hero-btn {
+    padding: 13px 22px;
+    min-height: 46px;
+  }
+
+  .hero-arrow {
+    width: 38px;
+    height: 38px;
+    font-size: 20px;
+  }
+
+  .products,
+  .categories {
+    padding: 48px 0;
+  }
+
+  .product-grid,
+  .collection-grid {
+    gap: 18px;
+  }
+
+  .footer {
+    margin-top: 48px;
+    padding: 18px 0;
+  }
+
+  .collection-title,
+  .about-title,
+  .contact-title,
+  .checkout-title {
+    line-height: 1.08;
+    letter-spacing: -0.6px;
+  }
+
+  .footer-inner {
+    gap: 8px;
+  }
+
+  .footer-links {
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .lux-logo {
+    font-size: 46px;
+    letter-spacing: 3px;
+  }
+
+  .lux-bar {
+    width: 160px;
+  }
+}
+
+/* Mobile portrait */
+@media (max-width: 576px) {
+  :root {
+    --container-padding: 14px;
+  }
+
+  .navbar {
+    --navbar-height: 54px;
+    min-height: 54px;
+    height: auto;
+  }
+
+  .main {
+    padding-top: 0;
+  }
+
+  .hero {
+    margin-top: 0;
+  }
+
+  .navbar-top {
+    height: 54px;
+    min-height: 54px;
+  }
+
+  .brand-text {
+    font-size: 26px;
+    letter-spacing: 0.8px;
+  }
+
+  .nav-premium-strip {
+    height: 38px;
+    padding: 0 10px;
+  }
+
+  .nav-strip-item {
+    font-size: 10px;
+    letter-spacing: 0.35px;
+    padding-right: 20px;
+  }
+
+  .nav-strip-item::after {
+    margin-left: 20px;
+  }
+
+  .carousel {
+    height: 320px;
+  }
+
+  .hero-text {
+    width: calc(100% - 24px);
+  }
+
+  .hero-text h1 {
+    font-size: 31px;
+    line-height: 1.1;
+  }
+
+  .hero-text p {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .product-image,
+  .collection-image {
+    height: 220px;
+  }
+
+  .quickview-card {
+    margin: 0 12px;
+    width: calc(100% - 24px);
+    padding: 24px;
+  }
+
+  .cart-drawer,
+  .wishlist-drawer {
+    width: 100vw;
+    padding: 18px;
+  }
+
+  .collection-title {
+    font-size: 28px;
+  }
+
+  .collection-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .footer-inner p,
+  .footer-links a {
+    font-size: 11px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 28px;
+  }
+
+  .lux-logo {
+    font-size: 36px;
+    letter-spacing: 2px;
+  }
+
+  .lux-bar {
+    width: 130px;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+  :root {
+    --container-padding: 10px;
+  }
+
+  .hero-text h1 {
+    font-size: 26px;
+  }
+
+  .hero-btn {
+    padding: 10px 18px;
+    border-radius: 30px;
+  }
+
+  .product-info {
+    padding: 14px;
+  }
+
+  .product-info h3,
+  .product-name {
+    font-size: 13px;
+  }
+
+  .price {
+    font-size: 16px;
+  }
+}
+

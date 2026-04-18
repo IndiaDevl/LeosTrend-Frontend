@@ -1,0 +1,35 @@
+@import "../responsive.css";
+
+.lux-loader{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:#0a0a0a;
+color:white;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.lux-logo{
+font-size:60px;
+font-weight:900;
+letter-spacing:5px;
+margin-bottom:20px;
+}
+
+.lux-bar{
+width:200px;
+height:4px;
+background:linear-gradient(90deg,#6a11cb,#2575fc);
+animation:loadBar 2s infinite;
+}
+
+@keyframes loadBar{
+0%{transform:scaleX(0)}
+100%{transform:scaleX(1)}
+}
