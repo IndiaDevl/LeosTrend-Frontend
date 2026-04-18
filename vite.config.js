@@ -1,10 +1,12 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+const isNetlifyBuild = process.env.NETLIFY === 'true'
+
 export default defineConfig({
   plugins: [react()],
   build: {
-    outDir: '../backend/dist',
+    outDir: isNetlifyBuild ? 'dist' : '../backend/dist',
     emptyOutDir: true,
   },
   server: {
