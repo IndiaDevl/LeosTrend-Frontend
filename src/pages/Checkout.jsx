@@ -69,8 +69,13 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
       );
 
       orderData = res.data;
-    } catch {
-      setPaymentError("Failed to create payment order.");
+    } catch (error) {
+      const serverMessage =
+        error.response?.data?.details ||
+        error.response?.data?.error ||
+        error.message;
+
+      setPaymentError(serverMessage || "Failed to create payment order.");
       setLoading(false);
       return;
     }
