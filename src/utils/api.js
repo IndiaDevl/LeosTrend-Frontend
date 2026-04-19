@@ -15,7 +15,8 @@ const getApiBaseUrl = () => {
     const host = window.location.hostname;
 
     if (host === "localhost" || host === "127.0.0.1") {
-      return "http://localhost:1000";
+     // return "http://localhost:1000";
+        return "https://leostrend.com";
     }
 
     return liveBackendUrl;

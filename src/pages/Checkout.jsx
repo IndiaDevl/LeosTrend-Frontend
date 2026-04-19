@@ -60,7 +60,8 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
     try {
       const res = await axios.post(
-        `${API_BASE_URL}/razorpay/order`,
+        `${API_BASE_URL}/api/payment/razorpay/order`,
+      //  `https://leostrend.com/api/payment/razorpay/order`,
         {
           amount: totalAmount,
           currency: "INR",
