@@ -7,7 +7,7 @@ import {
 } from "../../utils/api";
 import "./Admin.css";
 
-
+// Admin Login Page Component
 function AdminLogin() {
   const navigate = useNavigate();
   const [form, setForm] = useState({ username: "", password: "", rememberMe: false });
