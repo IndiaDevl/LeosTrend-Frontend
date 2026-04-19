@@ -5,6 +5,7 @@ export const ADMIN_SESSION_EXPIRY_KEY = "admin_session_expiry";
 
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
+  const liveBackendUrl = "https://leostrend.com";
 
   if (envUrl && envUrl.trim() !== "") {
     return envUrl.replace(/\/$/, "");
@@ -17,10 +18,10 @@ const getApiBaseUrl = () => {
       return "http://localhost:1000";
     }
 
-    return window.location.origin;
+    return liveBackendUrl;
   }
 
-  return "http://localhost:1000";
+  return liveBackendUrl;
 };
 
 export const API_BASE_URL = getApiBaseUrl();
