@@ -6,17 +6,22 @@ export const ADMIN_SESSION_EXPIRY_KEY = "admin_session_expiry";
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL;
   const liveBackendUrl = "https://leostrend.com";
+  const localBackendUrl = "http://localhost:1000";
 
   if (envUrl && envUrl.trim() !== "") {
     return envUrl.replace(/\/$/, "");
   }
 
   if (typeof window !== "undefined") {
-    const host = window.location.hostname;
+    const host = String(window.location.hostname || "").toLowerCase();
+    const origin = window.location.origin.replace(/\/$/, "");
 
     if (host === "localhost" || host === "127.0.0.1") {
-     // return "http://localhost:1000";
-        return "https://leostrend.com";
+      return localBackendUrl;
+    }
+
+    if (host === "leostrend.com" || host === "www.leostrend.com") {
+      return origin;
     }
 
     return liveBackendUrl;
