@@ -32,6 +32,7 @@ const initialForm = {
 function AddProduct() {
   const [form, setForm] = useState(initialForm);
   const [imageFile, setImageFile] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [imagePreview, setImagePreview] = useState("");
   const [galleryPreviews, setGalleryPreviews] = useState([]);
@@ -48,9 +49,9 @@ function AddProduct() {
       form.colors.trim() &&
       form.description.trim() &&
       form.stock !== "" &&
-      Boolean(imageFile)
+      (Boolean(imageFile) || Boolean(imageUrl.trim()))
     );
-  }, [form, imageFile]);
+  }, [form, imageFile, imageUrl]);
 
   const onChange = (event) => {
     const { name, value, type, checked } = event.target;
@@ -60,9 +61,16 @@ function AddProduct() {
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
-
     setImageFile(file);
+    setImageUrl(""); // Clear URL if file is chosen
     setImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleImageUrlChange = (event) => {
+    const url = event.target.value;
+    setImageUrl(url);
+    setImageFile(null); // Clear file if URL is entered
+    setImagePreview(url);
   };
 
   const handleGalleryChange = (event) => {
@@ -81,7 +89,12 @@ function AddProduct() {
     try {
       const formData = new FormData();
       Object.entries(form).forEach(([key, value]) => formData.append(key, value));
-      formData.append("image", imageFile);
+      // Prefer file, else use URL
+      if (imageFile) {
+        formData.append("image", imageFile);
+      } else if (imageUrl.trim()) {
+        formData.append("image", imageUrl.trim());
+      }
       galleryFiles.forEach((file) => formData.append("galleryImages", file));
 
       const response = await axios.post(PRODUCTS_API_URL, formData, {
@@ -95,11 +108,10 @@ function AddProduct() {
       notifyProductsUpdated();
       setForm(initialForm);
       setImageFile(null);
+      setImageUrl("");
       setGalleryFiles([]);
-        event.preventDefault();
-        setSubmitting(true);
-        setMessage("");
-        setError("");
+      setImagePreview("");
+    } catch (err) {
       const apiMessage = err.response?.data?.message;
       const apiError = err.response?.data?.error;
       const networkMessage = err.message;
@@ -276,15 +288,24 @@ function AddProduct() {
             )}
           </div>
 
+
           <label>
             Product Image
-            <input type="file" accept="image/*" onChange={handleImageChange} required />
+            <input type="file" accept="image/*" onChange={handleImageChange} disabled={Boolean(imageUrl.trim())} required={!imageUrl.trim()} />
+          </label>
+          <label>
+            Product Image URL
+            <input
+              type="url"
+              placeholder="Paste image URL (https://...)"
+              value={imageUrl}
+              onChange={handleImageUrlChange}
+              disabled={Boolean(imageFile)}
+              style={{marginTop:4}}
+            />
           </label>
 
-          <label className="full-width">
-            Gallery Image Uploads
-            <input type="file" accept="image/*" multiple onChange={handleGalleryChange} />
-          </label>
+          {/* Gallery Image Uploads removed. Use only URLs below. */}
 
           <label className="full-width">
             Gallery Image URLs
@@ -298,7 +319,7 @@ function AddProduct() {
 
           {imagePreview && (
             <div className="image-preview full-width">
-              <img src={resolveImageUrl(imagePreview)} alt="Preview" />
+              <img src={imagePreview} alt="Preview" />
             </div>
           )}
 

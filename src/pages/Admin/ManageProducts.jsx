@@ -372,13 +372,15 @@ function ManageProducts() {
                               <option value="Limited">Limited</option>
                               <option value="Sale">Sale</option>
                             </select>
+                            {/* Main product image upload (keep for main image) */}
                             <input type="file" accept="image/*" onChange={handleImageChange} />
-                            <input type="file" accept="image/*" multiple onChange={handleGalleryChange} />
+                            {/* Gallery image URLs only, no file upload */}
+                            <label style={{fontWeight:600, marginTop:'1em'}}>Gallery Image URLs</label>
                             <textarea
                               name="galleryImages"
                               value={draft.galleryImages}
                               onChange={handleDraftChange}
-                              placeholder="Gallery image URLs (comma or newline separated)"
+                              placeholder="Paste extra image URLs separated by commas or new lines"
                               className="admin-edit-textarea"
                             />
                             <div className="trending-toggle-card">
