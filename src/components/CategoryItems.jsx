@@ -1,121 +1,57 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import "./CategoryItems.css";
 
 const categoryItems = [
-  { key: "oversized", title: "Oversized T-Shirts", image: "/TShirt-Yellow.webp" },
-  {
-    key: "sweatshirts",
-    title: "Sweatshirts",
-    image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=90&w=1600&auto=format&fit=crop",
-  },
-  {
-    key: "zip",
-    title: "Zip Sweatshirts",
-    image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=90&w=1600&auto=format&fit=crop",
-  },
-  {
-    key: "hoodies",
-    title: "Hoodies",
-    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=90&w=1600&auto=format&fit=crop",
-  },
+  { key: "oversized", title: "Oversized", image: "/TShirt-Yellow.webp" },
+  { key: "sweatshirts", title: "Sweatshirts", image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=90&w=1600" },
+  { key: "zip", title: "Zip", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=90&w=1600" },
+  { key: "hoodies", title: "Hoodies", image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=90&w=1600" },
 ];
 
-const CATEGORY_PAGE_DOT_COUNT = 3;
-
 function CategoryItems() {
-  const trackRef = useRef(null);
-  const [activePage, setActivePage] = useState(0);
-  const [isCompactCarousel, setIsCompactCarousel] = useState(false);
+  const sectionRef = useRef(null);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia("(max-width: 1100px)");
+    const cards = sectionRef.current.querySelectorAll(".category-card");
 
-    const syncCompactMode = () => {
-      setIsCompactCarousel(mediaQuery.matches);
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("reveal");
+          }
+        });
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+    );
 
-    syncCompactMode();
-    mediaQuery.addEventListener("change", syncCompactMode);
-
-    return () => {
-      mediaQuery.removeEventListener("change", syncCompactMode);
-    };
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
   }, []);
 
-  const scrollToPage = (pageIndex) => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const maxScrollLeft = Math.max(track.scrollWidth - track.clientWidth, 0);
-    const pageProgress = CATEGORY_PAGE_DOT_COUNT <= 1 ? 0 : pageIndex / (CATEGORY_PAGE_DOT_COUNT - 1);
-
-    track.scrollTo({
-      left: maxScrollLeft * pageProgress,
-      behavior: "smooth",
-    });
-
-    setActivePage(pageIndex);
-  };
-
-  useEffect(() => {
-    if (!isCompactCarousel) {
-      setActivePage(0);
-      return undefined;
-    }
-
-    return undefined;
-  }, [isCompactCarousel]);
-
-  const handleScroll = () => {
-    const track = trackRef.current;
-    if (!track) return;
-
-    const maxScrollLeft = Math.max(track.scrollWidth - track.clientWidth, 0);
-    if (maxScrollLeft === 0) {
-      setActivePage(0);
-      return;
-    }
-
-    const scrollProgress = track.scrollLeft / maxScrollLeft;
-    const nextPage = Math.round(scrollProgress * (CATEGORY_PAGE_DOT_COUNT - 1));
-    setActivePage(nextPage);
-  };
-
   return (
-    <div className="category-items-shell">
-      <div className="category-items-grid" ref={trackRef} onScroll={handleScroll}>
-        {categoryItems.map((category, index) => (
+    <section className="category" ref={sectionRef}>
+      <div className="category-track">
+        {categoryItems.map((cat, i) => (
           <Link
-            key={category.key}
-            to={`/collection/${category.key}`}
-            className="category-items-card observe-reveal"
-            style={{ "--reveal-delay": `${index * 90}ms` }}
+            key={cat.key}
+            to={`/collection/${cat.key}`}
+            className="category-card"
+            style={{ transitionDelay: `${i * 80}ms` }}
           >
-            <div className="category-items-image-wrap">
-              <img src={category.image} alt={category.title} loading="lazy" decoding="async" />
+            <div className="category-img-wrap">
+              <img src={cat.image} alt={cat.title} />
             </div>
-            <div className="category-items-label">
-              <span className="category-items-label-text">{category.title}</span>
-              <span className="category-items-label-arrow" aria-hidden="true">→</span>
+            <div className="category-info">
+              <span className="category-num">0{i + 1}</span>
+              <h3>{cat.title}</h3>
+              <span className="category-arrow">Explore →</span>
             </div>
           </Link>
         ))}
       </div>
-
-      <div className="category-items-dots" aria-label="Category carousel navigation">
-        {Array.from({ length: CATEGORY_PAGE_DOT_COUNT }, (_, index) => (
-          <button
-            key={`category-dot-${index}`}
-            type="button"
-            className={`category-items-dot ${index === activePage ? "active" : ""}`}
-            onClick={() => scrollToPage(index)}
-            aria-label={`Show category page ${index + 1}`}
-            aria-current={index === activePage ? "true" : undefined}
-          />
-        ))}
-      </div>
-    </div>
+    </section>
   );
 }
 

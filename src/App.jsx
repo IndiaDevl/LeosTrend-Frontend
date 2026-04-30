@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { BrowserRouter as Router, Routes, Route, Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaHome, FaTshirt, FaBoxOpen, FaInfoCircle, FaPhoneAlt, FaChevronRight, FaChevronDown, FaSearch } from "react-icons/fa";
 import { FiSearch, FiHome, FiShoppingBag, FiPackage, FiHeart, FiShoppingCart } from "react-icons/fi";
 import axios from "axios";
@@ -17,6 +17,9 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import ProductDetails from "./pages/ProductDetails";
+import DesktopNavbar from "./components/DesktopNavbar";
+import MobileNavbar from "./components/MobileNavbar";
+import useRipple from "./utils/useRipple";
 import { homeProducts } from "./data/products";
 import AdminRoute from "./components/AdminRoute";
 import AdminLogin from "./pages/Admin/AdminLogin";
@@ -392,6 +395,7 @@ function SearchOverlay({
 /* ── Mobile Bottom Navigation ───────────────────────────────────── */
 function BottomNav({ cartCount, wishlistCount, onCartClick, onWishlistClick }) {
   const { pathname } = useLocation();
+  const ripple = useRipple();
 
   const isActive = (path) => {
     if (path === "/") return pathname === "/";
@@ -400,41 +404,37 @@ function BottomNav({ cartCount, wishlistCount, onCartClick, onWishlistClick }) {
 
   return (
     <nav className="mobile-bottom-nav" aria-label="Mobile navigation">
-      <NavLink to="/" className={() => `bnav-item${isActive("/") ? " bnav-active" : ""}`} aria-label="Home">
+      <NavLink to="/" className={() => `bnav-item${isActive("/") ? " bnav-active" : ""}`} aria-label="Home" onPointerDown={ripple}>
         <span className="bnav-icon"><FiHome /></span>
         <span className="bnav-label">Home</span>
-        {isActive("/") && <span className="bnav-dot" aria-hidden="true" />}
       </NavLink>
 
-      <NavLink to="/collection/oversized" className={() => `bnav-item${isActive("/collection") ? " bnav-active" : ""}`} aria-label="Shop">
+      <NavLink to="/collection/oversized" className={() => `bnav-item${isActive("/collection") ? " bnav-active" : ""}`} aria-label="Shop" onPointerDown={ripple}>
         <span className="bnav-icon"><FiShoppingBag /></span>
         <span className="bnav-label">Shop</span>
-        {isActive("/collection") && <span className="bnav-dot" aria-hidden="true" />}
       </NavLink>
 
-      <NavLink to="/orders" className={() => `bnav-item${isActive("/orders") ? " bnav-active" : ""}`} aria-label="Orders">
+      <NavLink to="/orders" className={() => `bnav-item${isActive("/orders") ? " bnav-active" : ""}`} aria-label="Orders" onPointerDown={ripple}>
         <span className="bnav-icon"><FiPackage /></span>
         <span className="bnav-label">Orders</span>
-        {isActive("/orders") && <span className="bnav-dot" aria-hidden="true" />}
       </NavLink>
 
       <button
         type="button"
         className={`bnav-item${isActive("/wishlist") ? " bnav-active" : ""}`}
         onClick={onWishlistClick}
+        onPointerDown={ripple}
         aria-label={`Wishlist, ${wishlistCount} items`}
       >
         <span className="bnav-icon"><FiHeart /></span>
         <span className="bnav-label">Wishlist</span>
         {wishlistCount > 0 && <span className="bnav-cart-badge">{wishlistCount > 9 ? "9+" : wishlistCount}</span>}
-        {isActive("/wishlist") && <span className="bnav-dot" aria-hidden="true" />}
       </button>
 
-      <button type="button" className={`bnav-item bnav-cart-btn${isActive("/cart") ? " bnav-active" : ""}`} onClick={onCartClick} aria-label={`Cart, ${cartCount} items`}>
+      <button type="button" className={`bnav-item bnav-cart-btn${isActive("/cart") ? " bnav-active" : ""}`} onClick={onCartClick} onPointerDown={ripple} aria-label={`Cart, ${cartCount} items`}>
         <span className="bnav-icon"><FiShoppingCart /></span>
         <span className="bnav-label">Cart</span>
         {cartCount > 0 && <span className="bnav-cart-badge">{cartCount > 9 ? "9+" : cartCount}</span>}
-        {isActive("/cart") && <span className="bnav-dot" aria-hidden="true" />}
       </button>
     </nav>
   );
@@ -469,25 +469,25 @@ return ()=>clearTimeout(timer);
 },[]);
 
 useEffect(() => {
-const fetchProducts = async () => {
-try {
-const response = await axios.get(PRODUCTS_API_URL);
-if (Array.isArray(response.data)) {
-setTshirts(response.data.map(normalizeProduct));
-}
-} catch (error) {
-console.error("Product fetch failed:", error.message);
-} finally {
-setProductsLoading(false);
-}
-};
+  const fetchProducts = async () => {
+    try {
+      const response = await axios.get(PRODUCTS_API_URL);
+      if (Array.isArray(response.data)) {
+        setTshirts(response.data.map(normalizeProduct));
+      }
+    } catch (error) {
+      console.error("Product fetch failed:", error.message);
+    } finally {
+      setProductsLoading(false);
+    }
+  };
 
-fetchProducts();
-window.addEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
+  fetchProducts();
+  window.addEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
 
-return () => {
-window.removeEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
-};
+  return () => {
+    window.removeEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
+  };
 }, []);
 
 
@@ -633,13 +633,6 @@ const navBrandTicker = [
 ];
 
 const toggleMegaMenu = () => {
-const mobile = window.matchMedia("(max-width: 992px)").matches;
-if (mobile) {
-setMobileMenuTab("categories");
-setMegaOpen(false);
-return;
-}
-
 setMegaOpen((prev) => !prev);
 };
 
@@ -702,6 +695,9 @@ const navigate = useNavigate();
 const showHomeTicker = location.pathname === "/";
 const overlayRoot = typeof document !== "undefined" ? document.body : null;
 
+useEffect(() => {
+}, []);
+
 
 
 const openWishlistPage = () => {
@@ -732,7 +728,7 @@ return(
 <div className="nav-premium-strip" aria-label="LeosTrend brand ticker">
 <div className="nav-strip-glow" aria-hidden="true" />
 <div className="nav-strip-track" aria-hidden="true">
-{[...navBrandTicker, ...navBrandTicker].map((item, idx)=>(
+{[...navBrandTicker, ...navBrandTicker, ...navBrandTicker, ...navBrandTicker].map((item, idx)=>(
 <span key={`${item}-${idx}`} className="nav-strip-item">{item}</span>
 ))}
 </div>
@@ -740,441 +736,35 @@ return(
 )}
 
 <div className="navbar-top">
-
-<div className="navbar-inner mx-auto w-full max-w-7xl px-6 md:px-10 lg:px-16">
-
-<div className="mobile-nav-left">
-<button
-type="button"
-className={`hamburger${menuOpen ? " open" : ""}`}
-onClick={() => {
-if (menuOpen) {
-closeMobileMenu();
-return;
-}
-
-openMobileMenu();
-}}
-aria-label="Toggle navigation menu"
-aria-expanded={menuOpen}
-aria-controls="main-nav"
->
-<span className="hamburger-lines" aria-hidden="true">
-<span className="hamburger-line" />
-<span className="hamburger-line" />
-<span className="hamburger-line" />
-</span>
-</button>
-</div>
-
-<Link to="/" className="brand" aria-label="LeosTrend home">
-<span className="brand-lockup">
-<span className="brand-crown" aria-hidden="true">
-<svg viewBox="0 0 72 30" className="brand-crown-svg" focusable="false">
-<path d="M9 24h54l-2 3H11l-2-3Zm5.4-2.7 3.1-10.2 9.1 6.3L36 4.4l9.4 13 9.1-6.3 3.1 10.2H14.4Zm8-1.9h27.2l-1.3-4.6-3.9 2.7L36 10.3l-8.4 7.2-3.9-2.7-1.3 4.6Z" fill="currentColor" />
-<path d="M24.7 8.7 28 6.4l2.1 3-3.3 2.2-2.1-2.9Zm23.2 0 3.3 2.2-2.1 2.9-3.3-2.2 2.1-3Z" fill="currentColor" opacity=".78" />
-<circle cx="36" cy="7" r="2.1" fill="currentColor" />
-</svg>
-</span>
-<span className="brand-text">
-<span className="brand-title">LEOS TREND</span>
-</span>
-<span className="brand-ornament" aria-hidden="true">
-<span className="brand-line" />
-<span className="brand-diamond" />
-<span className="brand-line" />
-</span>
-</span>
-</Link>
-
-{/* NAVIGATION */}
-
-<nav
-id="main-nav"
-className={`nav-links ${menuOpen?"active":""}`}
-onClick={(e)=>{
-if (e.target.closest("a")) {
-closeMobileMenu();
-if (!e.target.closest(".mega-menu")) setMegaOpen(false);
-}
-}}
->
-
-<div className="mobile-menu-frame">
-
-<div className="mobile-menu-head">
-<div className="mobile-menu-tabs" role="tablist" aria-label="Mobile navigation views">
-<button
-type="button"
-className={`mobile-menu-tab${mobileMenuTab === "menu" ? " active" : ""}`}
-onClick={() => setMobileMenuTab("menu")}
-role="tab"
-aria-selected={mobileMenuTab === "menu"}
->
-Menu
-</button>
-<button
-type="button"
-className={`mobile-menu-tab${mobileMenuTab === "categories" ? " active" : ""}`}
-onClick={() => setMobileMenuTab("categories")}
-role="tab"
-aria-selected={mobileMenuTab === "categories"}
->
-Categories
-</button>
-</div>
-
-<button
-type="button"
-className="mobile-menu-close"
-onClick={() => {
-closeMobileMenu();
-}}
-aria-label="Close navigation menu"
->
-×
-</button>
-</div>
-
-<div className={`mobile-menu-panel mobile-menu-menu-panel${mobileMenuTab === "menu" ? " active" : ""}`}>
-
-<div className="mega-parent">
-
-<Link to="/">
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaHome/></span>
-<span>Home</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-
-<div className={`mega-trigger ${megaOpen ? "open" : ""}`} ref={megaTriggerRef}>
-
-<button
-type="button"
-className="collection-btn"
-onClick={toggleMegaMenu}
-aria-expanded={megaOpen}
-aria-haspopup="menu"
->
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaTshirt/></span>
-<span>Collection</span>
-</span>
-<span className={`nav-item-arrow collection-arrow ${megaOpen ? "open" : ""}`} aria-hidden="true"><FaChevronDown/></span>
-</button>
-
-<div className="mega-menu" onClick={(e)=>{ if (e.target.closest("a")) setMegaOpen(false); }}>
-
-<div className="mega-column">
-
-<h4>T-Shirts</h4>
-
-<Link to="/collection/oversized">Oversized</Link>
-<Link to="/collection/street">Streetwear</Link>
-<Link to="/collection/graphic">Graphic</Link>
-
-</div>
-
-<div className="mega-column">
-
-<h4>Sweatshirts</h4>
-
-<Link to="/collection/sweatshirts">Crew Sweatshirts</Link>
-<Link to="/collection/zip">Zip Sweatshirts</Link>
-
-</div>
-
-<div className="mega-column">
-
-<h4>Hoodies</h4>
-
-<Link to="/collection/hoodies">Premium Hoodies</Link>
-<Link to="/collection/minimal">Minimal Hoodies</Link>
-
-</div>
-
-</div>
-
-</div>
-
-<Link to="/contact">
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaPhoneAlt/></span>
-<span>Contact</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/about">
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaInfoCircle/></span>
-<span>About</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/orders">
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaBoxOpen/></span>
-<span>Orders</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-
-<button
-type="button"
-className="mobile-menu-search"
-onClick={() => {
-openWishlistPage();
-}}
->
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaHeart/></span>
-<span>Wishlist</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</button>
-
-<button
-type="button"
-className="mobile-menu-search"
-onClick={() => {
-openSearchOverlay();
-}}
->
-<span className="nav-item-copy">
-<span className="nav-item-icon"><FaSearch/></span>
-<span>Search</span>
-</span>
-<span className="nav-item-arrow" aria-hidden="true"><FaChevronRight/></span>
-</button>
-
-</div>
-
-</div>
-
-<div className={`mobile-menu-panel mobile-menu-categories-panel${mobileMenuTab === "categories" ? " active" : ""}`}>
-<div className="mobile-menu-category-grid">
-<Link to="/collection/oversized" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">T-Shirts</span>
-<strong>Oversized</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/street" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">T-Shirts</span>
-<strong>Streetwear</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/graphic" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">T-Shirts</span>
-<strong>Graphic</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/sweatshirts" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">Sweatshirts</span>
-<strong>Crew</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/zip" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">Sweatshirts</span>
-<strong>Zip</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/hoodies" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">Hoodies</span>
-<strong>Premium</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<Link to="/collection/minimal" className="mobile-menu-category-card">
-<span className="mobile-menu-category-meta">Hoodies</span>
-<strong>Minimal</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</Link>
-<button
-type="button"
-className="mobile-menu-category-card mobile-menu-category-back"
-onClick={() => setMobileMenuTab("menu")}
->
-<span className="mobile-menu-category-meta">Return</span>
-<strong>Main Menu</strong>
-<span className="mobile-menu-category-arrow" aria-hidden="true"><FaChevronRight/></span>
-</button>
-</div>
-
-</div>
-
-</div>
-
-</nav>
-
-{/* RIGHT SIDE */}
-
-<div className="nav-right">
-
-<button
-type="button"
-className="mobile-search-btn"
-aria-label="Search products"
-onClick={() => {
-openSearchOverlay();
-}}
->
-<FiSearch/>
-</button>
-
-<button
-className="wishlist-btn"
-onClick={()=>{
-openWishlistPage();
-}}
-aria-label="Open wishlist"
->
-<FaHeart/>
-<span className="cart-count">{wishlist.length}</span>
-</button>
-
-<div className="cart-icon-wrap">
-<button
-className="cart-btn"
-onClick={openCartPage}
-aria-label="Open cart"
->
-<FaShoppingCart/>
-<span className={`cart-count${badgePulse ? " badge-pulse" : ""}`}>{cartItemsCount}</span>
-</button>
-</div>
-
-</div>
-
-</div>
-
+  {/* Desktop only */}
+  <DesktopNavbar
+    cartItemsCount={cartItemsCount}
+    badgePulse={badgePulse}
+    openCartPage={openCartPage}
+    openSearchOverlay={openSearchOverlay}
+    wishlistCount={wishlist.length}
+    openWishlistPage={openWishlistPage}
+  />
+  {/* Mobile only */}
+  <MobileNavbar
+    menuOpen={menuOpen}
+    openMobileMenu={openMobileMenu}
+    closeMobileMenu={closeMobileMenu}
+    mobileMenuTab={mobileMenuTab}
+    setMobileMenuTab={setMobileMenuTab}
+    megaOpen={megaOpen}
+    toggleMegaMenu={toggleMegaMenu}
+    setMegaOpen={setMegaOpen}
+    megaTriggerRef={megaTriggerRef}
+    cartItemsCount={cartItemsCount}
+    badgePulse={badgePulse}
+    openCartPage={openCartPage}
+    openSearchOverlay={openSearchOverlay}
+    openWishlistPage={openWishlistPage}
+  />
 </div>
 
 </header>
-
-{menuOpen && (
-<div
-className="mobile-fullscreen-menu"
-role="dialog"
-aria-modal="true"
-aria-label="Mobile navigation menu"
-onClick={(e) => {
-if (e.target.closest("a")) {
-closeMobileMenu();
-}
-}}
->
-<div className="mobile-fullscreen-menu-head">
-<div className="mobile-fullscreen-menu-tabs" role="tablist" aria-label="Mobile navigation sections">
-<button
-type="button"
-className={`mobile-fullscreen-menu-tab${mobileMenuTab === "menu" ? " active" : ""}`}
-onClick={() => setMobileMenuTab("menu")}
-role="tab"
-aria-selected={mobileMenuTab === "menu"}
->
-Menu
-</button>
-<button
-type="button"
-className={`mobile-fullscreen-menu-tab${mobileMenuTab === "categories" ? " active" : ""}`}
-onClick={() => setMobileMenuTab("categories")}
-role="tab"
-aria-selected={mobileMenuTab === "categories"}
->
-Categories
-</button>
-</div>
-
-<button
-type="button"
-className="mobile-fullscreen-menu-close"
-onClick={closeMobileMenu}
-aria-label="Close navigation menu"
->
-×
-</button>
-</div>
-
-{mobileMenuTab === "menu" ? (
-<div className="mobile-fullscreen-menu-body">
-<Link to="/" className="mobile-fullscreen-menu-row">
-<span>Home</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<button type="button" className="mobile-fullscreen-menu-row" onClick={() => setMobileMenuTab("categories")}>
-<span>Collection</span>
-<FaChevronRight aria-hidden="true" />
-</button>
-<Link to="/contact" className="mobile-fullscreen-menu-row">
-<span>Contact</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/about" className="mobile-fullscreen-menu-row">
-<span>About Us</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<button
-type="button"
-className="mobile-fullscreen-menu-row"
-onClick={() => {
-openWishlistPage();
-closeMobileMenu();
-}}
->
-<span>Wishlist</span>
-<FaChevronRight aria-hidden="true" />
-</button>
-<button
-type="button"
-className="mobile-fullscreen-menu-row"
-onClick={() => {
-closeMobileMenu();
-openSearchOverlay();
-}}
->
-<span>Search</span>
-<FaChevronRight aria-hidden="true" />
-</button>
-</div>
-) : (
-<div className="mobile-fullscreen-menu-body">
-<Link to="/collection/oversized" className="mobile-fullscreen-menu-row">
-<span>Oversized</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/street" className="mobile-fullscreen-menu-row">
-<span>Streetwear</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/graphic" className="mobile-fullscreen-menu-row">
-<span>Graphic</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/sweatshirts" className="mobile-fullscreen-menu-row">
-<span>Crew Sweatshirts</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/zip" className="mobile-fullscreen-menu-row">
-<span>Zip Sweatshirts</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/hoodies" className="mobile-fullscreen-menu-row">
-<span>Premium Hoodies</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<Link to="/collection/minimal" className="mobile-fullscreen-menu-row">
-<span>Minimal Hoodies</span>
-<FaChevronRight aria-hidden="true" />
-</Link>
-<button type="button" className="mobile-fullscreen-menu-row" onClick={() => setMobileMenuTab("menu")}>
-<span>Main Menu</span>
-<FaChevronRight aria-hidden="true" />
-</button>
-</div>
-)}
-</div>
-)}
-
 
 {overlayRoot && createPortal(
   <SearchOverlay
@@ -1318,23 +908,23 @@ element={
 }
 />
 
-</Routes>
-</Layout>
+<Route path="*" element={<Navigate to="/" replace />} />
 
-</main>
+    </Routes>
+    </Layout>
 
-{/* MOBILE BOTTOM NAV */}
-<BottomNav
-cartCount={cartItemsCount}
-wishlistCount={wishlist.length}
-onCartClick={openCartPage}
-onWishlistClick={openWishlistPage}
-/>
+  </main>
 
-{/* FOOTER */}
-{location.pathname === "/" ? (
- <Footer />
-) : null}
+  {/* MOBILE BOTTOM NAV */}
+  <BottomNav
+    cartCount={cartItemsCount}
+    wishlistCount={wishlist.length}
+    onCartClick={openCartPage}
+    onWishlistClick={openWishlistPage}
+  />
+
+  {/* FOOTER */}
+
 
 </div>
 

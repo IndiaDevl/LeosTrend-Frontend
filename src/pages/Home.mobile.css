@@ -1,0 +1,146 @@
+  /* Utility classes for mobile/desktop footer display */
+  .mobile-hide { display: block !important; }
+  .mobile-show { display: none !important; }
+  @media (max-width: 640px) {
+    .mobile-hide { display: none !important; }
+    .mobile-show { display: block !important; }
+  }
+  /* Utility classes for mobile/desktop display */
+  .mobile-show { display: none !important; }
+  .mobile-hide { display: block !important; }
+  @media (max-width: 640px) {
+    .mobile-show { display: block !important; }
+    .mobile-hide { display: none !important; }
+  }
+  /* BrandImpactStats mobile override: remove all margin/padding and set grid to 1 column */
+  .brand-impact-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+  .brand-impact-section .home-content-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .brand-impact-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .brand-impact-stat {
+    margin: 0 !important;
+    padding: 12px 10px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+  }
+  .brand-impact-stat:last-child {
+    border-bottom: none !important;
+  }
+  .brand-impact-eyebrow,
+  .brand-impact-quote {
+    margin: 0 !important;
+    padding: 0 10px !important;
+  }
+/* Mobile-specific styles for Home page and category cards */
+@media (max-width: 640px) {
+  .home-content-wrapper,
+  .home-section-block,
+  .trending-now-section,
+  .brand-impact-section,
+  .reviews-section,
+  .trust-strip-section {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box;
+  }
+  /* Remove this override so all sections have equal padding */
+  /* .home-section-block.home-section-category {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  } */
+  .home-section-title, .category-title, .trending-now-group-title {
+    letter-spacing: 0.5px !important;
+    margin-bottom: 8px !important;
+  }
+  .home-section-subtitle, .category-subtitle {
+    line-height: 1.5 !important;
+    margin-bottom: 10px !important;
+  }
+  .category-track, .category-container {
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .category {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .home-section-block {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .trending-now-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .category-card {
+    margin-bottom: 0 !important;
+    padding-bottom: 10px !important;
+  }
+  .brand-impact-section {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .category-track, .category-container, .category {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  /* Remove margin/padding from last card and first element of next section */
+  .category-track > .category-card:last-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  .brand-impact-section > *:first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  /* Remove all margin/padding from wrappers between cards and next section */
+  .category,
+  .category-track,
+  .category-container,
+  .home-section-block,
+  .trust-strip-section,
+  .brand-impact-section,
+  .brand-impact-section > *,
+  .trust-strip-section > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  /* Remove margin/padding from last card, last product section child, and first trust/brand section child */
+  .category-track > .category-card:last-child,
+  .category-track > *:last-child,
+  .category-container > *:last-child,
+  .home-section-block > *:last-child,
+  .trust-strip-section > *:first-child,
+  .brand-impact-section > *:first-child {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+  }
+  .trust-strip-section,
+  .trust-strip-section > *,
+  .trust-strip-row,
+  .trust-strip-row > * {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    border: none !important;
+  }
+}

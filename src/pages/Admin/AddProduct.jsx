@@ -26,6 +26,7 @@ const initialForm = {
   sku: "",
   rating: "New",
   galleryImages: "",
+  isTrending: false,
 };
 
 function AddProduct() {
@@ -52,8 +53,8 @@ function AddProduct() {
   }, [form, imageFile]);
 
   const onChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setForm((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
   const handleImageChange = (event) => {
@@ -248,6 +249,32 @@ function AddProduct() {
               <option value="Sale">Sale</option>
             </select>
           </label>
+
+          <div className="trending-toggle-card full-width">
+            <div className="trending-toggle-inner">
+              <div className="trending-toggle-info">
+                <span className="trending-toggle-icon">🔥</span>
+                <div>
+                  <p className="trending-toggle-title">Feature in Trending Now</p>
+                  <p className="trending-toggle-desc">Pin this product to the Trending Now section on the homepage (max 4 per category).</p>
+                </div>
+              </div>
+              <label className="trending-switch" aria-label="Feature in Trending Now">
+                <input
+                  type="checkbox"
+                  name="isTrending"
+                  checked={form.isTrending}
+                  onChange={onChange}
+                />
+                <span className="trending-switch-track">
+                  <span className="trending-switch-thumb" />
+                </span>
+              </label>
+            </div>
+            {form.isTrending && (
+              <p className="trending-toggle-active-note">✦ This product will appear in the Trending Now cards on the homepage.</p>
+            )}
+          </div>
 
           <label>
             Product Image

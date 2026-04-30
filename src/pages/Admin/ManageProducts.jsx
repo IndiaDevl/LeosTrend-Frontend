@@ -26,6 +26,7 @@ const initialDraft = {
   sku: "",
   rating: "New",
   galleryImages: "",
+  isTrending: false,
 };
 
 function ManageProducts() {
@@ -38,19 +39,25 @@ function ManageProducts() {
   const [galleryFiles, setGalleryFiles] = useState([]);
   const [imagePreview, setImagePreview] = useState("");
   const [galleryPreviews, setGalleryPreviews] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("admin_searchTerm") || "");
+  const [categoryFilter, setCategoryFilter] = useState(() => localStorage.getItem("admin_categoryFilter") || "all");
+
+  useEffect(() => {
+    localStorage.setItem("admin_searchTerm", searchTerm);
+  }, [searchTerm]);
+
+  useEffect(() => {
+    localStorage.setItem("admin_categoryFilter", categoryFilter);
+  }, [categoryFilter]);
 
   const filteredProducts = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-
     return products.filter((product) => {
       const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
       const matchesSearch =
         !query ||
         product.name.toLowerCase().includes(query) ||
         product.description.toLowerCase().includes(query);
-
       return matchesCategory && matchesSearch;
     });
   }, [products, searchTerm, categoryFilter]);
@@ -93,6 +100,7 @@ function ManageProducts() {
   }, []);
 
   const handleDelete = async (id) => {
+    console.log("Deleting product with id:", id);
     try {
       await axios.delete(`${PRODUCTS_API_URL}/${id}`, {
         headers: {
@@ -101,7 +109,6 @@ function ManageProducts() {
       });
 
       setProducts((prev) => prev.filter((item) => item._id !== id));
-      notifyProductsUpdated();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to delete product");
     }
@@ -125,6 +132,7 @@ function ManageProducts() {
       sku: product.sku || "",
       rating: product.rating || "New",
       galleryImages: Array.isArray(product.galleryImages) ? product.galleryImages.join("\n") : "",
+      isTrending: Boolean(product.isTrending),
     });
     setImageFile(null);
     setImagePreview(product.image || "");
@@ -142,8 +150,8 @@ function ManageProducts() {
   };
 
   const handleDraftChange = (event) => {
-    const { name, value } = event.target;
-    setDraft((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = event.target;
+    setDraft((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
   const handleImageChange = (event) => {
@@ -178,6 +186,7 @@ function ManageProducts() {
       formData.append("sku", draft.sku);
       formData.append("rating", draft.rating);
       formData.append("galleryImages", draft.galleryImages);
+      formData.append("isTrending", draft.isTrending ? "true" : "false");
 
       if (imageFile) {
         formData.append("image", imageFile);
@@ -372,6 +381,31 @@ function ManageProducts() {
                               placeholder="Gallery image URLs (comma or newline separated)"
                               className="admin-edit-textarea"
                             />
+                            <div className="trending-toggle-card">
+                              <div className="trending-toggle-inner">
+                                <div className="trending-toggle-info">
+                                  <span className="trending-toggle-icon">🔥</span>
+                                  <div>
+                                    <p className="trending-toggle-title">Feature in Trending Now</p>
+                                    <p className="trending-toggle-desc">Show this product in the Trending Now homepage section.</p>
+                                  </div>
+                                </div>
+                                <label className="trending-switch" aria-label="Feature in Trending Now">
+                                  <input
+                                    type="checkbox"
+                                    name="isTrending"
+                                    checked={Boolean(draft.isTrending)}
+                                    onChange={handleDraftChange}
+                                  />
+                                  <span className="trending-switch-track">
+                                    <span className="trending-switch-thumb" />
+                                  </span>
+                                </label>
+                              </div>
+                              {draft.isTrending && (
+                                <p className="trending-toggle-active-note">✦ Will appear in Trending Now on homepage.</p>
+                              )}
+                            </div>
                             {imagePreview && (
                               <img
                                 src={resolveImageUrl(imagePreview)}
@@ -400,7 +434,12 @@ function ManageProducts() {
                               className="admin-product-thumb"
                             />
                             <div>
-                              <p className="admin-product-title">{product.name}</p>
+                              <p className="admin-product-title">
+                                {product.name}
+                                {product.isTrending && (
+                                  <span className="trending-badge-pill">🔥 Trending</span>
+                                )}
+                              </p>
                               <p className="admin-product-meta">Sizes: {formatList(product.sizes)}</p>
                               <p className="admin-product-meta">Colors: {formatList(product.colors)}</p>
                               <p className="admin-product-meta">Gallery: {Array.isArray(product.galleryImages) ? product.galleryImages.length : 0} extra</p>

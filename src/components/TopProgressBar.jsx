@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation } from "react-router-dom";
 
-// Accent color — change once here to match your brand
-const BAR_COLOR = "#6c63ff";
+// Accent color — pure black, premium
+const BAR_COLOR = "#0a0a0a";
 
 function TopProgressBar() {
   const { pathname } = useLocation();
@@ -53,17 +53,15 @@ function TopProgressBar() {
         top: 0,
         left: 0,
         zIndex: 9999,
-        height: "3px",
+        height: "2px",
         width: `${width}%`,
         background: BAR_COLOR,
-        // Glow effect like NProgress / YouTube
-        boxShadow: `0 0 10px ${BAR_COLOR}, 0 0 4px ${BAR_COLOR}`,
-        borderRadius: "0 3px 3px 0",
+        boxShadow: "none",
+        borderRadius: "0 1px 1px 0",
         pointerEvents: "none",
-        // Fast transition when completing (100 %), slower crawl otherwise
         transition:
           width === 100
-            ? "width 0.15s ease, opacity 0.35s ease"
+            ? "width 0.15s ease, opacity 0.3s ease"
             : "width 0.45s cubic-bezier(0.22, 1, 0.36, 1)",
         opacity: width === 100 ? 0 : 1,
       }}

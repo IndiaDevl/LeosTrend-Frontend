@@ -13,8 +13,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-       // target: 'http://localhost:1000',
-        target: 'https://leostrend.com',
+        target: 'http://localhost:1000',
         changeOrigin: true,
       }
     }

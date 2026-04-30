@@ -2,13 +2,6 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./Footer.css";
 
-const serviceNotes = [
-  "Quality checked pieces",
-  "Free shipping on select orders",
-  "Secure payments",
-  "Client support",
-];
-
 const storeLinks = [
   { label: "Home", to: "/" },
   { label: "Collection", to: "/collection/oversized" },
@@ -23,110 +16,96 @@ const quickLinks = [
   { label: "Orders", to: "/orders" },
 ];
 
-const navigationSections = [
-  {
-    title: "Our Store",
-    links: storeLinks,
-  },
-  {
-    title: "Quick Links",
-    links: quickLinks,
-  },
+const legalLinks = [
+  { label: "Privacy Policy", to: "/privacy" },
+  { label: "Terms of Use", to: "/terms" },
 ];
 
+function Footer() {
+  const [email, setEmail] = useState("");
+  const [done, setDone] = useState(false);
 
-function Footer({ customerProfile, onSignOut, onSignUp }) {
-  const [newsletterSuccess, setNewsletterSuccess] = useState(false);
   return (
-    <footer className="lt-footer">
-      <div className="lt-footer__container">
-        <div className="lt-footer__service-rail" aria-label="Store highlights">
-          {serviceNotes.map((note) => (
-            <span key={note} className="lt-footer__service-note">{note}</span>
-          ))}
-        </div>
+    <footer className="ft">
+      {/* ── top accent line ── */}
+      <div className="ft__accent" />
 
-        <div className="lt-footer__main">
-          <section className="lt-footer__brand">
-            <p className="lt-footer__brand-label">LeosTrend</p>
-            <h2 className="lt-footer__headline">
-              Modern essentials with a sharper luxury edge.
-            </h2>
-            <p className="lt-footer__description">
-              LeosTrend creates elevated everyday clothing with premium fabrics, cleaner silhouettes, and a refined streetwear point of view.
-            </p>
+      <div className="ft__inner">
 
-            <div className="lt-footer__contact">
-              <a href="tel:+918121234560">+91 81212 34560</a>
-              <a href="mailto:support@leotrend.com">support@leotrend.com</a>
-            </div>
-          </section>
-
-          <div className="lt-footer__aside">
-            {navigationSections.map((section) => (
-              <nav key={section.title}>
-                <h3 className="lt-footer__section-title">{section.title}</h3>
-                <ul className="lt-footer__nav-list">
-                  {section.links.map((item) => (
-                    <li key={item.label}>
-                      <Link to={item.to}>
-                        {item.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ))}
-
-            <section className="lt-footer__newsletter">
-              <h3 className="lt-footer__section-title">Newsletter</h3>
-              <p className="lt-footer__newsletter-text">
-                Get first access to new drops, restocks, and limited releases.
-              </p>
-
-              {newsletterSuccess ? (
-                <div className="lt-footer__newsletter-success">Thanks for subscribing!</div>
-              ) : !newsletterSuccess && (
-                <form
-                  className="lt-footer__form"
-                  onSubmit={e => { e.preventDefault(); setNewsletterSuccess(true); }}
-                >
-                  <div className="lt-footer__form-fields">
-                    <input
-                      type="email"
-                      placeholder="Enter your email"
-                      className="lt-footer__input"
-                      disabled={!!customerProfile}
-                    />
-                    {customerProfile ? (
-                      <button
-                        type="button"
-                        className="lt-footer__button"
-                        onClick={onSignOut}
-                      >
-                        Sign Out
-                      </button>
-                    ) : (
-                      <button
-                        type="submit"
-                        className="lt-footer__button"
-                      >
-                        Sign Up
-                      </button>
-                    )}
-                  </div>
-                </form>
-              )}
-              <p className="lt-footer__fineprint">
-                By signing up, you agree to receive LeosTrend updates and occasional launch emails.
-              </p>
-            </section>
+        {/* ── BRAND COLUMN ── */}
+        <div className="ft__brand">
+          <p className="ft__brand-kicker">LeosTrend</p>
+          <h2 className="ft__headline">
+            Dress&nbsp;sharp.<br />Live&nbsp;premium.
+          </h2>
+          <p className="ft__desc">
+            Elevated everyday clothing with premium fabrics,
+            cleaner silhouettes, and a refined streetwear point of view.
+          </p>
+          <div className="ft__contact">
+            <a href="tel:+918121234560">+91 81212 34560</a>
+            <a href="mailto:support@leotrend.com">support@leotrend.com</a>
           </div>
         </div>
 
-        <div className="lt-footer__bottom">
-          <p>© 2026 LeosTrend. All rights reserved.</p>
-          <p>Crafted for premium everyday wear.</p>
+        {/* ── NAV COLUMNS ── */}
+        <nav className="ft__nav-col">
+          <h3 className="ft__nav-title">Our Store</h3>
+          <ul>
+            {storeLinks.map(l => (
+              <li key={l.label}><Link to={l.to}>{l.label}</Link></li>
+            ))}
+          </ul>
+        </nav>
+
+        <nav className="ft__nav-col">
+          <h3 className="ft__nav-title">Quick Links</h3>
+          <ul>
+            {quickLinks.map(l => (
+              <li key={l.label}><Link to={l.to}>{l.label}</Link></li>
+            ))}
+          </ul>
+        </nav>
+
+        {/* ── NEWSLETTER ── */}
+        <div className="ft__newsletter">
+          <h3 className="ft__nav-title">Newsletter</h3>
+          <p className="ft__nl-text">
+            First access to drops, restocks &amp; limited releases.
+          </p>
+
+          {done ? (
+            <p className="ft__nl-thanks">You're on the list. ✦</p>
+          ) : (
+            <form className="ft__nl-form" onSubmit={e => { e.preventDefault(); if (email) setDone(true); }}>
+              <div className="ft__nl-field">
+                <input
+                  type="email"
+                  required
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="your@email.com"
+                  className="ft__nl-input"
+                />
+                <button type="submit" className="ft__nl-btn">Join</button>
+              </div>
+              <p className="ft__nl-fine">No spam. Unsubscribe anytime.</p>
+            </form>
+          )}
+        </div>
+
+      </div>
+
+      {/* ── BOTTOM BAR ── */}
+      <div className="ft__bottom">
+        <p className="ft__copy">© 2026 LeosTrend — All rights reserved.</p>
+        <div className="ft__legal">
+          {legalLinks.map((l, i) => (
+            <React.Fragment key={l.label}>
+              {i > 0 && <span className="ft__legal-sep" />}
+              <Link to={l.to}>{l.label}</Link>
+            </React.Fragment>
+          ))}
         </div>
       </div>
     </footer>

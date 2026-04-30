@@ -9,17 +9,23 @@ const TRENDING_SECTIONS = [
   { key: "zip", title: "Zip Sweatshirts" },
 ];
 
-function TrendingNow({ products = [], onQuickView }) {
-  const navigate = useNavigate();
-  const rowRefs = useRef([]);
 
+function TrendingNow({ products = [], onQuickView, gridRefs }) {
+  // DEBUG: Log all products, their category
+  // console.log("TrendingNow products:", products);
+  // products.forEach(p => console.log("Product:", p.name, "Category:", p.category));
+  const navigate = useNavigate();
+  const rowRefs = gridRefs || useRef([]);
+
+  // Show all products in each category (no isTrending logic)
   const groupedProducts = useMemo(() => {
-    return TRENDING_SECTIONS.map((section) => ({
-      ...section,
-      items: products
-        .filter((product) => String(product?.category || "").trim().toLowerCase() === section.key)
-        .slice(0, 4),
-    }));
+    return TRENDING_SECTIONS.map((section) => {
+      const categoryProducts = products.filter(
+        (product) =>
+          String(product?.category || "").trim().toLowerCase() === section.key
+      );
+      return { ...section, items: categoryProducts.slice(0, 4) };
+    });
   }, [products]);
 
   useEffect(() => {
@@ -76,12 +82,22 @@ function TrendingNow({ products = [], onQuickView }) {
                 }}
               >
                 {group.items.map((product) => {
+
                   const hasDiscount = Number(product?.mrp) > Number(product?.price);
-                  const discount = hasDiscount
+                  let discount = hasDiscount
                     ? Math.round(
                         ((Number(product.mrp) - Number(product.price)) / Number(product.mrp)) * 100
                       )
                     : 0;
+                  if (discount >= 100) discount = 99;
+
+                  // Helper to get correct image URL
+                  const getImageUrl = (img) => {
+                    if (!img) return '';
+                    if (img.startsWith('http')) return img;
+                    // Change this to your backend URL if different
+                    return `http://localhost:5000/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
+                  };
 
                   return (
                     <article key={product.id} className="trending-now-card">
@@ -96,9 +112,9 @@ function TrendingNow({ products = [], onQuickView }) {
                           }
                         }}
                       >
-                        <img src={product.image} alt={product.name} loading="lazy" />
+                        <img src={getImageUrl(product.image)} alt={product.name} loading="lazy" />
 
-                        {hasDiscount && (
+                        {hasDiscount && discount > 0 && (
                           <span className="trending-now-discount">{discount}% OFF</span>
                         )}
 

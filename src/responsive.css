@@ -1,3 +1,22 @@
+@media (max-width: 640px) {
+  .home-page,
+  .about-page,
+  .cart-page,
+  .checkout-page,
+  .wishlist-page,
+  .orders-page,
+  .contact-page,
+  .main,
+  .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
+  }
+}
 /* Shared responsive rules for all screens */
 
 :root {

@@ -7,7 +7,8 @@ export const collectionProducts = [
     mrp: 1499,
     rating: "4.5⭐",
     category: "oversized",
-    image: "/TShirt-Yellow.webp"
+    image: "/TShirt-Yellow.webp",
+    isTrending: true // Ensures this product appears in Trending Now (Oversized)
   },
   {
     id: 102,
@@ -107,7 +108,8 @@ export const collectionProducts = [
     mrp: 1799,
     rating: "4.5⭐",
     category: "sweatshirts",
-    image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=600"
+    image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?w=600",
+    isTrending: true // Ensures this product appears in Trending Now (Sweatshirts)
   },
   {
     id: 202,
@@ -147,7 +149,8 @@ export const collectionProducts = [
     mrp: 2299,
     rating: "4.6⭐",
     category: "hoodies",
-    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600"
+    image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=600",
+    isTrending: true // Ensures this product appears in Trending Now (Hoodies)
   },
   {
     id: 302,
@@ -187,7 +190,8 @@ export const collectionProducts = [
     mrp: 1999,
     rating: "4.4⭐",
     category: "zip",
-    image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=600"
+    image: "https://images.unsplash.com/photo-1556906781-9a412961c28c?w=600",
+    isTrending: true // Ensures this product appears in Trending Now (Zip)
   },
   {
     id: 402,

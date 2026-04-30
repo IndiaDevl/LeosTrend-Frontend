@@ -156,7 +156,7 @@ function Orders() {
       <div className="container orders-shell">
         <header className="orders-head">
           <div>
-            <p className="orders-kicker">LeosTrend</p>
+            <p className="orders-kicker">Order History</p>
             <h1>My Orders</h1>
             <p>Track all your purchases, order statuses, and delivery progress in one place.</p>
           </div>
@@ -195,7 +195,7 @@ function Orders() {
             />
           </div>
 
-          <button className="orders-btn" type="submit" disabled={loading || refreshing}>
+          <button className="orders-btn orders-lookup-submit-row" type="submit" disabled={loading || refreshing}>
             {loading ? "Searching..." : "Find My Orders"}
           </button>
         </form>

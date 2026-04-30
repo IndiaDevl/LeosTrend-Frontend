@@ -1,0 +1,31 @@
+@media (max-width: 640px) {
+  .brand-impact-section {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+  .brand-impact-section .home-content-wrapper {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .brand-impact-grid {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .brand-impact-stat {
+    margin: 0 !important;
+    padding: 12px 10px !important;
+    border-bottom: 1px solid #f3f4f6 !important;
+  }
+  .brand-impact-stat:last-child {
+    border-bottom: none !important;
+  }
+  .brand-impact-eyebrow,
+  .brand-impact-quote {
+    margin: 0 !important;
+    padding: 0 10px !important;
+  }
+}

@@ -1,0 +1,264 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
+
+@media (max-width: 640px) {
+  .ts-section {
+    padding: 0 !important;
+    margin: 0 !important;
+    border-top: none !important;
+    border-bottom: none !important;
+  }
+  .ts-inner {
+    grid-template-columns: 1fr !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .ts-card {
+    padding: 16px 12px !important;
+    margin: 0 !important;
+    border-right: none !important;
+    border-bottom: 1px solid #ebebeb !important;
+  }
+  .ts-card:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* ═══════════════════════════════════════
+   SECTION
+═══════════════════════════════════════ */
+.ts-section {
+  width: 100%;
+  background: #fff;
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  font-family: 'DM Sans', sans-serif;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════
+   GRID
+═══════════════════════════════════════ */
+.ts-inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  max-width: 100%;
+  margin: 0;
+}
+
+/* ═══════════════════════════════════════
+   CARD — base (hidden before reveal)
+═══════════════════════════════════════ */
+.ts-card {
+  padding: 44px 40px;
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  border-right: 1px solid #ebebeb;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+
+  /* start hidden — JS adds .ts-card--revealed */
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.35s ease;
+}
+
+.ts-card--revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ts-card:last-child {
+  border-right: none;
+}
+
+/* ── Sliding underline on hover ── */
+.ts-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #0a0a0a;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ts-card:hover {
+  background: #f9f9f9;
+}
+
+.ts-card:hover::before {
+  transform: scaleX(1);
+}
+
+/* ── Click ripple ── */
+.ts-ripple {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(10, 10, 10, 0.08);
+  transform: translate(-50%, -50%) scale(0);
+  animation: tsRipple 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes tsRipple {
+  to {
+    transform: translate(-50%, -50%) scale(60);
+    opacity: 0;
+  }
+}
+
+/* ═══════════════════════════════════════
+   ICON
+═══════════════════════════════════════ */
+.ts-icon-wrap {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border: 1px solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  transition:
+    background 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.ts-card:hover .ts-icon-wrap {
+  background: #0a0a0a;
+  border-color: #0a0a0a;
+}
+
+.ts-svg {
+  width: 20px;
+  height: 20px;
+  stroke: #0a0a0a;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.35s ease;
+  display: block;
+}
+
+.ts-card:hover .ts-svg {
+  stroke: #fff;
+}
+
+/* ═══════════════════════════════════════
+   BODY
+═══════════════════════════════════════ */
+.ts-body {
+  flex: 1;
+  overflow: hidden;
+}
+
+.ts-num {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #d0d0d0;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  transition: color 0.35s ease;
+}
+
+.ts-card:hover .ts-num {
+  color: #aaa;
+}
+
+.ts-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0a0a0a;
+  margin-bottom: 6px;
+  line-height: 1.2;
+  position: relative;
+  display: inline-block;
+}
+
+/* Title underline wipe on hover */
+.ts-title::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: #0a0a0a;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
+}
+
+.ts-card:hover .ts-title::after {
+  transform: scaleX(1);
+}
+
+.ts-text {
+  font-size: 13px;
+  font-weight: 300;
+  color: #888;
+  line-height: 1.75;
+  transition: color 0.35s ease;
+}
+
+.ts-card:hover .ts-text {
+  color: #555;
+}
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media (max-width: 900px) {
+  .ts-inner {
+    grid-template-columns: repeat(3, minmax(220px, 1fr));
+  }
+  .ts-card {
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  .ts-inner {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .ts-inner::-webkit-scrollbar { display: none; }
+  .ts-card {
+    flex: 0 0 80vw;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    border-right: 1px solid #ebebeb;
+    border-bottom: none;
+    padding: 28px 24px;
+  }
+  .ts-card:last-child { border-right: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ts-card {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+  .ts-ripple { display: none; }
+}
+
+

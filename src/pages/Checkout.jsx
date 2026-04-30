@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { API_BASE_URL } from "../utils/api";
+import { API_BASE_URL, ORDERS_API_URL } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../context/CheckoutContext";
 import "./Checkout.css";
@@ -12,6 +12,40 @@ const STATES = [
   "Odisha","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura",
   "Uttar Pradesh","Uttarakhand","West Bengal"
 ];
+
+function StateDropdown({ value, onChange }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div className="state-dropdown" ref={ref}>
+      <button type="button" className={`state-dropdown-trigger${open ? " open" : ""}`} onClick={() => setOpen(p => !p)}>
+        <span className="state-dropdown-value">{value}</span>
+        <span className="state-dropdown-arrow" aria-hidden="true" />
+      </button>
+      {open && (
+        <div className="state-dropdown-list">
+          {STATES.map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`state-dropdown-option${s === value ? " selected" : ""}`}
+              onClick={() => { onChange(s); setOpen(false); }}
+            >
+              {s}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Checkout({ cart = [], calculateTotal = () => 0 }) {
   const { order, setOrder, clearOrder } = useCheckout();
@@ -89,20 +123,79 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
       description: "Order Payment",
       order_id: orderData.id,
 
-      handler: function (response) {
-        setLoading(false);
+      handler: async function (response) {
+        const fullAddress = [
+          order.shippingAddress,
+          order.city,
+          order.stateVal,
+          order.pin,
+        ].filter(Boolean).join(", ");
 
-        setPaymentDetails({
+        const orderPayload = {
+          customer: order.customer,
+          phone: order.phone,
+          email: order.email,
+          shippingAddress: fullAddress,
+          items: cart.map((item) => ({
+            id: item.id || item._id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color,
+            image: item.image,
+          })),
+          total: calculateTotal(),
+          payment: {
+            razorpayPaymentId: response.razorpay_payment_id,
+            razorpayOrderId: response.razorpay_order_id,
+            razorpaySignature: response.razorpay_signature,
+          },
+        };
+
+        // Save payment backup to localStorage in case API call fails
+        const paymentBackup = {
+          ...orderPayload,
           paymentId: response.razorpay_payment_id,
-          orderId: response.razorpay_order_id,
-          signature: response.razorpay_signature,
-          amount: orderData.amount / 100,
-          currency: orderData.currency,
-          status: "Success",
-          date: new Date().toLocaleString(),
-        });
+          paidAt: new Date().toISOString(),
+        };
+        localStorage.setItem("leostrend_payment_backup", JSON.stringify(paymentBackup));
 
-        clearOrder();
+        // Retry up to 3 times if saving order fails
+        let lastError = null;
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            const res = await axios.post(ORDERS_API_URL, orderPayload);
+
+            // Success — remove backup and navigate
+            localStorage.removeItem("leostrend_payment_backup");
+            clearOrder();
+            setLoading(false);
+
+            navigate("/order-success", {
+              state: {
+                orderId: res.data.orderId,
+                orderNumber: res.data.orderNumber,
+              },
+            });
+            return;
+          } catch (err) {
+            lastError = err;
+            // Wait before retrying (500ms, 1500ms)
+            if (attempt < 3) {
+              await new Promise((r) => setTimeout(r, attempt * 500));
+            }
+          }
+        }
+
+        // All retries failed — payment backup is still in localStorage
+        setLoading(false);
+        setPaymentError(
+          "Payment of ₹" + calculateTotal() + " was successful (Payment ID: " +
+            response.razorpay_payment_id +
+            ") but we couldn't save your order. Don't worry — your payment is safe. " +
+            "Please contact support with this Payment ID and we will process your order."
+        );
       },
 
       modal: {
@@ -143,9 +236,22 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
   return (
     <div className="checkout-page">
+
+      <div className="checkout-page-header">
+        <p className="checkout-kicker">Leos Trend</p>
+        <h1 className="checkout-page-title">Checkout</h1>
+      </div>
+
       <div className="checkout-steps">
-        <div className={step >= 2 ? "active" : ""}>Delivery</div>
-        <div className={step >= 3 ? "active" : ""}>Payment</div>
+        <div className={`checkout-step${step >= 2 ? " active" : ""}`}>
+          <span className="step-num">01</span>
+          Delivery
+        </div>
+        <div className="step-divider" />
+        <div className={`checkout-step${step >= 3 ? " active" : ""}`}>
+          <span className="step-num">02</span>
+          Payment
+        </div>
       </div>
 
       <div className="checkout-container">
@@ -173,7 +279,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
         {!paymentDetails && (
           <>
-            <div className="checkout-form glass">
+            <div className="checkout-form">
               {step === 2 && (
                 <>
                   <h2>Delivery Details</h2>
@@ -222,21 +328,10 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
                       }
                     />
 
-                    <select
+                    <StateDropdown
                       value={order.stateVal}
-                      onChange={(e) =>
-                        setOrder({
-                          ...order,
-                          stateVal: e.target.value,
-                        })
-                      }
-                    >
-                      {STATES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
+                      onChange={(s) => setOrder({ ...order, stateVal: s })}
+                    />
 
                     <input
                       placeholder="PIN Code"
@@ -269,38 +364,58 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
                       className="secondary-btn"
                       onClick={() => setStep(2)}
                     >
-                      ← Back
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                        <path d="M19 12H5M12 5l-7 7 7 7"/>
+                      </svg>
+                      Back
                     </button>
 
                     <button
-                      className="primary-btn glow"
+                      className="primary-btn pay-btn"
                       onClick={handlePayment}
                       disabled={loading}
                     >
-                      {loading
-                        ? "Processing..."
-                        : "Pay Now with Razorpay 🚀"}
+                      {loading ? (
+                        <span className="pay-btn-loading">
+                          <span className="pay-spinner" />
+                          <span>Processing</span>
+                        </span>
+                      ) : (
+                        <span className="pay-btn-inner">
+                          <span className="pay-btn-left">
+                            <svg className="pay-lock-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6">
+                              <rect x="5" y="11" width="14" height="10" rx="1"/>
+                              <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                            </svg>
+                            <span className="pay-btn-text">Pay Now</span>
+                          </span>
+                          <span className="pay-secure-badge">SSL Secured</span>
+                        </span>
+                      )}
                     </button>
                   </div>
+
+                  <p className="pay-trust-line">
+                    <span className="pay-trust-dot" />
+                    256-bit encryption
+                    <span className="pay-trust-sep" />
+                    PCI DSS Compliant
+                    <span className="pay-trust-sep" />
+                    Secure Checkout
+                  </p>
                 </>
               )}
             </div>
 
-            <div className="checkout-summary glass">
+            <div className="checkout-summary">
               <h2>Order Summary</h2>
 
               {cart.map((item) => (
-                <div
-                  className="summary-item"
-                  key={item.cartKey}
-                >
+                <div className="summary-item" key={item.cartKey}>
                   <img src={item.image} alt="" />
-
-                  <div>
+                  <div className="summary-item-info">
                     <p>{item.name}</p>
-                    <span>
-                      ₹{item.price} × {item.quantity}
-                    </span>
+                    <span>₹{item.price} × {item.quantity}</span>
                   </div>
                 </div>
               ))}

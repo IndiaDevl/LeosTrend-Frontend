@@ -126,6 +126,7 @@ export const normalizeProduct = (product) => {
     brand: product.brand || "LeosTrend",
     mrp: product.mrp ?? product.price,
     rating: product.rating || "New",
+    isTrending: product.isTrending === true || product.isTrending === 1 || product.isTrending === "true",
     imageUrl: primaryImage,
     image: primaryImage,
     images: mergedImages,

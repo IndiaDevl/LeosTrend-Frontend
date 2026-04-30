@@ -1,4 +1,5 @@
 import React from "react";
+import "./ProductCard.mobile.css";
 import { FaEye, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import ProductTilt from "./ProductTilt";
 
@@ -38,22 +39,31 @@ function ProductCard({
         ? `${product.stock} in stock`
         : "Ready to ship";
 
+  // Helper to get correct image URL
+  const getImageUrl = (img) => {
+    if (!img) return '';
+    if (img.startsWith('http')) return img;
+    // Change this to your backend URL if different
+    return `http://localhost:5000/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
+  };
+
   return (
     <ProductTilt>
       <article
-        className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-900/10"
+        className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-900/10 product-card"
         onClick={(event) => {
           if (isInteractiveTarget(event.target)) return;
           onOpenDetails?.();
         }}
       >
-        <div className="relative aspect-[4/5] overflow-hidden bg-slate-100">
+        <div className="relative aspect-[4/5] overflow-hidden bg-white flex items-center justify-center product-card-image">
           <img
-            src={product.image}
+            src={getImageUrl(product.image)}
             alt={product.name}
             loading="lazy"
             decoding="async"
-            className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
+            className="h-full w-full object-contain transition-transform duration-500 ease-out"
+            style={{ objectFit: 'contain', objectPosition: 'center', background: '#fff', maxWidth: '90%', maxHeight: '90%', margin: 'auto' }}
           />
 
           {showWishlist && onToggleWishlist ? (
@@ -131,36 +141,35 @@ function ProductCard({
           </div>
         </div>
 
-        <div className="space-y-3 p-5 sm:p-6">
-          <div className="space-y-2">
-            <h3 className="line-clamp-2 text-lg font-semibold tracking-tight text-slate-950">
-              {product.name}
-            </h3>
-
-            <p className="text-sm text-slate-500">
-              Sizes: {sizeLabel}
-            </p>
-
-            <p className={`text-sm font-semibold ${isOutOfStock ? "text-rose-600" : isLowStock ? "text-amber-600" : "text-emerald-700"}`}>
-              {stockLabel}
-            </p>
-          </div>
-
-          <div className="flex items-end justify-between gap-4">
-            <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold tracking-tight text-slate-950">
-                Rs {product.price}
-              </span>
-              {product.mrp && product.mrp > product.price && (
-                <span className="text-sm text-slate-400 line-through">
-                  Rs {product.mrp}
-                </span>
-              )}
-            </div>
-
-            <span className="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
-              View Details
+        <div className="p-5 sm:p-6">
+          <h3 className="line-clamp-2 product-card-title">
+            {product.name}
+          </h3>
+          <div className="product-card-price-row">
+            <span className="text-2xl font-bold tracking-tight text-slate-950">
+              Rs {product.price}
             </span>
+            {product.mrp && product.mrp > product.price && (
+              <span className="text-sm text-slate-400 line-through">
+                Rs {product.mrp}
+              </span>
+            )}
+          </div>
+          <div className="product-card-btn-row">
+            <button
+              type="button"
+              disabled={isOutOfStock}
+              data-prevent-card-nav="true"
+              className="pointer-events-auto inline-flex flex-1 items-center justify-center gap-2 rounded-2xl bg-slate-950 px-4 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400 product-card-btn"
+              onClick={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                onAddToCart();
+              }}
+            >
+              <FaShoppingCart className="text-xs" />
+              {isOutOfStock ? "Out of Stock" : "Add to Cart"}
+            </button>
           </div>
         </div>
       </article>

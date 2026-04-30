@@ -13,9 +13,9 @@ return(
 
 <div className="page-nav">
 
-<button onClick={()=>navigate(-1)}>⬅ Back</button>
+<button onClick={()=>navigate(-1)}>← Back</button>
 
-<button onClick={()=>navigate("/")}>🏠 Home</button>
+<button onClick={()=>navigate("/")}>Home</button>
 
 </div>
 
@@ -41,9 +41,10 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 <FaEnvelope/>
 </div>
 
+<div className="contact-card-text">
 <h3>Email</h3>
-
 <p>support@leostrend.com</p>
+</div>
 
 </article>
 
@@ -53,9 +54,10 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 <FaPhone/>
 </div>
 
+<div className="contact-card-text">
 <h3>Phone</h3>
-
 <p>+91 9876543210</p>
+</div>
 
 </article>
 
@@ -65,9 +67,10 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 <FaMapMarkerAlt/>
 </div>
 
+<div className="contact-card-text">
 <h3>Location</h3>
-
 <p>Hyderabad, India</p>
+</div>
 
 </article>
 
@@ -77,9 +80,10 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 <FaClock/>
 </div>
 
+<div className="contact-card-text">
 <h3>Support Hours</h3>
-
-<p>Mon - Sat, 10:00 AM to 7:00 PM</p>
+<p>Mon – Sat, 10:00 AM to 7:00 PM</p>
+</div>
 
 </article>
 
