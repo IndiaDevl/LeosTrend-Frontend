@@ -1,7 +1,11 @@
-import React from "react";
+
+import React, { useState } from "react";
 import "./ProductCard.mobile.css";
 import { FaEye, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import ProductTilt from "./ProductTilt";
+import { API_BASE_URL } from "../utils/api";
+
+const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x500?text=No+Image";
 
 const formatCategoryLabel = (category = "") => {
   if (category === "zip") return "Zip Sweatshirt";
@@ -42,10 +46,14 @@ function ProductCard({
   // Helper to get correct image URL
   const getImageUrl = (img) => {
     if (!img) return '';
-    if (img.startsWith('http')) return img;
-    // Change this to your backend URL if different
-    return `http://localhost:5000/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
+    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:') || img.startsWith('blob:')) return img;
+    if (img.startsWith('/uploads/')) return `${API_BASE_URL}${img}`;
+    if (img.startsWith('uploads/')) return `${API_BASE_URL}/${img}`;
+    // fallback: just a filename
+    return `${API_BASE_URL}/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
   };
+
+  const [imgSrc, setImgSrc] = useState(getImageUrl(product.image));
 
   return (
     <ProductTilt>
@@ -58,12 +66,13 @@ function ProductCard({
       >
         <div className="relative aspect-[4/5] overflow-hidden bg-white flex items-center justify-center product-card-image">
           <img
-            src={getImageUrl(product.image)}
+            src={imgSrc || PLACEHOLDER_IMAGE}
             alt={product.name}
             loading="lazy"
             decoding="async"
             className="h-full w-full object-contain transition-transform duration-500 ease-out"
             style={{ objectFit: 'contain', objectPosition: 'center', background: '#fff', maxWidth: '90%', maxHeight: '90%', margin: 'auto' }}
+            onError={() => setImgSrc(PLACEHOLDER_IMAGE)}
           />
 
           {showWishlist && onToggleWishlist ? (
