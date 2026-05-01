@@ -94,11 +94,34 @@ function TsCard({ item, index }) {
 }
 
 export default function TrustStrip() {
+  // Use window.matchMedia to detect mobile (max-width: 640px)
+  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 640px)').matches);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)');
+    const handler = (e) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  if (isMobile) {
+    // Marquee/scrolling effect for mobile (duplicated items)
+    const marqueeItems = [...VALUE_ITEMS, ...VALUE_ITEMS];
+    return (
+      <section className="ts-section ts-marquee-section">
+        <div className="ts-inner ts-marquee">
+          {marqueeItems.map((item, i) => (
+            <TsCard key={item.num + '-' + i} item={item} index={i} />
+          ))}
+        </div>
+      </section>
+    );
+  }
+  // Desktop: single row, grid, no duplication
   return (
     <section className="ts-section">
       <div className="ts-inner">
         {VALUE_ITEMS.map((item, i) => (
-          <TsCard key={item.num} item={item} index={i} />
+          <TsCard key={item.num + '-' + i} item={item} index={i} />
         ))}
       </div>
     </section>

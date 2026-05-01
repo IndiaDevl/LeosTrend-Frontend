@@ -169,6 +169,11 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
             // Success — remove backup and navigate
             localStorage.removeItem("leostrend_payment_backup");
+            // Save phone/email for order lookup
+            localStorage.setItem('leostrend_order_contact', JSON.stringify({
+              phone: order.phone,
+              email: order.email
+            }));
             clearOrder();
             setLoading(false);
 

@@ -5,7 +5,7 @@ import "./Cart.css";
 function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
   const subtotal = calculateTotal();
-  const shipping = subtotal >= 999 ? 0 : 99;
+  const shipping = subtotal >= 999 ? 0 : 69;
   const finalTotal = subtotal + shipping;
 
   return (

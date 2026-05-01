@@ -44,7 +44,7 @@ function Footer() {
           </p>
           <div className="ft__contact">
             <a href="tel:+918121234560">+91 81212 34560</a>
-            <a href="mailto:support@leotrend.com">support@leotrend.com</a>
+            <a href="mailto:lt@leotrend.com">lt@leotrend.com</a>
           </div>
         </div>
 

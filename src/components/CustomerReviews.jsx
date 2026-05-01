@@ -37,19 +37,21 @@ const reviews = [
 ];
 
 function CustomerReviews() {
+  // Duplicate reviews for seamless marquee
+  const marqueeReviews = [...reviews, ...reviews];
   return (
-    <section className="reviews-section">
+    <section className="reviews-section reviews-marquee-section">
       <div className="home-section-head text-center observe-reveal" style={{ marginBottom: "32px" }}>
         <p className="home-section-kicker">Customer Love</p>
         <h2 className="home-section-title">What People Say</h2>
         <p className="home-section-subtitle">Real orders. Real people. Real experiences.</p>
       </div>
 
-      <div className="swipe-row-wrap">
-        <div className="reviews-grid">
-          {reviews.map((r, i) => (
+      <div className="reviews-marquee-row">
+        <div className="reviews-marquee-inner">
+          {marqueeReviews.map((r, i) => (
             <article
-              key={r.name}
+              key={r.name + '-' + i}
               className="review-card observe-reveal"
               style={{ "--reveal-delay": `${i * 100}ms` }}
             >
@@ -75,7 +77,6 @@ function CustomerReviews() {
             </article>
           ))}
         </div>
-        <span className="swipe-hint-chip" aria-hidden="true">← Swipe →</span>
       </div>
     </section>
   );

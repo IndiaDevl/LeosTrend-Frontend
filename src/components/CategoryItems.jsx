@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import "./CategoryItems.css";
 
 const categoryItems = [
-  { key: "oversized", title: "Oversized", image: "/TShirt-Yellow.webp" },
-  { key: "sweatshirts", title: "Sweatshirts", image: "https://images.unsplash.com/photo-1578587018452-892bacefd3f2?q=90&w=1600" },
-  { key: "zip", title: "Zip", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=90&w=1600" },
-  { key: "hoodies", title: "Hoodies", image: "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?q=90&w=1600" },
+  { key: "oversized", title: "Oversized", image: "https://res.cloudinary.com/dzb32pohu/image/upload/v1777570621/WhatsApp_Image_2026-04-30_at_11.04.02_PM_v6emxj.jpg" },
+  { key: "sweatshirts", title: "Sweatshirts", image: "https://res.cloudinary.com/dzb32pohu/image/upload/v1777560139/ChatGPT_Image_Apr_28_2026_10_01_30_PM_mga6ky.png" },
+  { key: "zip", title: "Zip", image: "https://res.cloudinary.com/dzb32pohu/image/upload/v1777560186/ChatGPT_Image_Apr_28_2026_10_05_17_PM_bqjydm.png" },
+  { key: "hoodies", title: "Hoodies", image: "https://res.cloudinary.com/dzb32pohu/image/upload/v1777657279/WhatsApp_Image_2026-05-01_at_11.08.51_PM_qqdw8u.jpg" },
 ];
 
 function CategoryItems() {
