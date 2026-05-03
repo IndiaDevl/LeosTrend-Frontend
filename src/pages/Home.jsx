@@ -12,10 +12,9 @@ import BrandImpactStats from "../components/BrandImpactStats";
 import BrandImpactStatsMobile from "../components/BrandImpactStats.mobile";
 import CustomerReviews from "../components/CustomerReviews";
 import ProductQuickViewModal from "../components/ProductQuickViewModal";
+import Footer from "../components/Footer";
 import "./Home.css";
 import "./Home.mobile.css";
-import Footer from "../components/Footer";
-import FooterMobile from "../components/Footer.mobile";
 
 function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishlistPending }) {
   const [quickProduct, setQuickProduct] = useState(null);
@@ -45,11 +44,10 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
             Discover elevated essentials designed for modern everyday wear.
           </p>
         </div>
-        {/* Desktop version */}
+        {/* Only render one version per device */}
         <div className="mobile-hide">
           <CategoryItems />
         </div>
-        {/* Mobile version */}
         <div className="mobile-show">
           <CategoryItemsMobile />
         </div>
@@ -85,14 +83,7 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
         isWishlistLoading={Boolean(quickProduct && isWishlistPending?.(quickProduct))}
         onToggleWishlist={toggleWishlist}
       />
-      {/* Desktop version */}
-      <div className="mobile-hide">
         <Footer />
-      </div>
-      {/* Mobile version */}
-      <div className="mobile-show">
-        <FooterMobile />
-      </div>
     </div>
   );
 }

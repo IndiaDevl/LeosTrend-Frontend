@@ -1,10 +1,10 @@
 /* Mobile-specific overrides for the desktop footer */
-.ft-mobile {
+ .ft-mobile {
   background: #0a0a0a;
   color: #fff;
   width: 100vw;
   max-width: 100vw;
-  padding: 18px 0 0 0;
+  padding: 0 !important;
   font-size: 13px;
   border-radius: 18px 18px 0 0;
   box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
@@ -14,8 +14,11 @@
   display: flex;
   flex-direction: column;
   gap: 18px;
-  padding: 18px 12px 12px 12px;
+  padding: 0 !important;
   border-bottom: 1px solid rgba(255,255,255,0.07);
+  width: 100vw !important;
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
 }
 
 .ft-mobile .ft__brand-kicker,
@@ -43,8 +46,11 @@
 .ft-mobile .ft__bottom {
   flex-direction: column;
   gap: 4px;
-  padding: 8px 12px;
+  padding: 0 !important;
   font-size: 10px;
+  width: 100vw !important;
+  max-width: 100vw !important;
+  box-sizing: border-box !important;
 }
 
 .ft-mobile .ft__newsletter {

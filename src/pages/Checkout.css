@@ -1,4 +1,14 @@
-﻿/* ═══════════════════════════════════════════════════
+﻿/* === Modern e-commerce validation === */
+.input-error {
+  border-bottom: 1.5px solid #e53935 !important;
+}
+.input-error-message {
+  color: #e53935;
+  font-size: 11px;
+  margin-top: 2px;
+  font-family: "Sora", sans-serif;
+}
+/* ═══════════════════════════════════════════════════
    CHECKOUT PAGE — 30cr editorial luxury
    ═══════════════════════════════════════════════════ */
 

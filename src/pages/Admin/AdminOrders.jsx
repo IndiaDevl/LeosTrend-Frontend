@@ -35,7 +35,7 @@ function AdminOrders() {
       const response = await axios.get(ORDERS_API_URL, {
         headers: getAdminAuthHeaders(),
       });
-      setOrders(Array.isArray(response.data) ? response.data : []);
+      setOrders(Array.isArray(response.data.orders) ? response.data.orders : []);
       setError("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load orders");

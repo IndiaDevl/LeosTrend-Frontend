@@ -27,7 +27,6 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AddProduct from "./pages/Admin/AddProduct";
 import ManageProducts from "./pages/Admin/ManageProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
-import Footer from "./components/Footer";
 import { normalizeProduct, PRODUCTS_API_URL, PRODUCTS_UPDATED_EVENT } from "./utils/api";
 
 import Loader from "./components/Loader";
@@ -782,23 +781,21 @@ return(
 
 {/* ROUTES */}
 
+
 <main className="main">
-
-<Layout>
-<Routes>
-
-<Route
-path="/"
-element={
-<Home
-tshirts={tshirts}
-addToCart={addToCart}
-wishlist={wishlist}
-toggleWishlist={toggleWishlist}
-isWishlistPending={isWishlistPending}
-/>
-}
-/>
+  <Routes>
+    <Route
+      path="/"
+      element={
+        <Home
+          tshirts={tshirts}
+          addToCart={addToCart}
+          wishlist={wishlist}
+          toggleWishlist={toggleWishlist}
+          isWishlistPending={isWishlistPending}
+        />
+      }
+    />
 
 <Route
 path="/collection/:category"
@@ -911,7 +908,6 @@ element={
 <Route path="*" element={<Navigate to="/" replace />} />
 
     </Routes>
-    </Layout>
 
   </main>
 

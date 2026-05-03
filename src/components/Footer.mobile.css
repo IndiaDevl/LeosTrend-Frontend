@@ -5,19 +5,24 @@
 }
 @media (max-width: 640px) {
   .footer {
-    padding: 28px 14px 18px 14px !important;
+    padding: 0 !important;
     background: #111 !important;
     color: #fff !important;
     text-align: left !important;
   }
   .footer-mobile-main {
-    margin-top: 8px !important;
+    margin: 0 !important;
     min-height: 24px;
   }
   .footer-main {
     flex-direction: column !important;
     align-items: flex-start !important;
     gap: 18px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    box-sizing: border-box !important;
   }
   .footer-logo {
     font-size: 13px !important;

@@ -3,10 +3,10 @@
    ═══════════════════════════════════════════════════ */
 
 .category {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
+  width: 100%;
+  margin-left: 0;
   background: #ffffff;
-  padding: 0 0 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -53,6 +53,8 @@
   gap: 0;
   background: #ffffff;
   padding: 0;
+  width: 100%;
+  margin: 0;
 }
 
 /* reset any per-card placement */

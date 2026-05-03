@@ -1,7 +1,42 @@
 @import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Sora:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap");
 @import "./responsive.css";
-
+/* === STRONG MOBILE OVERRIDE: Edge-to-edge for all main wrappers/sections and global resets === */
 @media (max-width: 640px) {
+  .footer,
+  .footer-mobile,
+  .footer-main,
+  .footer-mobile-main,
+  .ft-mobile,
+  .brand-impact-section,
+  .brand-impact-grid,
+  .trending-now-section,
+  .trending-now-grid,
+  .product-card-grid-mobile-2col,
+  .product-mobile-collection-section,
+  .home-section-block,
+  .home-section-category,
+  .home-section-head,
+  .App {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100%;
+max-width: 100%;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+}
+  html, body {
+    width: 100%;
+max-width: 100%;
+    min-width: 0 !important;
+    overflow-x: hidden !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+  *, *::before, *::after {
+    box-sizing: inherit !important;
+  }
   .reviews-marquee-section {
     overflow: hidden !important;
     width: 100vw !important;
@@ -39,6 +74,55 @@
     flex-direction: column !important;
     justify-content: space-between !important;
   }
+  @media (max-width: 640px) {
+
+  /* NORMAL PAGES */
+  .home-page,
+  .about-page,
+  .cart-page,
+  .checkout-page,
+  .wishlist-page,
+  .orders-page,
+  .contact-page {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+@media (max-width: 640px) {
+
+  .hero {
+    width: 100vw !important;
+    max-width: 100vw !important;
+
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ✅ MUST BE INSIDE */
+  .home-premium .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+}
+
+  /* GLOBAL FIX */
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow-x: hidden !important;
+  }
+
 }
 
 @keyframes reviews-marquee-scroll {
@@ -51,25 +135,36 @@
 }
 
 @media (max-width: 640px) {
+
+  .container {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
   .home-page,
   .about-page,
   .cart-page,
   .checkout-page,
   .wishlist-page,
   .orders-page,
-  .contact-page,
-  .main,
-  .container {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+  .contact-page {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+
+  .hero {
     width: 100vw !important;
     max-width: 100vw !important;
-    box-sizing: border-box !important;
-  }
-}
 
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+}
 /* ================= GLOBAL ================= */
 
 :root{
@@ -3040,14 +3135,14 @@ font-size:30px;
 }
 }
 
-.qty-controls{
+ qty-controls{
 display:flex;
 align-items:center;
 gap:10px;
 margin-top:10px;
 }
 
-.qty-controls .quick-btn{
+ qty-controls .quick-btn{
 margin-top:0;
 min-width:36px;
 padding:6px 10px;
@@ -4294,3 +4389,8 @@ min-height:54px;
     padding-bottom: calc(72px + env(safe-area-inset-bottom));
   }
 }
+
+
+
+
+

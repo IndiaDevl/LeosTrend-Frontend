@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { API_BASE_URL, ORDERS_API_URL } from "../utils/api";
@@ -56,6 +57,67 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
   const [paymentError, setPaymentError] = useState(null);
 
   const navigate = useNavigate();
+
+  // === Checkout Form Validation (Vanilla JS) ===
+  // --- Validation helpers ---
+  function showError(input, message) {
+    input.classList.add("input-error");
+    let error = input.parentNode.querySelector(".input-error-message");
+    if (!error) {
+      error = document.createElement("div");
+      error.className = "input-error-message";
+      input.parentNode.appendChild(error);
+    }
+    error.textContent = message;
+  }
+  function clearError(input) {
+    input.classList.remove("input-error");
+    const error = input.parentNode.querySelector(".input-error-message");
+    if (error) error.remove();
+  }
+  function validateAndContinue(e) {
+    e.preventDefault();
+    const fullName = document.querySelector('input[placeholder="Full Name"]');
+    const phone = document.querySelector('input[placeholder="Phone"]');
+    const email = document.querySelector('input[placeholder="Email"]');
+    const address = document.querySelector('input[placeholder="Address/Landmark"]');
+    const city = document.querySelector('input[placeholder="City"]');
+    const state = document.querySelector('.state-dropdown-trigger .state-dropdown-value');
+    const pin = document.querySelector('input[placeholder="PIN Code"]');
+    let valid = true;
+    if (!fullName.value.trim()) { showError(fullName, "Please enter full name"); valid = false; } else { clearError(fullName); }
+    if (!/^[0-9]{10}$/.test(phone.value.trim())) { showError(phone, "Please enter a valid 10-digit phone number"); valid = false; } else { clearError(phone); }
+    if (!/^[^@]+@[^@]+\.[^@]+$/.test(email.value.trim())) { showError(email, "Please enter a valid email address"); valid = false; } else { clearError(email); }
+    if (!address.value.trim()) { showError(address, "Please enter address/landmark"); valid = false; } else { clearError(address); }
+    if (!city.value.trim()) { showError(city, "Please enter city"); valid = false; } else { clearError(city); }
+    if (!state || !state.textContent.trim()) {
+      const stateBtn = document.querySelector('.state-dropdown-trigger');
+      showError(stateBtn, "Please select state");
+      valid = false;
+    } else {
+      const stateBtn = document.querySelector('.state-dropdown-trigger');
+      clearError(stateBtn);
+    }
+    if (!/^[0-9]{6}$/.test(pin.value.trim())) { showError(pin, "Please enter a valid 6-digit PIN code"); valid = false; } else { clearError(pin); }
+    if (valid) {
+      setStep(3);
+    }
+  }
+  useEffect(() => {
+    document.querySelectorAll('.input-grid input').forEach(input => {
+      input.addEventListener('input', () => clearError(input));
+    });
+    const stateBtn = document.querySelector('.state-dropdown-trigger');
+    if (stateBtn) {
+      stateBtn.addEventListener('click', () => clearError(stateBtn));
+    }
+    return () => {
+      document.querySelectorAll('.input-grid input').forEach(input => {
+        input.removeEventListener('input', () => clearError(input));
+      });
+      if (stateBtn) stateBtn.removeEventListener('click', () => clearError(stateBtn));
+    };
+  }, []);
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -315,7 +377,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
                     />
 
                     <input
-                      placeholder="Address"
+                      placeholder="Address/Landmark"
                       value={order.shippingAddress}
                       onChange={(e) =>
                         setOrder({
@@ -349,7 +411,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
                   <button
                     className="primary-btn"
-                    onClick={() => setStep(3)}
+                    onClick={validateAndContinue}
                   >
                     Continue →
                   </button>
@@ -394,7 +456,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
                             </svg>
                             <span className="pay-btn-text">Pay Now</span>
                           </span>
-                          <span className="pay-secure-badge">SSL Secured</span>
+                        <span className="pay-secure-badge"></span>
                         </span>
                       )}
                     </button>

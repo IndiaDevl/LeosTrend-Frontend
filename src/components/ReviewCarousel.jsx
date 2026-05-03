@@ -1,58 +1,76 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import React, { useEffect, useRef } from "react";
+import "./ReviewCarousel.css";
 
 const reviews = [
-  {
-    name: "Arjun M.",
-    location: "Mumbai",
-    review: "Absolutely premium quality. The oversized tee fits perfectly and the fabric is super heavyweight. Will order again!",
-    rating: 5,
-    initials: "AM"
-  },
-  // Add more review objects here
+  { name: "Arjun M.", location: "Mumbai", review: "Premium quality!", rating: 5, initials: "AM" },
+  { name: "Sneha V.", location: "Chennai", review: "Amazing experience!", rating: 5, initials: "SV" },
+  { name: "Rahul K.", location: "Delhi", review: "Luxury feel.", rating: 5, initials: "RK" },
+  { name: "Priya S.", location: "Hyderabad", review: "Worth it!", rating: 5, initials: "PS" }
 ];
 
-const ReviewCard = ({ review }) => (
-  <div className="review-card" style={{background:'#fff',borderRadius:16,padding:24,boxShadow:'0 2px 8px rgba(0,0,0,0.08)',maxWidth:350}}>
-    <div style={{ color: '#FFA500', fontSize: '1.2em', marginBottom: 8 }}>
-      {'★'.repeat(review.rating)}
-    </div>
-    <p style={{fontSize:16,marginBottom:16}}>“{review.review}”</p>
-    <div style={{ display: 'flex', alignItems: 'center', marginTop: 10 }}>
-      <div style={{
-        background: '#6C63FF',
-        color: '#fff',
-        borderRadius: '50%',
-        width: 40,
-        height: 40,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontWeight: 'bold',
-        marginRight: 10
-      }}>{review.initials}</div>
-      <div>
-        <div style={{ fontWeight: 'bold' }}>{review.name}</div>
-        <div style={{ color: '#888' }}>{review.location}</div>
-      </div>
-    </div>
-  </div>
-);
+// duplicate for loop
+const loopData = [...reviews, ...reviews];
 
 export default function ReviewCarousel() {
+  const trackRef = useRef(null);
+
+  useEffect(() => {
+  if (window.innerWidth > 768) return;
+
+  let animationFrame;
+  let track = trackRef.current;
+
+  if (!track) return;
+
+  let position = 0;
+  const speed = 0.5;
+
+  // ✅ WAIT 1 FRAME BEFORE START
+  const startAnimation = () => {
+    const animate = () => {
+      position -= speed;
+
+      const width = track.scrollWidth / 2;
+
+      if (Math.abs(position) >= width) {
+        position = 0;
+      }
+
+      track.style.transform = `translateX(${position}px)`;
+
+      animationFrame = requestAnimationFrame(animate);
+    };
+
+    animate();
+  };
+
+  // 🔥 delay start (fixes cut issue)
+  const timeout = setTimeout(startAnimation, 50);
+
+  return () => {
+    cancelAnimationFrame(animationFrame);
+    clearTimeout(timeout);
+  };
+}, []);
   return (
-    <Swiper
-      spaceBetween={30}
-      slidesPerView={1}
-      autoplay={{ delay: 3000 }}
-      loop={true}
-    >
-      {reviews.map((r, i) => (
-        <SwiperSlide key={i}>
-          <ReviewCard review={r} />
-        </SwiperSlide>
-      ))}
-    </Swiper>
+    <div className="reviews-wrapper">
+      <div className="reviews-track" ref={trackRef}>
+        {loopData.map((r, i) => (
+          <div className="review-card" key={i}>
+            <div className="stars">{'★'.repeat(r.rating)}</div>
+
+            <p className="review-text">“{r.review}”</p>
+
+            <div className="user">
+              <div className="avatar">{r.initials}</div>
+              <div>
+                <div className="name">{r.name}</div>
+                <div className="location">{r.location}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
