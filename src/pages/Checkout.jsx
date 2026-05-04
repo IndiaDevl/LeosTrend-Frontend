@@ -48,7 +48,9 @@ function StateDropdown({ value, onChange }) {
   );
 }
 
+
 function Checkout({ cart = [], calculateTotal = () => 0 }) {
+  const SHIPPING_FEE = 70;
   const { order, setOrder, clearOrder } = useCheckout();
 
   const [step, setStep] = useState(2);
@@ -137,6 +139,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
     });
   };
 
+
   const handlePayment = async () => {
     setLoading(true);
     setPaymentError(null);
@@ -150,14 +153,14 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
       return;
     }
 
-    const totalAmount = calculateTotal() * 100;
+    // Always include shipping in total
+    const totalAmount = (calculateTotal() + SHIPPING_FEE) * 100;
 
     let orderData;
 
     try {
       const res = await axios.post(
         `${API_BASE_URL}/api/payment/razorpay/order`,
-      //  `https://leostrend.com/api/payment/razorpay/order`,
         {
           amount: totalAmount,
           currency: "INR",
@@ -207,7 +210,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
             color: item.color,
             image: item.image,
           })),
-          total: calculateTotal(),
+          total: calculateTotal() + SHIPPING_FEE,
           payment: {
             razorpayPaymentId: response.razorpay_payment_id,
             razorpayOrderId: response.razorpay_order_id,
@@ -258,7 +261,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
         // All retries failed — payment backup is still in localStorage
         setLoading(false);
         setPaymentError(
-          "Payment of ₹" + calculateTotal() + " was successful (Payment ID: " +
+          "Payment of ₹" + (calculateTotal() + SHIPPING_FEE) + " was successful (Payment ID: " +
             response.razorpay_payment_id +
             ") but we couldn't save your order. Don't worry — your payment is safe. " +
             "Please contact support with this Payment ID and we will process your order."
@@ -505,7 +508,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
               <div className="summary-total">
                 <span>Total</span>
-                <strong>₹{calculateTotal()}</strong>
+                <strong>₹{calculateTotal() + SHIPPING_FEE}</strong>
               </div>
             </div>
           </>
