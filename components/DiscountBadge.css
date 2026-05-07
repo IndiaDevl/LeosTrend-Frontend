@@ -1,0 +1,32 @@
+.discount-badge {
+  display: inline-block;
+  background: #111;
+  color: #fff;
+  font-family: 'Sora', 'Inter', Arial, sans-serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.06em;
+  padding: 0.22em 1.2em;
+  border-radius: 999px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.16);
+  border: 1.5px solid #222;
+  outline: none;
+  user-select: none;
+  min-width: 56px;
+  min-height: 2.1em;
+  text-align: center;
+  transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+}
+
+.discount-badge:active,
+.discount-badge:focus {
+  background: #181818;
+  color: #fff;
+}
+
+.discount-badge.premium {
+  background: linear-gradient(90deg, #111 60%, #181818 100%);
+  color: #fff;
+  border: 1.5px solid #222;
+  box-shadow: 0 2px 16px 0 rgba(0,0,0,0.22);
+}

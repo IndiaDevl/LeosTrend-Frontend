@@ -1,0 +1,37 @@
+/* Privacy policy page styles */
+
+.legal-page {
+  padding: 34px 0 24px;
+}
+
+.legal-nav {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.legal-nav button {
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.legal-card {
+  background: #ffffff;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 36px rgba(2, 6, 23, 0.08);
+}
+
+.legal-card h2 {
+  margin-bottom: 10px;
+}
+
+.legal-card p {
+  line-height: 1.7;
+  color: #475569;
+}

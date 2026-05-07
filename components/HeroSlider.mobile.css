@@ -1,0 +1,73 @@
+/* 🔥 MOBILE HERO FIX — CLEAN VERSION */
+@media (max-width: 640px) {
+
+  /* REMOVE GLOBAL SIDE GAP */
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+  }
+
+  #root, .app, main {
+    margin: 0;
+    padding: 0;
+  }
+
+  /* HERO FULL WIDTH */
+  .hero {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+
+  .hero-slider {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+  }
+
+  .hero-slide {
+    width: 100%;
+  }
+
+  .hero-image,
+  .hero-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* CONTENT FIX */
+  .hero-content {
+    width: 100%;
+    padding: 0 16px; /* small safe spacing */
+  }
+
+  .hero-content-inner {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero-subtitle {
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 14px;
+    max-width: 90%;
+  }
+
+  /* BUTTON FIX */
+  .hero-actions {
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .hero-btn.primary {
+    height: 38px;
+    font-size: 12px;
+    padding: 0 18px;
+    border-radius: 16px;
+    max-width: 80%;
+  }
+}

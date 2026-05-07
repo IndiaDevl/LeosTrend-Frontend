@@ -1,0 +1,91 @@
+
+.reviews-wrapper {
+  padding-right: 16px;
+  overflow: hidden; /* Prevents cut-off cards from showing */
+}
+
+.reviews-track {
+  display: flex;
+  transform: translateX(0); /* ensure clean start */
+}
+
+/* Marquee effect for mobile */
+@media (max-width: 768px) {
+  .reviews-wrapper {
+    padding-right: 16px;
+    padding-left: 0;
+  }
+  .reviews-track {
+    margin-left: -16px; /* Pull first card flush to the left */
+  }
+  .reviews-track.marquee {
+    animation: marquee 24s linear infinite;
+    will-change: transform;
+  }
+  /* Animate by -33.333% since we repeat 3x for seamless loop */
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-33.333%); }
+  }
+}
+
+.review-card {
+  width: 280px;
+  flex-shrink: 0;
+  margin-right: 16px; /* Space between cards */
+  background: #fff;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+.stars {
+  color: #FFA500;
+  margin-bottom: 8px;
+}
+
+.review-text {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: #6C63FF;
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.name {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.location {
+  color: #888;
+  font-size: 12px;
+}
+
+
+
+
+
+/* ✅ DESKTOP: stop movement + show nicely */
+@media (min-width: 769px) {
+  .reviews-track {
+    transform: none !important;
+    animation: none;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}

@@ -1,0 +1,241 @@
+﻿/* ═══════════════════════════════════════════════════
+   CATEGORY SECTION — 30cr editorial, pure white bg
+   ═══════════════════════════════════════════════════ */
+
+.category {
+  width: 100%;
+  margin-left: 0;
+  background: #ffffff;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ── Section header ── */
+.category-header {
+  margin-bottom: 48px;
+  padding: 0 48px;
+}
+
+.category-kicker {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-family: "Sora", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin: 0 0 14px;
+}
+
+.category-kicker::before {
+  content: "";
+  flex: 0 0 36px;
+  height: 1px;
+  background: #d1d5db;
+}
+
+.category-title {
+  font-family: "Cinzel", serif;
+  font-size: clamp(28px, 3.8vw, 52px);
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: #0a0a0a;
+  margin: 0;
+  line-height: 1;
+}
+
+/* ── 4-column card grid ── */
+.category-track {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  background: #ffffff;
+  padding: 0;
+  width: 100%;
+  margin: 0;
+}
+
+/* reset any per-card placement */
+.category-card:nth-child(1),
+.category-card:nth-child(2),
+.category-card:nth-child(3),
+.category-card:nth-child(4) {
+  grid-column: unset;
+  grid-row: unset;
+}
+
+/* ── Card ── */
+.category-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  border: 1px solid #e8e8e8;
+  background: #ffffff;
+  overflow: hidden;
+
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.28s ease;
+}
+
+.category-card.reveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.category-card:hover {
+  border-color: #0a0a0a;
+}
+
+/* ── Image wrapper ── */
+  .category-img-wrap {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    overflow: hidden;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .category-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    aspect-ratio: 4 / 5;
+    display: block;
+  }
+
+.category-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: none;
+  transition: transform 0.72s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.category-card:hover .category-img-wrap img {
+  transform: scale(1.05);
+}
+
+/* ── Info strip — white, below image ── */
+.category-info {
+  padding: 18px 20px 20px;
+  background: #ffffff;
+  border-top: 1px solid #e8e8e8;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Number */
+.category-num {
+  font-family: "Sora", sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  color: #c4c4c4;
+}
+
+/* Category name */
+.category-info h3 {
+  font-family: "Cinzel", serif;
+  font-size: clamp(14px, 1.15vw, 18px);
+  font-weight: 700;
+  color: #0a0a0a;
+  letter-spacing: .04em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* Arrow link */
+.category-arrow {
+  font-family: "Sora", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-top: 4px;
+  transition: color 0.22s ease;
+}
+
+.category-card:hover .category-arrow {
+  color: #0a0a0a;
+}
+
+/* ── Tablet ≤ 860px : 4 cols, still fine ── */
+@media (max-width: 860px) {
+  .category {
+    padding: 56px 0 64px;
+  }
+
+  .category-header {
+    padding: 0 28px;
+  }
+
+  .category-track {
+    gap: 2px;
+  }
+}
+
+/* ── Mobile ≤ 640px : horizontal scroll ── */
+@media (max-width: 640px) {
+  .category {
+    padding: 48px 0 56px;
+  }
+
+  .category-header {
+    margin-bottom: 32px;
+    padding: 0 20px;
+  }
+
+  .category-track {
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    gap: 16px;
+    padding: 0 12px;
+  }
+
+  .category-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-card {
+    flex: 0 0 72vw;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  .category-info {
+    padding: 16px 20px 16px 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-start;
+    min-height: 80px;
+  }
+  .category-info h3, .category-arrow, .category-num {
+    margin-left: 0;
+    text-align: left;
+  }
+
+  .category-info h3 {
+    font-size: 14px;
+  }
+}
