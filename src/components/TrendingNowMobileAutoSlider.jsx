@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from "react";
+import { Link } from "react-router-dom";
 import "./TrendingNow.mobile.css";
 
 const TRENDING_SECTIONS = [
@@ -94,13 +95,13 @@ export default function TrendingNowMobileAutoSlider({ products = [], onQuickView
 															<span className="trending-now-price-mrp">₹{product.mrp}</span>
 														)}
 													</div>
-													<button
-														type="button"
+													<Link
+														to={`/product/${encodeURIComponent(product.id)}`}
 														className="trending-now-view-btn"
-														onClick={() => onQuickView?.(product)}
+														style={{ display: 'inline-block', textAlign: 'center', textDecoration: 'none' }}
 													>
 														View
-													</button>
+													</Link>
 												</div>
 											</div>
 										</article>
