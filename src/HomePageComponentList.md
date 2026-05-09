@@ -38,7 +38,7 @@
     - Product image
     - Discount badge (if any)
     - Product name, price, old price
-    - "Quick View" button
+    
 - BrandImpactStats
   - Stats blocks (e.g., "100% Premium Fabric", "48hr Fast Dispatch")
 - TrustTicker

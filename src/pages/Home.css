@@ -683,3 +683,34 @@
     padding-top: 0 !important;
   }
 }
+
+/* ═══════════════════════════════════════
+   PREMIUM OFFER BANNER
+═══════════════════════════════════════ */
+
+.premium-offer-banner {
+  width: 100%;
+  padding: 28px clamp(18px, 4vw, 60px) 10px;
+  background: #ffffff;
+}
+
+.premium-offer-image-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 22px;
+  background: #f8f8f8;
+  cursor: pointer;
+}
+
+.premium-offer-image {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+  border-radius: 22px;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.premium-offer-image-wrap:hover .premium-offer-image {
+  transform: scale(1.03);
+}
+

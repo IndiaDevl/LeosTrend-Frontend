@@ -101,13 +101,7 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
   };
 
   const modalMarkup = (
-    <div
-      className="qv-overlay"
-      onClick={onClose}
-      role="dialog"
-      aria-modal="true"
-      aria-label="Quick view"
-    >
+    
       <div
         className="qv-modal"
         ref={modalRef}
@@ -115,7 +109,7 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
       >
         <button
           type="button"
-          aria-label="Close quick view"
+          aria-label="Close "
           className="qv-close-btn"
           onClick={onClose}
         >
@@ -283,7 +277,7 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
           </div>
         </div>
       </div>
-    </div>
+    
   );
 
   return typeof document !== "undefined"

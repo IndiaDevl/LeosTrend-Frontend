@@ -82,16 +82,7 @@ export default function TrendingNowMobileAutoSlider({ products = [], onQuickView
 												{hasDiscount && discount > 0 && (
 													<span className="trending-now-discount">{discount}% OFF</span>
 												)}
-												<button
-													type="button"
-													className="trending-now-overlay-btn"
-													onClick={(event) => {
-														event.stopPropagation();
-														onQuickView?.(product);
-													}}
-												>
-													Quick View
-												</button>
+												
 											</div>
 											<div className="trending-now-card-body">
 												<p className="trending-now-card-category">{group.title}</p>

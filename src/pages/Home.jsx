@@ -4,6 +4,7 @@ import HeroSliderMobile from "../components/HeroSlider.mobile";
 import TrustStrip from "../components/TrustStrip";
 import CategoryItems from "../components/CategoryItems";
 import CategoryItemsMobile from "../components/CategoryItems.mobile";
+import OfferBanner from "../components/OfferBanner";
 import TrendingNow from "../components/TrendingNow";
 import ProductCardGridMobile from "../components/ProductCardGridMobile";
 import TrendingNowMobileAutoSlider from "../components/TrendingNowMobileAutoSlider";
@@ -51,12 +52,16 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
         <div className="mobile-show">
           <CategoryItemsMobile />
         </div>
+        {/* Offer Banner Placement */}
+        <OfferBanner />
       </section>
 
-      {/* Desktop version */}
-      <div className="mobile-hide">
-        <TrendingNow products={tshirts} onQuickView={setQuickProduct} />
-      </div>
+
+
+{/* Desktop version */}
+<div className="mobile-hide">
+  <TrendingNow products={tshirts} onQuickView={setQuickProduct} />
+</div>
       {/* Mobile version */}
       <div className="mobile-show">
         <TrendingNowMobileAutoSlider products={tshirts} onQuickView={setQuickProduct} />

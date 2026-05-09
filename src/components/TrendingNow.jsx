@@ -118,16 +118,7 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
                           <span className="trending-now-discount">{discount}% OFF</span>
                         )}
 
-                        <button
-                          type="button"
-                          className="trending-now-overlay-btn"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            onQuickView?.(product);
-                          }}
-                        >
-                          Quick View
-                        </button>
+                       
                       </div>
 
                       <div className="trending-now-card-body">

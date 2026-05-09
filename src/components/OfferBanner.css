@@ -1,0 +1,147 @@
+/* ================================
+   OFFER BANNER — LEOS TREND
+   Zero-gap, full-bleed slider
+================================ */
+
+.offer-banner {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #f0ede8;
+  margin: 0;
+  padding: 0;
+  /* Prevents rubber-band scroll interfering */
+  touch-action: pan-y;
+}
+
+/* ================================
+   TRACK — holds ALL slides in a row
+================================ */
+
+.offer-track {
+  display: flex;
+  flex-wrap: nowrap;
+  width: 100%;
+  will-change: transform;
+  /* No transition by default — applied by JS class */
+}
+
+.offer-track--animated {
+  transition: transform 0.42s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* ================================
+   SLIDE — each takes exactly 100%
+================================ */
+
+.offer-slide {
+  min-width: 100%;
+  width: 100%;
+  flex: 0 0 100%;
+  overflow: hidden;
+  /* Block layout — no inline-block gap */
+  display: block;
+  line-height: 0;
+}
+
+/* ================================
+   IMAGE — fills slide edge-to-edge
+================================ */
+
+.offer-image {
+  display: block;
+  width: 100%;
+  /* Desktop height */
+  height: 760px;
+  object-fit: cover;
+  object-position: center;
+  /* Prevent drag ghost on desktop */
+  -webkit-user-drag: none;
+  user-select: none;
+  pointer-events: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+/* ================================
+   DOTS
+================================ */
+
+.offer-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 0 10px;
+  background: #fff;
+}
+
+.offer-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 99px;
+  background: #d1d5db;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.offer-dot--active {
+  width: 24px;
+  background: #111111;
+}
+
+/* ================================
+   TABLET
+================================ */
+
+@media (max-width: 1024px) {
+  .offer-image {
+    height: 520px;
+  }
+}
+
+/* ================================
+   MOBILE — the important one
+================================ */
+
+@media (max-width: 640px) {
+  .offer-banner {
+    /* Flush to screen edges — no margin, no border-radius */
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    /* Allow vertical scroll while banner handles horizontal */
+    touch-action: pan-y;
+  }
+
+  .offer-track {
+    /* On mobile, CSS scroll-snap as a BACKUP to JS swipe.
+       The track is driven by JS transform — snap is just extra safety. */
+    touch-action: pan-y;
+  }
+
+  .offer-slide {
+    min-width: 100%;
+    width: 100%;
+    flex: 0 0 100%;
+  }
+
+  .offer-image {
+    /* Full-bleed on mobile, exact height */
+    width: 100%;
+    height: 210px;
+    object-fit: cover;
+    object-position: center;
+    /* Kill any browser rendering gap under img */
+    vertical-align: top;
+    display: block;
+    border-radius: 0;
+  }
+
+  .offer-dots {
+    padding: 9px 0 8px;
+  }
+}
