@@ -50,7 +50,7 @@ function StateDropdown({ value, onChange }) {
 
 
 function Checkout({ cart = [], calculateTotal = () => 0 }) {
-  const SHIPPING_FEE = 70;
+  const SHIPPING_FEE = 0;
   const { order, setOrder, clearOrder } = useCheckout();
 
   const [step, setStep] = useState(2);
@@ -503,7 +503,7 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
 
               <div className="summary-row">
                 <span>Shipping</span>
-                <span>₹70</span>
+                <span>Free</span>
               </div>
 
               <div className="summary-total">

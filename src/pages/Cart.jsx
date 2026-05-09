@@ -5,7 +5,7 @@ import "./Cart.css";
 function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
   const subtotal = calculateTotal();
-  const shipping = 70;
+  const shipping = 0;
   const finalTotal = subtotal + shipping;
 
   return (
@@ -78,7 +78,7 @@ function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
 
             <div className="summary-row">
               <span>Shipping</span>
-              <span>₹{shipping}</span>
+              <span>Free</span>
             </div>
 
             <div className="summary-row grand-total">
