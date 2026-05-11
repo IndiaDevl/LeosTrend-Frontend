@@ -21,10 +21,7 @@ const applyBodyLock = () => {
   };
 
   body.style.overflow = "hidden";
-  body.style.position = "fixed";
-  body.style.top = `-${savedScrollY}px`;
-  body.style.width = "100%";
-  body.style.paddingRight = scrollbarWidth > 0 ? `${scrollbarWidth}px` : savedBodyStyles.paddingRight;
+body.style.width = "100%";
 };
 
 const releaseBodyLock = () => {
@@ -33,10 +30,8 @@ const releaseBodyLock = () => {
   const { body } = document;
 
   body.style.overflow = savedBodyStyles.overflow;
-  body.style.position = savedBodyStyles.position;
-  body.style.top = savedBodyStyles.top;
-  body.style.width = savedBodyStyles.width;
-  body.style.paddingRight = savedBodyStyles.paddingRight;
+body.style.width = savedBodyStyles.width;
+body.style.paddingRight = savedBodyStyles.paddingRight;
 
   window.scrollTo({ top: savedScrollY, left: 0, behavior: "auto" });
   savedBodyStyles = null;

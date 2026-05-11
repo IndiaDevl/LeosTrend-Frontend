@@ -35,6 +35,8 @@
     left: 0 !important;
     overflow-x: unset !important;
   }
+  
+  .category-card {
     height: auto !important;
     aspect-ratio: 3/4 !important;
     object-fit: cover !important;
