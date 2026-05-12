@@ -19,7 +19,8 @@
     display: flex !important;
     flex-direction: row !important;
     overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
+    scroll-snap-type: x proximity !important;
+    scroll-snap-stop: normal;
     gap: 8px !important;
     margin: 0 !important;
     padding: 0 !important;
