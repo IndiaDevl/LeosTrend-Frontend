@@ -10,7 +10,11 @@ background:#0a0a0a;
 display:flex;
 align-items:center;
 justify-content:center;
-z-index:9999;
+
+backdrop-filter: blur(8px);
+transition: opacity .35s ease;
+
+z-index:999;
 }
 
 .lux-loader-inner{
@@ -56,7 +60,7 @@ height:100%;
 width:100%;
 background:#ffffff;
 transform:translateX(-100%);
-animation:luxScan 1.8s cubic-bezier(.4,0,.2,1) infinite;
+animation:luxScan 0.9s cubic-bezier(.4,0,.2,1) infinite;
 }
 
 @keyframes luxScan{
