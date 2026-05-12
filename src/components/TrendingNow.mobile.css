@@ -18,25 +18,39 @@
  .trending-now-grid {
     display: flex !important;
     flex-direction: row !important;
+
     overflow-x: auto !important;
-    scroll-snap-type: x proximity !important;
-    scroll-snap-stop: normal;
+    overflow-y: hidden !important;
+
     gap: 8px !important;
+
     margin: 0 !important;
     padding: 0 !important;
-    border: none !important;
-    scroll-padding-left: 0 !important;
-    background: none !important;
+
     width: 100vw !important;
     max-width: 100vw !important;
-    min-width: 0 !important;
+
+    border: none !important;
+    background: none !important;
+
     box-sizing: border-box !important;
+
+    scroll-snap-type: x proximity !important;
+    scroll-padding-left: 0 !important;
+
     scrollbar-width: none;
+
     -webkit-overflow-scrolling: touch;
+
     overscroll-behavior-x: contain;
 
     scroll-behavior: smooth;
-    touch-action: pan-x;
+
+    touch-action: auto;
+}
+
+.trending-now-grid::-webkit-scrollbar {
+    display: none;
 }
 
   .trending-now-grid::-webkit-scrollbar{
@@ -47,16 +61,22 @@ display:none;
   .trending-now-card {
     flex: 0 0 calc(50vw - 4px) !important;
     max-width: calc(50vw - 4px) !important;
+
     min-width: 0 !important;
+
     margin: 0 !important;
     padding: 0 !important;
+
     scroll-snap-align: start !important;
+
     background: #fff;
     border-radius: 6px;
+
     overflow: hidden;
     position: relative;
+
     box-sizing: border-box !important;
-  }
+}
 
   /* IMAGE */
   .trending-now-card img {
