@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import "./TrustStrip.css";
 
 const VALUE_ITEMS = [
@@ -37,53 +37,47 @@ const VALUE_ITEMS = [
   },
 ];
 
-function TsCard({ item, index }) {
-  const cardRef = useRef(null);
-  const iconRef = useRef(null);
-  const [revealed, setRevealed] = useState(false);
-  const [ripples, setRipples] = useState([]);
+/* Duplicated items for the seamless 50% loop */
+const MARQUEE_ITEMS = [...VALUE_ITEMS, ...VALUE_ITEMS];
 
-  /* ── Scroll reveal (IntersectionObserver) ── */
+function DesktopCard({ item, index }) {
+  const cardRef = useRef(null);
+
   useEffect(() => {
     const el = cardRef.current;
     const obs = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) { setRevealed(true); obs.disconnect(); } },
-      { threshold: 0.25 }
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("ts-card--revealed");
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.2 }
     );
-    obs.observe(el);
+    if (el) obs.observe(el);
     return () => obs.disconnect();
   }, []);
-
-  /* ── Click ripple ── */
-  const handleClick = (e) => {
-    const rect = cardRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const id = Date.now();
-    setRipples((prev) => [...prev, { x, y, id }]);
-    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 700);
-  };
 
   return (
     <article
       ref={cardRef}
-      className={`ts-card ${revealed ? "ts-card--revealed" : ""}`}
+      className="ts-card"
       style={{ transitionDelay: `${index * 120}ms` }}
-      onClick={handleClick}
     >
-      {/* ripple layer */}
-      {ripples.map((r) => (
-        <span
-          key={r.id}
-          className="ts-ripple"
-          style={{ left: r.x, top: r.y }}
-        />
-      ))}
-
-      <div className="ts-icon-wrap">
-        {item.icon}
+      <div className="ts-icon-wrap">{item.icon}</div>
+      <div className="ts-body">
+        <p className="ts-num">{item.num}</p>
+        <h4 className="ts-title">{item.title}</h4>
+        <p className="ts-text">{item.text}</p>
       </div>
+    </article>
+  );
+}
 
+function MarqueeCard({ item, index }) {
+  return (
+    <article className="ts-card" key={index}>
+      <div className="ts-icon-wrap">{item.icon}</div>
       <div className="ts-body">
         <p className="ts-num">{item.num}</p>
         <h4 className="ts-title">{item.title}</h4>
@@ -94,36 +88,25 @@ function TsCard({ item, index }) {
 }
 
 export default function TrustStrip() {
-  // Use window.matchMedia to detect mobile (max-width: 640px)
-  const [isMobile, setIsMobile] = useState(() => window.matchMedia('(max-width: 640px)').matches);
-  useEffect(() => {
-    const mq = window.matchMedia('(max-width: 640px)');
-    const handler = (e) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
-
-  if (isMobile) {
-    // Marquee/scrolling effect for mobile (duplicated items)
-    const marqueeItems = [...VALUE_ITEMS, ...VALUE_ITEMS];
-    return (
-      <section className="ts-section ts-marquee-section">
-        <div className="ts-inner ts-marquee">
-          {marqueeItems.map((item, i) => (
-            <TsCard key={item.num + '-' + i} item={item} index={i} />
-          ))}
-        </div>
-      </section>
-    );
-  }
-  // Desktop: single row, grid, no duplication
   return (
     <section className="ts-section">
-      <div className="ts-inner">
+
+      {/* Desktop — 3-column grid with scroll reveal */}
+      <div className="ts-inner-desktop">
         {VALUE_ITEMS.map((item, i) => (
-          <TsCard key={item.num + '-' + i} item={item} index={i} />
+          <DesktopCard key={item.num} item={item} index={i} />
         ))}
       </div>
+
+      {/* Mobile — pure CSS infinite marquee, no JS needed */}
+      <div className="ts-marquee-wrapper">
+        <div className="ts-marquee-track">
+          {MARQUEE_ITEMS.map((item, i) => (
+            <MarqueeCard key={i} item={item} index={i} />
+          ))}
+        </div>
+      </div>
+
     </section>
   );
 }

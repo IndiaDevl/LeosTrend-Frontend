@@ -43,7 +43,7 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 
 <div className="contact-card-text">
 <h3>Email</h3>
-<p>support@leostrend.com</p>
+<p>lt@leostrend.com</p>
 </div>
 
 </article>
@@ -56,7 +56,7 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 
 <div className="contact-card-text">
 <h3>Phone</h3>
-<p>+91 9876543210</p>
+<p>+91 6366844738</p>
 </div>
 
 </article>
@@ -69,11 +69,10 @@ Need help with sizing, orders, or custom requests? Reach out and our team will r
 
 <div className="contact-card-text">
 <h3>Location</h3>
-<p>Hyderabad, India</p>
+<p>Tirupati, India</p>
 </div>
 
 </article>
-
 <article className="contact-card contact-hours-card">
 
 <div className="contact-icon-wrap">

@@ -1,69 +1,165 @@
 .reviews-wrapper {
-  padding-left: 16px;
-  padding-right: 16px;  /* optional but better */
+  width: 100%;
+  overflow: hidden;
+
+  position: relative;
+
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  touch-action: pan-y;
 }
 
 .reviews-track {
-  transform: translateX(0); /* ensure clean start */
+
+  display: flex;
+
+  gap: 16px;
+
+  width: max-content;
+
+  will-change: transform;
+
+  transform: translate3d(0,0,0);
+
+  backface-visibility: hidden;
+
+  perspective: 1000px;
 }
 
 .review-card {
+
   width: 280px;
+
   flex-shrink: 0;
 
   background: #fff;
+
   padding: 20px;
+
   border-radius: 16px;
+
   box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+
+  box-sizing: border-box;
 }
 
 .stars {
   color: #FFA500;
   margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .review-text {
+
   font-size: 14px;
-  margin-bottom: 12px;
+
+  line-height: 1.6;
+
+  margin-bottom: 14px;
+
+  color: #111;
 }
 
 .user {
+
   display: flex;
+
   align-items: center;
 }
 
 .avatar {
+
   width: 36px;
+
   height: 36px;
+
   background: #6C63FF;
+
   color: #fff;
+
   border-radius: 50%;
+
   display: flex;
+
   align-items: center;
+
   justify-content: center;
+
   margin-right: 10px;
+
+  font-size: 13px;
+
+  font-weight: 600;
 }
 
 .name {
-  font-weight: bold;
+
+  font-weight: 700;
+
   font-size: 14px;
+
+  color: #111;
 }
 
 .location {
+
   color: #888;
+
   font-size: 12px;
+
+  margin-top: 2px;
 }
 
+/* MOBILE */
+@media (max-width: 768px) {
 
+  .reviews-wrapper {
 
+    overflow: hidden;
 
+    -webkit-overflow-scrolling: touch;
+  }
 
-/* ✅ DESKTOP: stop movement + show nicely */
+  .reviews-track {
+
+    flex-wrap: nowrap;
+
+    align-items: stretch;
+  }
+
+}
+
+/* DESKTOP */
 @media (min-width: 769px) {
+
+  .reviews-wrapper {
+
+    overflow: visible;
+
+    padding: 0;
+  }
+
+  .reviews-track {
+
+    width: 100%;
+
+    transform: none !important;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 20px;
+  }
+
+}
+
+@media (prefers-reduced-motion: reduce) {
+
   .reviews-track {
     transform: none !important;
-    animation: none;
-    justify-content: center;
-    flex-wrap: wrap;
   }
+
 }

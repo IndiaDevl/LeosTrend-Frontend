@@ -1,56 +1,5 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap');
 
-@media (max-width: 640px) {
-  .ts-marquee-section {
-    padding: 0 !important;
-    margin: 0 !important;
-    border-top: none !important;
-    border-bottom: none !important;
-    overflow: hidden !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-  }
-  .ts-inner.ts-marquee {
-    display: flex !important;
-    flex-direction: row !important;
-    width: calc(6 * 60vw) !important;
-    min-width: calc(6 * 60vw) !important;
-    max-width: none !important;
-    animation: ts-marquee-scroll 20s linear infinite;
-    will-change: transform;
-    gap: 0 !important;
-    height: 180px !important;
-  }
-  .ts-card {
-    min-width: 60vw !important;
-    max-width: 60vw !important;
-    flex: 0 0 60vw !important;
-    box-sizing: border-box !important;
-    padding: 16px 12px !important;
-    margin: 0 !important;
-    border-right: none !important;
-    border-bottom: 1px solid #ebebeb !important;
-    height: 180px !important;
-    overflow: hidden !important;
-  }
-  .ts-card:last-child {
-    border-bottom: none !important;
-  }
-}
-
-@keyframes ts-marquee-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-180vw);
-  }
-}
-
-/* ═══════════════════════════════════════
-   SECTION
-═══════════════════════════════════════ */
 .ts-section {
   width: 100%;
   background: #fff;
@@ -60,19 +9,35 @@
   overflow: hidden;
 }
 
-/* ═══════════════════════════════════════
-   GRID
-═══════════════════════════════════════ */
-.ts-inner {
+/* DESKTOP GRID */
+.ts-inner-desktop {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  max-width: 100%;
-  margin: 0;
+  width: 100%;
 }
 
-/* ═══════════════════════════════════════
-   CARD — base (hidden before reveal)
-═══════════════════════════════════════ */
+/* MARQUEE WRAPPER */
+.ts-marquee-wrapper {
+  display: none;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ts-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: tsMarquee 18s linear infinite;
+}
+
+
+
+
+@keyframes tsMarquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+/* CARD */
 .ts-card {
   padding: 44px 40px;
   display: flex;
@@ -82,8 +47,7 @@
   position: relative;
   overflow: hidden;
   cursor: default;
-
-  /* start hidden — JS adds .ts-card--revealed */
+  background: #fff;
   opacity: 0;
   transform: translateY(24px);
   transition:
@@ -97,16 +61,24 @@
   transform: translateY(0);
 }
 
-.ts-card:last-child {
-  border-right: none;
+/* Marquee cards are always visible — no reveal animation */
+.ts-marquee-track .ts-card {
+  opacity: 1;
+  transform: none;
+  transition: background 0.35s ease;
+  flex: 0 0 260px;
+  width: 260px;
+  padding: 28px 24px;
+  min-height: 140px;
 }
 
-/* ── Sliding underline on hover ── */
+.ts-card:last-child { border-right: none; }
+
 .ts-card::before {
   content: '';
   position: absolute;
-  bottom: 0;
   left: 0;
+  bottom: 0;
   width: 100%;
   height: 2px;
   background: #0a0a0a;
@@ -115,36 +87,17 @@
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ts-card:hover {
-  background: #f9f9f9;
+@media (hover: hover) and (pointer: fine) {
+  .ts-card:hover { background: #f9f9f9; }
+  .ts-card:hover::before { transform: scaleX(1); }
+  .ts-card:hover .ts-icon-wrap { background: #0a0a0a; border-color: #0a0a0a; }
+  .ts-card:hover .ts-svg { stroke: #fff; }
+  .ts-card:hover .ts-num { color: #aaa; }
+  .ts-card:hover .ts-text { color: #555; }
+  .ts-card:hover .ts-title::after { transform: scaleX(1); }
 }
 
-.ts-card:hover::before {
-  transform: scaleX(1);
-}
-
-/* ── Click ripple ── */
-.ts-ripple {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: rgba(10, 10, 10, 0.08);
-  transform: translate(-50%, -50%) scale(0);
-  animation: tsRipple 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  pointer-events: none;
-}
-
-@keyframes tsRipple {
-  to {
-    transform: translate(-50%, -50%) scale(60);
-    opacity: 0;
-  }
-}
-
-/* ═══════════════════════════════════════
-   ICON
-═══════════════════════════════════════ */
+/* ICON */
 .ts-icon-wrap {
   width: 48px;
   height: 48px;
@@ -154,39 +107,20 @@
   align-items: center;
   justify-content: center;
   background: #fff;
-  transition:
-    background 0.35s ease,
-    border-color 0.35s ease;
-}
-
-.ts-card:hover .ts-icon-wrap {
-  background: #0a0a0a;
-  border-color: #0a0a0a;
+  transition: background 0.35s ease, border-color 0.35s ease;
 }
 
 .ts-svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   stroke: #0a0a0a;
+  stroke-width: 1.7;
   fill: none;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
   transition: stroke 0.35s ease;
-  display: block;
 }
 
-.ts-card:hover .ts-svg {
-  stroke: #fff;
-}
-
-/* ═══════════════════════════════════════
-   BODY
-═══════════════════════════════════════ */
-.ts-body {
-  flex: 1;
-  overflow: hidden;
-}
+/* BODY */
+.ts-body { flex: 1; overflow: hidden; }
 
 .ts-num {
   font-size: 10px;
@@ -195,10 +129,6 @@
   text-transform: uppercase;
   margin-bottom: 8px;
   transition: color 0.35s ease;
-}
-
-.ts-card:hover .ts-num {
-  color: #aaa;
 }
 
 .ts-title {
@@ -212,22 +142,17 @@
   display: inline-block;
 }
 
-/* Title underline wipe on hover */
 .ts-title::after {
   content: '';
   position: absolute;
-  bottom: -2px;
   left: 0;
+  bottom: -2px;
   width: 100%;
   height: 1px;
   background: #0a0a0a;
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1) 0.05s;
-}
-
-.ts-card:hover .ts-title::after {
-  transform: scaleX(1);
 }
 
 .ts-text {
@@ -238,51 +163,22 @@
   transition: color 0.35s ease;
 }
 
-.ts-card:hover .ts-text {
-  color: #555;
-}
-
-/* ═══════════════════════════════════════
-   RESPONSIVE
-═══════════════════════════════════════ */
+/* TABLET */
 @media (max-width: 900px) {
-  .ts-inner {
-    grid-template-columns: repeat(3, minmax(220px, 1fr));
-  }
-  .ts-card {
-    padding: 32px 24px;
-  }
+  .ts-card { padding: 32px 24px; }
 }
 
+/* MOBILE — show marquee, hide desktop grid */
 @media (max-width: 640px) {
-  .ts-inner {
-    display: flex;
-    flex-direction: row;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-  .ts-inner::-webkit-scrollbar { display: none; }
-  .ts-card {
-    flex: 0 0 80vw;
-    min-width: 0;
-    scroll-snap-align: start;
-    scroll-snap-stop: always;
-    border-right: 1px solid #ebebeb;
-    border-bottom: none;
-    padding: 28px 24px;
-  }
-  .ts-card:last-child { border-right: none; }
+  .ts-inner-desktop { display: none; }
+  .ts-marquee-wrapper { display: block; }
+  .ts-marquee-track .ts-title { font-size: 13px; }
+  .ts-marquee-track .ts-text { font-size: 10px; line-height: 1.45; }
+  .ts-marquee-track .ts-icon-wrap { width: 36px; height: 36px; }
+  .ts-marquee-track .ts-svg { width: 14px; height: 14px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ts-card {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-  .ts-ripple { display: none; }
+  .ts-card { opacity: 1; transform: none; transition: none; }
+  .ts-marquee-track { animation: none; }
 }
-
-

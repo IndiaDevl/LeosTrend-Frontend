@@ -14,43 +14,64 @@ const loopData = [...reviews, ...reviews];
 export default function ReviewCarousel() {
   const trackRef = useRef(null);
 
-  useEffect(() => {
+ useEffect(() => {
+
   if (window.innerWidth > 768) return;
 
-  let animationFrame;
-  let track = trackRef.current;
+  const track = trackRef.current;
 
   if (!track) return;
 
   let position = 0;
-  const speed = 0.5;
 
-  // ✅ WAIT 1 FRAME BEFORE START
-  const startAnimation = () => {
-    const animate = () => {
+  const speed = 0.35;
+
+  let animationFrame;
+
+  let isPaused = false;
+
+  const animate = () => {
+
+    if (!isPaused) {
+
       position -= speed;
 
-      const width = track.scrollWidth / 2;
+      const loopWidth = track.scrollWidth / 2;
 
-      if (Math.abs(position) >= width) {
+      if (Math.abs(position) >= loopWidth) {
         position = 0;
       }
 
-      track.style.transform = `translateX(${position}px)`;
+      track.style.transform =
+        `translate3d(${position}px, 0, 0)`;
+    }
 
-      animationFrame = requestAnimationFrame(animate);
-    };
-
-    animate();
+    animationFrame = requestAnimationFrame(animate);
   };
 
-  // 🔥 delay start (fixes cut issue)
-  const timeout = setTimeout(startAnimation, 50);
+  const pause = () => {
+    isPaused = true;
+  };
+
+  const resume = () => {
+    isPaused = false;
+  };
+
+  track.addEventListener("touchstart", pause, { passive: true });
+
+  track.addEventListener("touchend", resume, { passive: true });
+
+  animationFrame = requestAnimationFrame(animate);
 
   return () => {
+
     cancelAnimationFrame(animationFrame);
-    clearTimeout(timeout);
+
+    track.removeEventListener("touchstart", pause);
+
+    track.removeEventListener("touchend", resume);
   };
+
 }, []);
   return (
     <div className="reviews-wrapper">
