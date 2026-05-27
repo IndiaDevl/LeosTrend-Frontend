@@ -1,28 +1,38 @@
 @media (max-width: 640px) {
   .collection-page {
-    padding-left: 16px !important;
-    padding-right: 16px !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    box-sizing: border-box;
+    padding-top: calc(var(--navbar-height, 54px) + var(--ticker-height, 32px) + 18px) !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
   }
   .collection-page .container,
   .collection-page .collection-shell {
     padding-left: 0 !important;
     padding-right: 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    box-sizing: border-box;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   .collection-hero,
   .collection-top {
     padding-left: 16px !important;
     padding-right: 16px !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
+    width: 100% !important;
+    max-width: 100% !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    box-sizing: border-box;
+    box-sizing: border-box !important;
+  }
+
+  .mobile-filters-panel,
+  .collection-layout,
+  .collection-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
 }
 /* Collection premium styles */
@@ -381,6 +391,9 @@
   border-bottom: 1px solid #f3f4f6;
   box-shadow: none;
   transition: background 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .collection-card:hover {
@@ -393,13 +406,16 @@
   position: relative;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #ffffff;
+  background: #f7f7f5;
 }
 
 .collection-image img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center 55%;
+  padding: 8% 6% 4%;
+  box-sizing: border-box;
   transition: transform 0.52s cubic-bezier(0.16,1,0.3,1);
 }
 
@@ -474,6 +490,9 @@
 
 .collection-info {
   padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .collection-page .brand {
@@ -495,6 +514,7 @@
   display: block;
   font-weight: 600;
   letter-spacing: -.01em;
+  min-height: 3.7em;
 }
 
 .product-name:hover {
@@ -546,6 +566,7 @@
   text-transform: uppercase;
   cursor: pointer;
   transition: opacity 0.18s ease;
+  margin-top: auto;
 }
 
 .add-cart-btn:hover {
@@ -747,6 +768,12 @@
     aspect-ratio: 3 / 4;
   }
 
+  .collection-image img {
+    object-fit: contain;
+    object-position: center 54%;
+    padding: 9% 7% 5%;
+  }
+
   .collection-info {
     padding: 11px;
   }
@@ -764,6 +791,7 @@
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+    min-height: 3.8em;
   }
 
   .price {
@@ -847,6 +875,10 @@
 
   .collection-image {
     height: 150px;
+  }
+
+  .collection-image img {
+    padding: 8% 6% 4%;
   }
 
   .collection-info {

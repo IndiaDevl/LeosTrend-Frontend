@@ -261,4 +261,24 @@
     height: auto !important;
     border: none !important;
   }
+
+  .home-section-category .home-section-head {
+    padding: 0 16px 14px !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .home-section-category .home-section-subtitle {
+    max-width: none !important;
+  }
+
+  .reviews-section .home-section-head {
+    padding: 0 16px 14px !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .reviews-section .home-section-subtitle {
+    max-width: none !important;
+  }
 }

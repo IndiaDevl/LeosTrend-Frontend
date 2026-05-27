@@ -1,99 +1,114 @@
 @media (max-width: 640px) {
   .brand-impact-section {
+    width: 100% !important;
+    max-width: 100% !important;
     margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
+    padding: 34px 0 28px !important;
+    overflow: hidden !important;
     background: #101014 !important;
     color: #fff !important;
+    box-sizing: border-box !important;
   }
+
   .brand-impact-section .home-content-wrapper {
-    margin: 0 !important;
-    padding: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 16px !important;
+    box-sizing: border-box !important;
   }
+
   .brand-impact-eyebrow {
-    margin: 0 !important;
-    padding: 18px 0 10px 0 !important;
-    color: #bfc6d1 !important;
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: 0.12em;
-    text-align: center;
-    border-top: 2px solid #22242a;
-    border-bottom: 2px solid #22242a;
-    background: #101014 !important;
+    margin: 0 0 18px !important;
+    padding: 0 !important;
+    color: #9ca3af !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.24em !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
   }
+
+  .brand-impact-eyebrow::before,
+  .brand-impact-eyebrow::after {
+    background: #2b2d31 !important;
+    flex-basis: 28px !important;
+  }
+
   .brand-impact-grid {
     display: grid !important;
     grid-template-columns: 1fr !important;
     gap: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+    width: 100% !important;
+    margin: 0 0 20px !important;
+    border: 1px solid #26282d !important;
     background: #101014 !important;
+    box-sizing: border-box !important;
   }
+
   .brand-impact-stat {
+    width: 100% !important;
     margin: 0 !important;
-    padding: 22px 18px 10px 18px !important;
-    border-bottom: 1.5px solid #22242a !important;
+    padding: 20px 16px 18px !important;
+    border-right: none !important;
+    border-bottom: 1px solid #26282d !important;
     background: #101014 !important;
+    box-sizing: border-box !important;
+    align-items: center !important;
+    text-align: center !important;
   }
+
   .brand-impact-stat:last-child {
     border-bottom: none !important;
   }
+
   .brand-impact-num {
-    display: block;
-    color: #fff !important;
-    font-size: 2.5rem;
-    font-weight: 700;
-    line-height: 1.1;
-    margin-bottom: 2px;
-    text-align: left;
-    letter-spacing: 0.01em;
+    display: block !important;
+    margin-bottom: 12px !important;
+    color: #ffffff !important;
+    font-size: clamp(34px, 11vw, 46px) !important;
+    font-weight: 700 !important;
+    line-height: 0.95 !important;
+    letter-spacing: -0.04em !important;
+    text-align: center !important;
+    white-space: nowrap !important;
   }
+
   .brand-impact-suffix {
-    color: #bfc6d1 !important;
-    font-size: 1.3rem;
-    font-weight: 500;
-    margin-left: 2px;
+    color: #c2c7d0 !important;
+    font-size: 0.5em !important;
+    font-weight: 700 !important;
+    margin-left: 3px !important;
   }
-  .brand-impact-label {
-    display: block;
-    color: #bfc6d1 !important;
-    font-size: 1.08rem;
-    font-weight: 600;
-    margin-top: 8px;
-    text-align: left;
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-  }
+
   .brand-impact-rule {
-    border-top: 1.5px solid #22242a !important;
-    margin: 10px 0 10px 0 !important;
+    width: 32px !important;
+    height: 1px !important;
+    margin: 0 auto 12px !important;
+    background: #2b2d31 !important;
+    border: 0 !important;
   }
+
+  .brand-impact-label {
+    display: block !important;
+    color: #c2c7d0 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.45 !important;
+    letter-spacing: 0.18em !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+  }
+
   .brand-impact-quote {
     margin: 0 !important;
-    padding: 18px 10px 10px 10px !important;
-    color: #bfc6d1 !important;
-    font-size: 1.1rem;
-    font-style: italic;
-    text-align: center;
-    background: #101014 !important;
+    padding: 18px 8px 0 !important;
+    border-top: 1px solid #26282d !important;
+    color: #d0d4dc !important;
+    font-size: 18px !important;
+    line-height: 1.45 !important;
+    text-align: center !important;
+    text-wrap: balance !important;
+    background: transparent !important;
   }
-}
-
-@media (max-width: 640px) {
-
-  .brand-impact-section {
-    width: 100% !important;
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-}
-
-.home-content-wrapper {
-  width: 100% !important;
-  max-width: 100% !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  margin: 0 !important;
 }

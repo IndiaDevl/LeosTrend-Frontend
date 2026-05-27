@@ -1,47 +1,29 @@
 .reviews-wrapper {
   width: 100%;
   overflow: hidden;
-
   position: relative;
-
-  padding: 0 16px;
-
   box-sizing: border-box;
-
-  touch-action: pan-y;
 }
 
 .reviews-track {
-
   display: flex;
-
   gap: 16px;
-
   width: max-content;
+  animation: reviewScroll 14s linear infinite;
+}
 
-  will-change: transform;
-
-  transform: translate3d(0,0,0);
-
-  backface-visibility: hidden;
-
-  perspective: 1000px;
+@keyframes reviewScroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 .review-card {
-
   width: 280px;
-
   flex-shrink: 0;
-
   background: #fff;
-
   padding: 20px;
-
   border-radius: 16px;
-
-  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
 }
 
@@ -52,114 +34,61 @@
 }
 
 .review-text {
-
   font-size: 14px;
-
   line-height: 1.6;
-
   margin-bottom: 14px;
-
   color: #111;
 }
 
 .user {
-
   display: flex;
-
   align-items: center;
 }
 
 .avatar {
-
   width: 36px;
-
   height: 36px;
-
   background: #6C63FF;
-
   color: #fff;
-
   border-radius: 50%;
-
   display: flex;
-
   align-items: center;
-
   justify-content: center;
-
   margin-right: 10px;
-
   font-size: 13px;
-
   font-weight: 600;
 }
 
 .name {
-
   font-weight: 700;
-
   font-size: 14px;
-
   color: #111;
 }
 
 .location {
-
   color: #888;
-
   font-size: 12px;
-
   margin-top: 2px;
 }
 
-/* MOBILE */
-@media (max-width: 768px) {
-
-  .reviews-wrapper {
-
-    overflow: hidden;
-
-    -webkit-overflow-scrolling: touch;
-  }
-
-  .reviews-track {
-
-    flex-wrap: nowrap;
-
-    align-items: stretch;
-  }
-
-}
-
-/* DESKTOP */
+/* DESKTOP — grid layout, no animation */
 @media (min-width: 769px) {
-
   .reviews-wrapper {
-
     overflow: visible;
-
     padding: 0;
   }
 
   .reviews-track {
-
+    animation: none;
     width: 100%;
-
-    transform: none !important;
-
     justify-content: center;
-
     flex-wrap: wrap;
-
     gap: 20px;
   }
-
 }
 
 @media (prefers-reduced-motion: reduce) {
-
   .reviews-track {
-    transform: none !important;
+    animation: none;
   }
-
 }

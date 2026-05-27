@@ -36,6 +36,8 @@ const reviews = [
   },
 ];
 
+const marqueeReviews = [...reviews, ...reviews];
+
 function CustomerReviews() {
   return (
     <section className="reviews-section reviews-marquee-section">
@@ -47,11 +49,12 @@ function CustomerReviews() {
 
       <div className="reviews-marquee-row">
         <div className="reviews-marquee-inner">
-          {reviews.map((r, i) => (
+          {marqueeReviews.map((r, i) => (
             <article
               key={r.name + '-' + i}
               className="review-card observe-reveal"
               style={{ "--reveal-delay": `${i * 100}ms` }}
+              aria-hidden={i >= reviews.length ? "true" : undefined}
             >
               <div className="review-stars" aria-label={`${r.rating} out of 5 stars`}>
                 {Array.from({ length: r.rating }).map((_, si) => (

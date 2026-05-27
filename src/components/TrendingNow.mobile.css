@@ -9,6 +9,12 @@
     box-sizing: border-box !important;
   }
 
+  .trending-now-section .home-section-head {
+    padding: 0 16px 14px !important;
+    margin-bottom: 0 !important;
+    box-sizing: border-box !important;
+  }
+
   .trending-now-group-head {
     padding: 0 8px !important;
     margin-bottom: 10px !important;
@@ -46,7 +52,7 @@
 
     scroll-behavior: smooth;
 
-    touch-action: auto;
+    touch-action: pan-y pinch-zoom;
 }
 
 .trending-now-grid::-webkit-scrollbar {
@@ -119,6 +125,7 @@ display:none;
     font-size: 13px;
     line-height: 1.3;
     margin-bottom: 6px;
+    line-clamp: 2;
 
     display: -webkit-box;
     -webkit-line-clamp: 2;

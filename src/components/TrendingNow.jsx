@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo, useRef, useCallback } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TrendingNow.css";
 
@@ -18,99 +18,6 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
 
   const navigate = useNavigate();
   const rowRefs = gridRefs || useRef([]);
-
-  // Drag scroll state
-  const dragState = useRef({ isDown: false, startX: 0, scrollLeft: 0, velocity: 0, raf: null, lastX: 0, lastTime: 0 });
-
-  // Mouse/touch drag scroll handler
-  const addDragScroll = useCallback((row) => {
-    if (!row) return;
-    let isTouch = false;
-    const state = dragState.current;
-
-    // Mouse events
-    row.addEventListener('mousedown', (e) => {
-      if (e.button !== 0) return;
-      state.isDown = true;
-      state.startX = e.pageX - row.offsetLeft;
-      state.scrollLeft = row.scrollLeft;
-      state.lastX = e.pageX;
-      state.lastTime = Date.now();
-      row.classList.add('dragging');
-    });
-    row.addEventListener('mouseleave', () => {
-      if (state.isDown) {
-        state.isDown = false;
-        row.classList.remove('dragging');
-        momentumScroll(row);
-      }
-    });
-    row.addEventListener('mouseup', () => {
-      if (state.isDown) {
-        state.isDown = false;
-        row.classList.remove('dragging');
-        momentumScroll(row);
-      }
-    });
-    row.addEventListener('mousemove', (e) => {
-      if (!state.isDown) return;
-      e.preventDefault();
-      const x = e.pageX - row.offsetLeft;
-      const walk = (x - state.startX);
-      row.scrollLeft = state.scrollLeft - walk;
-      // velocity
-      const now = Date.now();
-      state.velocity = (e.pageX - state.lastX) / (now - state.lastTime + 1);
-      state.lastX = e.pageX;
-      state.lastTime = now;
-    });
-
-    // Touch events
-    row.addEventListener('touchstart', (e) => {
-      isTouch = true;
-      state.isDown = true;
-      state.startX = e.touches[0].pageX - row.offsetLeft;
-      state.scrollLeft = row.scrollLeft;
-      state.lastX = e.touches[0].pageX;
-      state.lastTime = Date.now();
-      row.classList.add('dragging');
-    }, { passive: true });
-    row.addEventListener('touchend', () => {
-      if (state.isDown) {
-        state.isDown = false;
-        row.classList.remove('dragging');
-        momentumScroll(row);
-      }
-    });
-    row.addEventListener('touchmove', (e) => {
-      if (!state.isDown) return;
-      const x = e.touches[0].pageX - row.offsetLeft;
-      const walk = (x - state.startX);
-      row.scrollLeft = state.scrollLeft - walk;
-      // velocity
-      const now = Date.now();
-      state.velocity = (e.touches[0].pageX - state.lastX) / (now - state.lastTime + 1);
-      state.lastX = e.touches[0].pageX;
-      state.lastTime = now;
-    }, { passive: false });
-  }, []);
-
-  // Inertia/momentum scroll
-  const momentumScroll = (row) => {
-    const state = dragState.current;
-    let velocity = state.velocity * 32; // scale for feel
-    const decay = 0.93;
-    function animate() {
-      if (Math.abs(velocity) > 0.5) {
-        row.scrollLeft -= velocity;
-        velocity *= decay;
-        state.raf = requestAnimationFrame(animate);
-      } else {
-        cancelAnimationFrame(state.raf);
-      }
-    }
-    animate();
-  };
 
   // Show all products in each category (no isTrending logic)
   const groupedProducts = useMemo(() => {
@@ -174,7 +81,6 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
                 className="trending-now-grid trending-row"
                 ref={(element) => {
                   rowRefs.current[groupIndex] = element;
-                  if (element) addDragScroll(element);
                 }}
               >
                 {group.items.map((product) => {

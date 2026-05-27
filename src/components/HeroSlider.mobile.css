@@ -1,7 +1,4 @@
-/* 🔥 MOBILE HERO FIX — CLEAN VERSION */
 @media (max-width: 640px) {
-
-  /* REMOVE GLOBAL SIDE GAP */
   html, body {
     margin: 0;
     padding: 0;
@@ -13,22 +10,30 @@
     padding: 0;
   }
 
-  /* HERO FULL WIDTH */
   .hero {
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    position: relative !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    margin-top: calc(var(--navbar-height, 54px) + var(--ticker-height, 32px)) !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    min-height: 320px !important;
+    height: clamp(360px, 62svh, 500px) !important;
+    max-height: 500px !important;
   }
 
   .hero-slider {
-    position: absolute;
-    inset: 0;
-    width: 100%;
+    position: absolute !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
   }
 
   .hero-slide {
     width: 100%;
+    height: 100%;
   }
 
   .hero-image,
@@ -39,34 +44,36 @@
     display: block;
   }
 
-  /* CONTENT FIX */
   .hero-content {
     width: 100%;
-    padding: 0 16px; /* small safe spacing */
+    padding: 0 16px 22px !important;
+    align-items: flex-end !important;
+    box-sizing: border-box;
   }
 
   .hero-content-inner {
+    max-width: min(100%, 320px);
     align-items: flex-start;
     text-align: left;
   }
 
   .hero-subtitle {
-    font-size: 11px;
-    line-height: 1.5;
-    margin-bottom: 14px;
+    font-size: 10.5px;
+    line-height: 1.55;
+    margin-bottom: 12px;
     max-width: 90%;
   }
 
-  /* BUTTON FIX */
   .hero-actions {
     gap: 10px;
     align-items: flex-start;
+    margin: 14px 0 0 !important;
   }
 
   .hero-btn.primary {
-    height: 38px;
-    font-size: 12px;
-    padding: 0 18px;
+    height: 36px;
+    font-size: 11px;
+    padding: 0 16px;
     border-radius: 16px;
     max-width: 80%;
   }
