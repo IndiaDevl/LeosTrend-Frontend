@@ -143,19 +143,6 @@ export const getOptimizedImageUrl = (image, options = {}) => {
     return `${API_BASE_URL}/api/image?${params.toString()}`;
   }
 
-  if (resolvedUrl && resolvedUrl.hostname.includes("images.unsplash.com")) {
-    if (Number.isFinite(width) && width > 0) {
-      resolvedUrl.searchParams.set("w", String(Math.round(width)));
-    }
-    if (Number.isFinite(height) && height > 0) {
-      resolvedUrl.searchParams.set("h", String(Math.round(height)));
-    }
-    resolvedUrl.searchParams.set("q", quality === "auto" ? "80" : String(quality));
-    resolvedUrl.searchParams.set("auto", "format,compress");
-    resolvedUrl.searchParams.set("fit", "max");
-    return resolvedUrl.toString();
-  }
-
   if (!resolved.includes("res.cloudinary.com") || !resolved.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
     const transforms = [`f_${format}`, `q_${quality}`, `dpr_${dpr}`];
 
