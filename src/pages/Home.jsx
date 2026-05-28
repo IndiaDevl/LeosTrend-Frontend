@@ -59,7 +59,7 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
       <TrustStrip />
 
       {/* ── Shop by Category ── */}
-      <section className="home-section-block home-section-category">
+      <section id="shop-category-section" className="home-section-block home-section-category">
         <div className="home-section-head text-center observe-reveal">
           <p className="home-section-kicker">Curated Collections</p>
           <h2 className="home-section-title">Shop by Category</h2>

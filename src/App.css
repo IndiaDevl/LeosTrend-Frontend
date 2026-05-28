@@ -189,7 +189,7 @@ color:#111;
 overflow-x:hidden;
 overscroll-behavior-x:none;
 scrollbar-gutter:stable;
-scroll-behavior:smooth;
+scroll-behavior:auto;
 }
 
 body{

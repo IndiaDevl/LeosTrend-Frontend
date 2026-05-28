@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 
 // Persist scroll positions in sessionStorage so back/forward restores correctly
@@ -23,6 +23,17 @@ function ScrollManager() {
   const { pathname } = useLocation();
   const navType = useNavigationType(); // "PUSH" | "REPLACE" | "POP"
   const scrollMap = useRef(loadScrollMap());
+
+  useEffect(() => {
+    if (!("scrollRestoration" in window.history)) return undefined;
+
+    const previousScrollRestoration = window.history.scrollRestoration;
+    window.history.scrollRestoration = "manual";
+
+    return () => {
+      window.history.scrollRestoration = previousScrollRestoration;
+    };
+  }, []);
 
   // Record scroll position in memory during scroll and persist only on pagehide/unmount.
   useEffect(() => {
@@ -53,13 +64,11 @@ function ScrollManager() {
   }, [pathname]);
 
   // When pathname changes, either restore (back/forward) or jump to top (new nav)
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (navType === "POP") {
       // Back / forward button — restore saved position
       const saved = scrollMap.current.get(pathname) ?? 0;
-      requestAnimationFrame(() => {
-        window.scrollTo({ top: saved, behavior: "auto" });
-      });
+      window.scrollTo({ top: saved, behavior: "auto" });
     } else {
       // Normal link click / programmatic navigation — go to top
       window.scrollTo({ top: 0, behavior: "auto" });

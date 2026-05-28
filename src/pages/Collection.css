@@ -1,6 +1,7 @@
 @media (max-width: 640px) {
   .collection-page {
-    padding-top: calc(var(--navbar-height, 54px) + var(--ticker-height, 32px) + 18px) !important;
+    padding-top: calc(var(--navbar-height, 54px) + 12px) !important;
+    padding-bottom: calc(var(--mobile-bottom-nav-height, 62px) + 20px) !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
     width: 100% !important;
@@ -367,6 +368,7 @@
   border-top: 1px solid #f3f4f6;
   border-radius: 0;
   overflow: hidden;
+  overflow-anchor: none;
   background: #ffffff;
 }
 
@@ -695,7 +697,8 @@
   }
 
   .collection-page {
-    padding-top: 22px;
+    padding-top: calc(var(--navbar-height, 54px) + 10px);
+    padding-bottom: calc(var(--mobile-bottom-nav-height, 62px) + 18px);
   }
 
   .collection-sidebar {
@@ -860,6 +863,11 @@
 }
 
 @media (max-width: 420px) {
+  .collection-page {
+    padding-top: calc(var(--navbar-height, 54px) + 8px);
+    padding-bottom: calc(var(--mobile-bottom-nav-height, 62px) + 18px);
+  }
+
   .collection-hero {
     padding: 0 8px 20px;
   }
@@ -874,7 +882,8 @@
   }
 
   .collection-image {
-    height: 150px;
+    aspect-ratio: 3 / 4;
+    height: auto;
   }
 
   .collection-image img {
@@ -883,6 +892,10 @@
 
   .collection-info {
     padding: 10px;
+  }
+
+  .product-name {
+    min-height: 0;
   }
 
   .price {

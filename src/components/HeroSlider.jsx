@@ -82,6 +82,15 @@ export default function HeroSlider() {
     startAuto();
   };
 
+  const handleShopNow = () => {
+    if (typeof document === "undefined") return;
+
+    const categorySection = document.getElementById("shop-category-section");
+    if (!categorySection) return;
+
+    categorySection.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
   return (
     <section className="hero">
 
@@ -96,7 +105,6 @@ export default function HeroSlider() {
             fetchPriority="high"
             decoding="async"
           />
-          <div className="hero-overlay" />
         </div>
       </div>
 
@@ -111,22 +119,22 @@ export default function HeroSlider() {
 
           <div className="hero-eyebrow">
             <div className="eyebrow-line" />
-            <p className="hero-kicker">Spring Capsule 2026</p>
+            <p className="hero-kicker">New Arrivals</p>
           </div>
 
           <h1 className="hero-title">
-            Elevate Your<br /><em>Everyday Style</em>
+            Easy Tees,<br /><em>Everyday Wear</em>
           </h1>
 
           <p className="hero-subtitle">
-            Premium oversized t-shirts crafted for comfort, identity, and modern expression.
+            Soft oversized tees for daily wear.
           </p>
 
           <div className="hero-actions">
-            <Link to="/collection/oversized" className="hero-btn primary">
-              <span>Shop Collection</span>
+            <button type="button" className="hero-btn primary" onClick={handleShopNow}>
+              <span>Shop Now</span>
               <span className="btn-arrow">→</span>
-            </Link>
+            </button>
             <Link to="/about" className="hero-btn secondary">Our Story</Link>
           </div>
 

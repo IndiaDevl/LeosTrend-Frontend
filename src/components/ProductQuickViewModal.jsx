@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import useBodyScrollLock from "../utils/useBodyScrollLock";
 import { getOptimizedImageUrl } from "../utils/api";
+import { scrollToPageStart } from "../utils/navigation";
 import "./ProductQuickViewModal.css";
 
 function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = false, isWishlistLoading = false, onToggleWishlist }) {
@@ -271,7 +272,10 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
               <Link
                 to={`/product/${encodeURIComponent(product.id)}`}
                 className="qv-secondary-btn"
-                onClick={onClose}
+                onClick={() => {
+                  scrollToPageStart();
+                  onClose();
+                }}
               >
                 View Product
                 <FaArrowRight />

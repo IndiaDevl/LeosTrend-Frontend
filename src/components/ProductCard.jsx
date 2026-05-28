@@ -50,6 +50,7 @@ function ProductCard({
   return (
     <ProductTilt>
       <article
+        data-wishlist-anchor-id={product.id}
         className="group relative overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-900/10 product-card"
         onClick={(event) => {
           if (isInteractiveTarget(event.target)) return;
@@ -79,10 +80,14 @@ function ProductCard({
               onClick={async (event) => {
                 event.preventDefault();
                 event.stopPropagation();
+                event.currentTarget.blur();
 
                 if (isWishlistLoading) return;
 
-                await onToggleWishlist();
+                await onToggleWishlist({
+                  anchorElement: event.currentTarget.closest("[data-wishlist-anchor-id]"),
+                  triggerElement: event.currentTarget,
+                });
               }}
               disabled={isWishlistLoading}
               aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}

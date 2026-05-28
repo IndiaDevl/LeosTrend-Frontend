@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaHeart, FaRegHeart } from "react-icons/fa";
 import ProductTilt from "../components/ProductTilt";
 import { getOptimizedImageUrl } from "../utils/api";
+import { navigateToPageStart } from "../utils/navigation";
 import "./Collection.css";
 
 const isInteractiveTarget = (target) => {
@@ -273,10 +274,11 @@ return(
 
 <div
 className="collection-card"
+data-wishlist-anchor-id={product.id}
 style={{cursor:"pointer"}}
 onClick={(event) => {
 	if (isInteractiveTarget(event.target)) return;
-	navigate(`/product/${encodeURIComponent(product.id)}`);
+	navigateToPageStart(navigate, `/product/${encodeURIComponent(product.id)}`);
 }}
 >
 
@@ -301,10 +303,14 @@ onPointerDown={(event) => {
 onClick={async (event) => {
 	event.preventDefault();
 	event.stopPropagation();
+	event.currentTarget.blur();
 
 	if (isWishlistLoading?.(product)) return;
 
-	await toggleWishlist?.(product);
+	await toggleWishlist?.(product, {
+		anchorElement: event.currentTarget.closest("[data-wishlist-anchor-id]"),
+		triggerElement: event.currentTarget,
+	});
 }}
 disabled={isWishlistLoading?.(product)}
 aria-label="Toggle wishlist"

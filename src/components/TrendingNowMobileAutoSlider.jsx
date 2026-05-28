@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./TrendingNow.mobile.css";
 import { buildTrendingGroups } from "../utils/trendingNow";
 import { getOptimizedImageUrl } from "../utils/api";
+import { navigateToPageStart } from "../utils/navigation";
 
 const AUTO_ADVANCE_DELAY = 3600;
 const AUTO_RESUME_DELAY = 1800;
@@ -224,11 +225,11 @@ function TrendingNowMobileCarouselRow({ group, groupIndex, navigate, getImageUrl
 									className={`trending-now-card trending-now-mobile-card${isActiveCard ? " is-active" : ""}`}
 									role="button"
 									tabIndex={0}
-									onClick={() => navigate(`/product/${encodeURIComponent(product.id)}`)}
+									onClick={() => navigateToPageStart(navigate, `/product/${encodeURIComponent(product.id)}`)}
 									onKeyDown={(event) => {
 										if (event.key === "Enter" || event.key === " ") {
 											event.preventDefault();
-											navigate(`/product/${encodeURIComponent(product.id)}`);
+											navigateToPageStart(navigate, `/product/${encodeURIComponent(product.id)}`);
 										}
 									}}
 								>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { BrowserRouter as Router, Routes, Route, Link, NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { FaShoppingCart, FaHeart, FaHome, FaTshirt, FaBoxOpen, FaInfoCircle, FaPhoneAlt, FaChevronRight, FaChevronDown, FaSearch } from "react-icons/fa";
@@ -17,6 +17,7 @@ import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
 import OrderDetails from "./pages/OrderDetails";
 import ProductDetails from "./pages/ProductDetails";
+import { scrollToPageStart } from "./utils/navigation";
 import DesktopNavbar from "./components/DesktopNavbar";
 import MobileNavbar from "./components/MobileNavbar";
 import useRipple from "./utils/useRipple";
@@ -282,6 +283,7 @@ function SearchOverlay({
                       to={`/product/${encodeURIComponent(product.id)}`}
                       className="search-result-card"
                       onClick={() => {
+                        scrollToPageStart();
                         onSearchSelect(searchTerm);
                         onClose();
                       }}
@@ -371,7 +373,10 @@ function SearchOverlay({
                     key={product.id}
                     to={`/product/${encodeURIComponent(product.id)}`}
                     className="search-result-card"
-                    onClick={onClose}
+                    onClick={() => {
+                      scrollToPageStart();
+                      onClose();
+                    }}
                   >
                     <img src={product.image} alt={product.name} className="search-result-image" loading="lazy" />
                     <div className="search-result-copy">
@@ -457,6 +462,20 @@ const [cartToast, setCartToast] = useState(null);
 const [badgePulse, setBadgePulse] = useState(false);
 const cartToastTimer = useRef(null);
 const megaTriggerRef = useRef(null);
+const pendingWishlistRestoreRef = useRef(null);
+const wishlistRestoreFrameRef = useRef(0);
+const wishlistRestoreTimeoutRef = useRef(0);
+
+const resolveWishlistAnchorSelector = (productId) => {
+  const normalizedId = String(productId || "").trim();
+  if (!normalizedId) return "";
+
+  const escapedId = typeof CSS !== "undefined" && typeof CSS.escape === "function"
+    ? CSS.escape(normalizedId)
+    : normalizedId.replace(/(["\\])/g, "\\$1");
+
+  return `[data-wishlist-anchor-id="${escapedId}"]`;
+};
 
 useBodyScrollLock(menuOpen, "mobile-menu-open");
 
@@ -499,6 +518,72 @@ useEffect(() => {
 useEffect(() => {
   setStoredWishlist(wishlist);
 }, [wishlist]);
+
+const cancelWishlistRestore = () => {
+  if (wishlistRestoreFrameRef.current) {
+    cancelAnimationFrame(wishlistRestoreFrameRef.current);
+    wishlistRestoreFrameRef.current = 0;
+  }
+
+  if (wishlistRestoreTimeoutRef.current) {
+    clearTimeout(wishlistRestoreTimeoutRef.current);
+    wishlistRestoreTimeoutRef.current = 0;
+  }
+};
+
+const restoreWishlistViewportPosition = () => {
+  const restoreState = pendingWishlistRestoreRef.current;
+  if (!restoreState) return false;
+
+  if (restoreState.selector && typeof restoreState.viewportTop === "number") {
+    const anchorElement = document.querySelector(restoreState.selector);
+    if (anchorElement) {
+      const anchorDocumentTop = anchorElement.getBoundingClientRect().top + window.scrollY;
+      const targetScrollY = Math.max(0, anchorDocumentTop - restoreState.viewportTop);
+
+      if (Math.abs(window.scrollY - targetScrollY) > 1) {
+        window.scrollTo({ top: targetScrollY, left: 0, behavior: "auto" });
+      }
+
+      return true;
+    }
+  }
+
+  if (typeof restoreState.scrollY === "number") {
+    if (Math.abs(window.scrollY - restoreState.scrollY) > 1) {
+      window.scrollTo({ top: restoreState.scrollY, left: 0, behavior: "auto" });
+    }
+
+    return true;
+  }
+
+  return false;
+};
+
+useLayoutEffect(() => {
+  if (!pendingWishlistRestoreRef.current) return;
+
+  cancelWishlistRestore();
+  restoreWishlistViewportPosition();
+
+  wishlistRestoreFrameRef.current = requestAnimationFrame(() => {
+    restoreWishlistViewportPosition();
+    wishlistRestoreFrameRef.current = requestAnimationFrame(() => {
+      restoreWishlistViewportPosition();
+      wishlistRestoreFrameRef.current = 0;
+    });
+  });
+
+  wishlistRestoreTimeoutRef.current = window.setTimeout(() => {
+    restoreWishlistViewportPosition();
+    pendingWishlistRestoreRef.current = null;
+    wishlistRestoreTimeoutRef.current = 0;
+  }, 160);
+}, [wishlist]);
+
+useEffect(() => () => {
+  cancelWishlistRestore();
+}, []);
 
 useEffect(() => {
   sessionStorage.setItem(SEARCH_STORAGE_KEY, JSON.stringify(recentSearches));
@@ -668,9 +753,23 @@ const commitRecentSearch = (value) => {
 
 
 // LocalStorage-based wishlist toggle
-const toggleWishlist = (product) => {
+const toggleWishlist = (product, options = {}) => {
   const productId = getProductId(product);
   if (!productId) return;
+	options.triggerElement?.blur?.();
+  const selector = options.anchorSelector || resolveWishlistAnchorSelector(productId);
+  const anchorElement = options.anchorElement || (selector ? document.querySelector(selector) : null);
+	pendingWishlistRestoreRef.current = anchorElement
+    ? {
+      selector,
+      viewportTop: anchorElement.getBoundingClientRect().top,
+      scrollY: window.scrollY,
+      }
+    : {
+      selector,
+      viewportTop: null,
+      scrollY: window.scrollY,
+      };
   setWishlist((prev) => {
     const exists = prev.some((item) => getProductId(item) === productId);
     if (exists) {

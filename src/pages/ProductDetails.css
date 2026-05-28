@@ -1062,10 +1062,11 @@
 
 @media (max-width: 640px) {
 .product-details-page {
-  padding: 98px 0 40px;
+  padding-top: calc(var(--navbar-height, 54px) + 12px);
+  padding-bottom: calc(var(--mobile-bottom-nav-height, 62px) + 20px);
 }
   .product-details-card {
-    animation: detailsMobileReveal 0.5s ease-out both;
+    animation: none;
   }
 
   .details-breadcrumb {
@@ -1075,7 +1076,7 @@
   }
 
   .details-image {
-    animation: detailsMediaReveal 0.55s cubic-bezier(0.22, 0.78, 0.2, 1) both;
+    animation: none;
   }
 
   .details-gallery-image {
@@ -1207,26 +1208,11 @@
   .details-promise,
   .details-foot-grid,
   .details-specs-block {
-    opacity: 0;
-    transform: translateY(10px);
-    animation: detailsMobileReveal 0.45s ease-out forwards;
-    will-change: transform, opacity;
+    opacity: 1;
+    transform: none;
+    animation: none;
+    will-change: auto;
   }
-
-  .details-headline-row { animation-delay: 0.03s; }
-  .details-info h1 { animation-delay: 0.06s; }
-  .price-row { animation-delay: 0.1s; }
-  .details-description { animation-delay: 0.14s; }
-  .meta-grid { animation-delay: 0.18s; }
-  .color-wrap { animation-delay: 0.22s; }
-  .size-wrap { animation-delay: 0.26s; }
-  .qty-wrap { animation-delay: 0.3s; }
-  .total-row { animation-delay: 0.34s; }
-  .add-btn { animation-delay: 0.38s; }
-  .details-back-link { animation-delay: 0.42s; }
-  .details-promise { animation-delay: 0.46s; }
-  .details-foot-grid { animation-delay: 0.5s; }
-  .details-specs-block { animation-delay: 0.54s; }
 
   .details-info h1 {
     font-size: 34px;

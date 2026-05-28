@@ -24,7 +24,7 @@ function ProductCardGrid({
           showWishlist={showWishlist}
           isWishlisted={isWishlisted ? isWishlisted(product) : false}
           isWishlistLoading={isWishlistLoading ? isWishlistLoading(product) : false}
-          onToggleWishlist={onToggleWishlist ? () => onToggleWishlist(product) : undefined}
+          onToggleWishlist={onToggleWishlist ? (options) => onToggleWishlist(product, options) : undefined}
         />
       ))}
     </div>

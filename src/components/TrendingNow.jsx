@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import "./TrendingNow.css";
 import { buildTrendingGroups } from "../utils/trendingNow";
 import { getOptimizedImageUrl } from "../utils/api";
+import { navigateToPageStart } from "../utils/navigation";
 
 
 function TrendingNow({ products = [], onQuickView, gridRefs }) {
@@ -82,7 +83,7 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
 
                   // Card click handler
                   const handleCardClick = () => {
-                    navigate(`/product/${encodeURIComponent(product.id)}`);
+                    navigateToPageStart(navigate, `/product/${encodeURIComponent(product.id)}`);
                   };
 
                   return (

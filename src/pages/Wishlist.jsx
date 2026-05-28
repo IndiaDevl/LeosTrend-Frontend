@@ -1,5 +1,6 @@
 ﻿import React from "react";
 import { Link } from "react-router-dom";
+import { scrollToPageStart } from "../utils/navigation";
 import "./Wishlist.css";
 
 
@@ -26,13 +27,21 @@ function Wishlist({ wishlist = [], toggleWishlist, addToCart }) {
         <div className="wishlist-list">
           {wishlist.map((item, index) => (
             <article key={item.id} className="wishlist-row" style={{ animationDelay: `${index * 0.06}s` }}>
-              <Link to={`/product/${encodeURIComponent(item.id)}`} className="wishlist-image-wrap">
+              <Link
+                to={`/product/${encodeURIComponent(item.id)}`}
+                className="wishlist-image-wrap"
+                onClick={scrollToPageStart}
+              >
                 <img src={item.image} alt={item.name} className="wishlist-img" />
               </Link>
 
               <div className="wishlist-details">
                 <p className="wishlist-brand">{item.brand || "LeosTrend"}</p>
-                <Link to={`/product/${encodeURIComponent(item.id)}`} className="wishlist-name-link">
+                <Link
+                  to={`/product/${encodeURIComponent(item.id)}`}
+                  className="wishlist-name-link"
+                  onClick={scrollToPageStart}
+                >
                   <h2 className="wishlist-name">{item.name}</h2>
                 </Link>
                 {Array.isArray(item.sizes) && item.sizes.length > 0 && (
