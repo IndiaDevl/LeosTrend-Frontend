@@ -105,6 +105,7 @@ export const resolveImageUrl = (image) => {
 };
 
 const CLOUDINARY_UPLOAD_SEGMENT = "/image/upload/";
+const CLOUDINARY_FETCH_BASE = "https://res.cloudinary.com/dppuhxbti/image/fetch/";
 
 export const getOptimizedImageUrl = (image, options = {}) => {
   const resolved = resolveImageUrl(image);
@@ -142,8 +143,35 @@ export const getOptimizedImageUrl = (image, options = {}) => {
     return `${API_BASE_URL}/api/image?${params.toString()}`;
   }
 
+  if (resolvedUrl && resolvedUrl.hostname.includes("images.unsplash.com")) {
+    if (Number.isFinite(width) && width > 0) {
+      resolvedUrl.searchParams.set("w", String(Math.round(width)));
+    }
+    if (Number.isFinite(height) && height > 0) {
+      resolvedUrl.searchParams.set("h", String(Math.round(height)));
+    }
+    resolvedUrl.searchParams.set("q", quality === "auto" ? "80" : String(quality));
+    resolvedUrl.searchParams.set("auto", "format,compress");
+    resolvedUrl.searchParams.set("fit", "max");
+    return resolvedUrl.toString();
+  }
+
   if (!resolved.includes("res.cloudinary.com") || !resolved.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
-    return resolved;
+    const transforms = [`f_${format}`, `q_${quality}`, `dpr_${dpr}`];
+
+    if (crop) {
+      transforms.push(`c_${crop}`);
+    }
+
+    if (Number.isFinite(width) && width > 0) {
+      transforms.push(`w_${Math.round(width)}`);
+    }
+
+    if (Number.isFinite(height) && height > 0) {
+      transforms.push(`h_${Math.round(height)}`);
+    }
+
+    return `${CLOUDINARY_FETCH_BASE}${transforms.join(",")}/${encodeURIComponent(resolved)}`;
   }
 
   const transforms = [`f_${format}`, `q_${quality}`, `dpr_${dpr}`];
