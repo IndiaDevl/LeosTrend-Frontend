@@ -791,6 +791,11 @@
   color: #64748b;
 }
 
+.admin-trending-meta {
+  color: #92600a;
+  font-weight: 600;
+}
+
 .admin-category-pill {
   display: inline-block;
   padding: 5px 10px;
@@ -840,6 +845,12 @@
   flex-wrap: wrap;
 }
 
+.trending-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
 .table-actions button {
   border: none;
   border-radius: 9px;
@@ -861,6 +872,21 @@
 
 .btn-danger {
   background: linear-gradient(120deg, #dc2626, #b91c1c);
+}
+
+.btn-warning {
+  background: linear-gradient(120deg, #d4a017, #b7791f);
+}
+
+.btn-slot {
+  background: linear-gradient(120deg, #0f766e, #115e59);
+}
+
+.btn-slot.is-active,
+.btn-slot:disabled {
+  background: linear-gradient(120deg, #cbd5e1, #94a3b8);
+  color: #0f172a;
+  cursor: default;
 }
 
 .btn-ghost {

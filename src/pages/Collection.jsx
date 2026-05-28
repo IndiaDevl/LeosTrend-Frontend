@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { FaChevronDown, FaHeart, FaRegHeart } from "react-icons/fa";
 import ProductTilt from "../components/ProductTilt";
+import { getOptimizedImageUrl } from "../utils/api";
 import "./Collection.css";
 
 const isInteractiveTarget = (target) => {
@@ -313,7 +314,7 @@ aria-pressed={isWishlisted(product.id)}
 </button>
 
 <div className="collection-image-link">
-<img src={product.image} alt={product.name} loading="lazy" decoding="async"/>
+<img src={getOptimizedImageUrl(product.image, { width: 760, height: 950 })} alt={product.name} loading="lazy" decoding="async"/>
 </div>
 
 </div>

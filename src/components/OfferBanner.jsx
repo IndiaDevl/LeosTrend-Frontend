@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
+import { getOptimizedImageUrl } from "../utils/api";
 import "./OfferBanner.css";
 
 const BANNERS = [
@@ -130,9 +131,11 @@ export default function OfferBanner() {
         {BANNERS.map((banner, i) => (
           <div className="offer-slide" key={i}>
             <img
-              src={banner.src}
+              src={getOptimizedImageUrl(banner.src, { width: 1600, height: 900 })}
               alt={banner.alt}
               className="offer-image"
+              loading={i === 0 ? "eager" : "lazy"}
+              decoding="async"
               draggable="false"
             />
           </div>

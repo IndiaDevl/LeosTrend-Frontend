@@ -27,6 +27,7 @@ const initialDraft = {
   rating: "New",
   galleryImages: "",
   isTrending: false,
+  trendingPosition: "1",
 };
 
 function ManageProducts() {
@@ -50,16 +51,40 @@ function ManageProducts() {
     localStorage.setItem("admin_categoryFilter", categoryFilter);
   }, [categoryFilter]);
 
+  const getTrendingSortValue = (product) => {
+    const position = Number(product.trendingPosition);
+    return Number.isInteger(position) && position > 0 ? position : Number.MAX_SAFE_INTEGER;
+  };
+
   const filteredProducts = useMemo(() => {
     const query = searchTerm.trim().toLowerCase();
-    return products.filter((product) => {
-      const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
-      const matchesSearch =
-        !query ||
-        product.name.toLowerCase().includes(query) ||
-        product.description.toLowerCase().includes(query);
-      return matchesCategory && matchesSearch;
-    });
+    return products
+      .map((product, index) => ({ product, index }))
+      .filter(({ product }) => {
+        const matchesCategory = categoryFilter === "all" || product.category === categoryFilter;
+        const matchesSearch =
+          !query ||
+          product.name.toLowerCase().includes(query) ||
+          product.description.toLowerCase().includes(query);
+        return matchesCategory && matchesSearch;
+      })
+      .sort((left, right) => {
+        if (left.product.category === right.product.category) {
+          if (left.product.isTrending !== right.product.isTrending) {
+            return left.product.isTrending ? -1 : 1;
+          }
+
+          if (left.product.isTrending && right.product.isTrending) {
+            const positionDifference = getTrendingSortValue(left.product) - getTrendingSortValue(right.product);
+            if (positionDifference !== 0) {
+              return positionDifference;
+            }
+          }
+        }
+
+        return left.index - right.index;
+      })
+      .map(({ product }) => product);
   }, [products, searchTerm, categoryFilter]);
 
   const metrics = useMemo(() => {
@@ -80,6 +105,18 @@ function ManageProducts() {
     }
 
     return items.join(", ");
+  };
+
+  const formatTrendingPosition = (value) => {
+    const position = Number(value);
+    if (!Number.isInteger(position) || position < 1) {
+      return "";
+    }
+
+    if (position === 1) return "1st card";
+    if (position === 2) return "2nd card";
+    if (position === 3) return "3rd card";
+    return `${position}th card`;
   };
 
   const loadProducts = async () => {
@@ -133,6 +170,7 @@ function ManageProducts() {
       rating: product.rating || "New",
       galleryImages: Array.isArray(product.galleryImages) ? product.galleryImages.join("\n") : "",
       isTrending: Boolean(product.isTrending),
+      trendingPosition: String(product.trendingPosition || 1),
     });
     setImageFile(null);
     setImagePreview(product.image || "");
@@ -187,6 +225,7 @@ function ManageProducts() {
       formData.append("rating", draft.rating);
       formData.append("galleryImages", draft.galleryImages);
       formData.append("isTrending", draft.isTrending ? "true" : "false");
+      formData.append("trendingPosition", draft.isTrending ? draft.trendingPosition : "");
 
       if (imageFile) {
         formData.append("image", imageFile);
@@ -200,13 +239,50 @@ function ManageProducts() {
         },
       });
 
-      const updated = normalizeProduct(response.data);
-      setProducts((prev) => prev.map((item) => (item._id === updated._id ? updated : item)));
+      normalizeProduct(response.data);
+      await loadProducts();
       notifyProductsUpdated();
       cancelEdit();
     } catch (err) {
       setError(err.response?.data?.message || "Failed to update product");
     }
+  };
+
+  const updateTrendingState = async (product, { isTrending, trendingPosition, errorMessage }) => {
+    try {
+      setError("");
+      const formData = new FormData();
+      formData.append("isTrending", isTrending ? "true" : "false");
+      formData.append("trendingPosition", isTrending ? String(trendingPosition) : "");
+
+      const response = await axios.put(`${PRODUCTS_API_URL}/${product._id}`, formData, {
+        headers: {
+          ...getAdminAuthHeaders(),
+        },
+      });
+
+      normalizeProduct(response.data);
+      await loadProducts();
+      notifyProductsUpdated();
+    } catch (err) {
+      setError(err.response?.data?.message || errorMessage);
+    }
+  };
+
+  const moveToTrendingCard = async (product, trendingPosition) => {
+    await updateTrendingState(product, {
+      isTrending: true,
+      trendingPosition,
+      errorMessage: "Failed to update Trending Now card",
+    });
+  };
+
+  const removeFromTrending = async (product) => {
+    await updateTrendingState(product, {
+      isTrending: false,
+      trendingPosition: "",
+      errorMessage: "Failed to remove product from Trending Now",
+    });
   };
 
   return (
@@ -405,7 +481,22 @@ function ManageProducts() {
                                 </label>
                               </div>
                               {draft.isTrending && (
-                                <p className="trending-toggle-active-note">✦ Will appear in Trending Now on homepage.</p>
+                                <>
+                                  <p className="trending-toggle-active-note">✦ Will appear in the selected Trending Now card on homepage.</p>
+                                  <label>
+                                    Trending card position
+                                    <select
+                                      name="trendingPosition"
+                                      value={draft.trendingPosition}
+                                      onChange={handleDraftChange}
+                                    >
+                                      <option value="1">1st card</option>
+                                      <option value="2">2nd card</option>
+                                      <option value="3">3rd card</option>
+                                      <option value="4">4th card</option>
+                                    </select>
+                                  </label>
+                                </>
                               )}
                             </div>
                             {imagePreview && (
@@ -439,12 +530,19 @@ function ManageProducts() {
                               <p className="admin-product-title">
                                 {product.name}
                                 {product.isTrending && (
-                                  <span className="trending-badge-pill">🔥 Trending</span>
+                                  <span className="trending-badge-pill">
+                                    🔥 Trending {product.trendingPosition ? `• ${formatTrendingPosition(product.trendingPosition)}` : ""}
+                                  </span>
                                 )}
                               </p>
                               <p className="admin-product-meta">Sizes: {formatList(product.sizes)}</p>
                               <p className="admin-product-meta">Colors: {formatList(product.colors)}</p>
                               <p className="admin-product-meta">Gallery: {Array.isArray(product.galleryImages) ? product.galleryImages.length : 0} extra</p>
+                              {product.isTrending && (
+                                <p className="admin-product-meta admin-trending-meta">
+                                  Removing this product from Trending Now will automatically show the previous collection item in that card.
+                                </p>
+                              )}
                             </div>
                           </div>
                         )}
@@ -503,6 +601,33 @@ function ManageProducts() {
                             >
                               Edit
                             </button>
+                            <div className="trending-card-actions" aria-label="Trending card position controls">
+                              {[1, 2, 3, 4].map((position) => {
+                                const isActiveCard = product.isTrending && Number(product.trendingPosition) === position;
+
+                                return (
+                                  <button
+                                    key={`${product._id}-card-${position}`}
+                                    type="button"
+                                    className={`btn-slot ${isActiveCard ? "is-active" : ""}`}
+                                    onClick={() => moveToTrendingCard(product, position)}
+                                    disabled={isActiveCard}
+                                    title={`Show in ${formatTrendingPosition(position)}`}
+                                  >
+                                    Card {position}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                            {product.isTrending && (
+                              <button
+                                type="button"
+                                className="btn-warning"
+                                onClick={() => removeFromTrending(product)}
+                              >
+                                Remove Trending
+                              </button>
+                            )}
                             <button
                               type="button"
                               className="btn-danger"

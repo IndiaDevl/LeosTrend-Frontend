@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { getOptimizedImageUrl } from "../utils/api";
 import "./CategoryItems.css";
 
 const categoryItems = [
@@ -72,7 +73,7 @@ function CategoryItems() {
                 {cat.badge}
               </span>
               <img
-                src={cat.image}
+                src={getOptimizedImageUrl(cat.image, { width: 900, height: 1100 })}
                 alt={cat.title}
                 loading="lazy"
                 draggable="false"

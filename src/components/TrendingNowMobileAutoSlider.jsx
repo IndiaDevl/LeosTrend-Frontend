@@ -1,13 +1,8 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TrendingNow.mobile.css";
-
-const TRENDING_SECTIONS = [
-	{ key: "oversized", title: "Oversized" },
-	{ key: "sweatshirts", title: "Sweatshirts" },
-	{ key: "zip", title: "Zip Sweatshirts" },
-	{ key: "hoodies", title: "Hoodies" },
-];
+import { buildTrendingGroups } from "../utils/trendingNow";
+import { getOptimizedImageUrl } from "../utils/api";
 
 const AUTO_ADVANCE_DELAY = 3600;
 const AUTO_RESUME_DELAY = 1800;
@@ -306,29 +301,11 @@ function TrendingNowMobileCarouselRow({ group, groupIndex, navigate, getImageUrl
 export default function TrendingNowMobileAutoSlider({ products = [], onQuickView }) {
 	const navigate = useNavigate();
 
-	const groupedProducts = useMemo(() => TRENDING_SECTIONS.map((section) => {
-
-		const categoryProducts = products.filter(
-			(product) =>
-				String(product?.category || "")
-					.trim()
-					.toLowerCase() === section.key
-		);
-
-		return {
-			...section,
-			items: categoryProducts.slice(0, 4),
-		};
-	}), [products]);
+	const groupedProducts = useMemo(() => buildTrendingGroups(products), [products]);
 
 	const visibleGroups = groupedProducts.filter((group) => group.items.length > 0);
 
-	const getImageUrl = (image) => {
-		if (!image) return "";
-		if (image.startsWith("http")) return image;
-		if (image.startsWith("/")) return image;
-		return `http://localhost:5000/uploads/products/${image.replace(/^.*[\\/]/, "")}`;
-	};
+	const getImageUrl = (image) => getOptimizedImageUrl(image, { width: 560, height: 700 });
 
 	return (
 

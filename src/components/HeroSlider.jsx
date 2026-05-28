@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { getOptimizedImageUrl } from "../utils/api";
 import "./HeroSlider.css";
 
 const SLIDES = [
@@ -11,9 +12,26 @@ const SLIDES = [
 
 export default function HeroSlider() {
   const [current, setCurrent] = useState(0);
+  const [isMobileViewport, setIsMobileViewport] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(max-width: 640px)").matches;
+  });
   const stripRef = useRef(null);
   const panelImgRef = useRef(null);
   const timerRef = useRef(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+
+    const mediaQuery = window.matchMedia("(max-width: 640px)");
+    const handleChange = (event) => setIsMobileViewport(event.matches);
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  const getHeroImage = (img, width) => getOptimizedImageUrl(img, { width, height: 1000 });
 
   const goTo = (n) => {
     const next = (n + SLIDES.length) % SLIDES.length;
@@ -22,7 +40,7 @@ export default function HeroSlider() {
       panelImgRef.current.style.opacity = "0";
       setTimeout(() => {
         if (panelImgRef.current) {
-          panelImgRef.current.src = SLIDES[next].img.replace("w=1600", "w=800");
+          panelImgRef.current.src = getHeroImage(SLIDES[next].img, 900);
           panelImgRef.current.style.opacity = "1";
         }
       }, 300);
@@ -69,17 +87,17 @@ export default function HeroSlider() {
 
       {/* ── Slides ── */}
       <div className="hero-slider">
-        {SLIDES.map(({ img }, i) => (
-          <div key={i} className={`hero-slide${i === current ? " active" : ""}`}>
-            <img
-              src={img}
-              alt="LeosTrend collection"
-              className="hero-image"
-              loading={i === 0 ? "eager" : "lazy"}
-            />
-            <div className="hero-overlay" />
-          </div>
-        ))}
+        <div className="hero-slide active">
+          <img
+            src={getHeroImage(SLIDES[current].img, isMobileViewport ? 900 : 1600)}
+            alt="LeosTrend collection"
+            className="hero-image"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
+          />
+          <div className="hero-overlay" />
+        </div>
       </div>
 
       {/* ── Vertical progress strip ── */}
@@ -131,16 +149,20 @@ export default function HeroSlider() {
       </div>
 
       {/* ── Right image panel ── */}
-      <div className="hero-image-panel">
-        <img
-          ref={panelImgRef}
-          className="panel-img"
-          src={SLIDES[0].img.replace("w=1600", "w=800")}
-          alt="Featured look"
-          style={{ transition: "opacity 0.5s ease" }}
-        />
-        <div className="panel-overlay" />
-      </div>
+      {!isMobileViewport && (
+        <div className="hero-image-panel">
+          <img
+            ref={panelImgRef}
+            className="panel-img"
+            src={getHeroImage(SLIDES[0].img, 900)}
+            alt="Featured look"
+            loading="eager"
+            decoding="async"
+            style={{ transition: "opacity 0.5s ease" }}
+          />
+          <div className="panel-overlay" />
+        </div>
+      )}
 
       {/* ── Nav: prev · dots · next ── */}
       <div className="hero-nav">

@@ -27,6 +27,7 @@ const initialForm = {
   rating: "New",
   galleryImages: "",
   isTrending: false,
+  trendingPosition: "1",
 };
 
 function AddProduct() {
@@ -284,7 +285,18 @@ function AddProduct() {
               </label>
             </div>
             {form.isTrending && (
-              <p className="trending-toggle-active-note">✦ This product will appear in the Trending Now cards on the homepage.</p>
+              <>
+                <p className="trending-toggle-active-note">✦ This product will appear in the selected Trending Now card on the homepage.</p>
+                <label>
+                  Trending card position
+                  <select name="trendingPosition" value={form.trendingPosition} onChange={onChange}>
+                    <option value="1">1st card</option>
+                    <option value="2">2nd card</option>
+                    <option value="3">3rd card</option>
+                    <option value="4">4th card</option>
+                  </select>
+                </label>
+              </>
             )}
           </div>
 

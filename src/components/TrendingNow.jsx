@@ -2,13 +2,8 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "./TrendingNow.css";
-
-const TRENDING_SECTIONS = [
-  { key: "oversized", title: "Oversized" },
-  { key: "sweatshirts", title: "Sweatshirts" },
-  { key: "hoodies", title: "Hoodies" },
-  { key: "zip", title: "Zip Sweatshirts" },
-];
+import { buildTrendingGroups } from "../utils/trendingNow";
+import { getOptimizedImageUrl } from "../utils/api";
 
 
 function TrendingNow({ products = [], onQuickView, gridRefs }) {
@@ -19,15 +14,8 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
   const navigate = useNavigate();
   const rowRefs = gridRefs || useRef([]);
 
-  // Show all products in each category (no isTrending logic)
   const groupedProducts = useMemo(() => {
-    return TRENDING_SECTIONS.map((section) => {
-      const categoryProducts = products.filter(
-        (product) =>
-          String(product?.category || "").trim().toLowerCase() === section.key
-      );
-      return { ...section, items: categoryProducts.slice(0, 4) };
-    });
+    return buildTrendingGroups(products);
   }, [products]);
 
   useEffect(() => {
@@ -92,15 +80,6 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
                     : 0;
                   if (discount >= 100) discount = 99;
 
-                  // Helper to get correct image URL
-                  const getImageUrl = (img) => {
-                    if (!img) return '';
-                    if (img.startsWith('http')) return img;
-                    if (img.startsWith('/')) return img;
-                    // Change this to your backend URL if different
-                    return `http://localhost:5000/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
-                  };
-
                   // Card click handler
                   const handleCardClick = () => {
                     navigate(`/product/${encodeURIComponent(product.id)}`);
@@ -120,7 +99,7 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
                     >
                       <div className="trending-now-image-wrap premium-image-wrap">
                         <img
-                          src={getImageUrl(product.image)}
+                          src={getOptimizedImageUrl(product.image, { width: 760, height: 950 })}
                           alt={product.name}
                           loading="lazy"
                           className="premium-img"

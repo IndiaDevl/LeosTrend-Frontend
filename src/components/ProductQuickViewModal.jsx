@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import useBodyScrollLock from "../utils/useBodyScrollLock";
+import { getOptimizedImageUrl } from "../utils/api";
 import "./ProductQuickViewModal.css";
 
 function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = false, isWishlistLoading = false, onToggleWishlist }) {
@@ -64,6 +65,8 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
     ? Math.round(((product.mrp - product.price) / product.mrp) * 100)
     : 0;
   const activeImage = mediaSources[activeMediaIndex] || product.image;
+  const getGalleryImage = (src, kind = "main") =>
+    getOptimizedImageUrl(src, kind === "thumb" ? { width: 180, height: 180 } : { width: 1200, height: 1400 });
 
   const handleGalleryScroll = () => {
     const track = galleryTrackRef.current;
@@ -148,7 +151,7 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
                 {mediaSources.map((src, index) => (
                   <div className="qv-gallery-slide" key={`${src}-${index}`}>
                     <img
-                      src={src}
+                      src={getGalleryImage(src)}
                       alt={`${product.name} view ${index + 1}`}
                       loading="lazy"
                       decoding="async"
@@ -173,7 +176,7 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
                       onClick={() => jumpToMedia(index)}
                       aria-label={`View image ${index + 1}`}
                     >
-                      <img src={src} alt="" className="qv-thumb-img" loading="lazy" decoding="async" />
+                      <img src={getGalleryImage(src, "thumb")} alt="" className="qv-thumb-img" loading="lazy" decoding="async" />
                     </button>
                   ))}
                 </div>

@@ -104,6 +104,66 @@ export const resolveImageUrl = (image) => {
   return `${API_BASE_URL}${prefixed}`;
 };
 
+const CLOUDINARY_UPLOAD_SEGMENT = "/image/upload/";
+
+export const getOptimizedImageUrl = (image, options = {}) => {
+  const resolved = resolveImageUrl(image);
+  if (!resolved) return "";
+
+  const {
+    width,
+    height,
+    crop = "limit",
+    quality = "auto",
+    format = "auto",
+    dpr = "auto",
+  } = options;
+
+  const resolvedUrl = (() => {
+    try {
+      return new URL(resolved, window.location.origin);
+    } catch {
+      return null;
+    }
+  })();
+
+  if (resolvedUrl && resolvedUrl.pathname.startsWith("/uploads/")) {
+    const params = new URLSearchParams({ src: resolvedUrl.pathname.replace(/^\/+/, "") });
+    if (Number.isFinite(width) && width > 0) {
+      params.set("w", String(Math.round(width)));
+    }
+    if (Number.isFinite(height) && height > 0) {
+      params.set("h", String(Math.round(height)));
+    }
+    if (quality !== undefined && quality !== null && quality !== "auto") {
+      params.set("q", String(quality));
+    }
+
+    return `${API_BASE_URL}/api/image?${params.toString()}`;
+  }
+
+  if (!resolved.includes("res.cloudinary.com") || !resolved.includes(CLOUDINARY_UPLOAD_SEGMENT)) {
+    return resolved;
+  }
+
+  const transforms = [`f_${format}`, `q_${quality}`, `dpr_${dpr}`];
+
+  if (crop) {
+    transforms.push(`c_${crop}`);
+  }
+
+  if (Number.isFinite(width) && width > 0) {
+    transforms.push(`w_${Math.round(width)}`);
+  }
+
+  if (Number.isFinite(height) && height > 0) {
+    transforms.push(`h_${Math.round(height)}`);
+  }
+
+  const transformationString = transforms.join(",");
+  return resolved.replace(CLOUDINARY_UPLOAD_SEGMENT, `${CLOUDINARY_UPLOAD_SEGMENT}${transformationString}/`);
+};
+
 export const resolveImageUrls = (images) => {
   if (!Array.isArray(images)) return [];
 
@@ -118,6 +178,10 @@ export const normalizeProduct = (product) => {
   );
   const primaryImage = resolveImageUrl(imageSource) || gallerySources[0] || "";
   const mergedImages = [...new Set([primaryImage, ...gallerySources].filter(Boolean))];
+  const rawTrendingPosition = Number(product.trendingPosition);
+  const trendingPosition = Number.isInteger(rawTrendingPosition) && rawTrendingPosition >= 1 && rawTrendingPosition <= 4
+    ? rawTrendingPosition
+    : null;
 
   return {
     ...product,
@@ -127,6 +191,7 @@ export const normalizeProduct = (product) => {
     mrp: product.mrp ?? product.price,
     rating: product.rating || "New",
     isTrending: product.isTrending === true || product.isTrending === 1 || product.isTrending === "true",
+    trendingPosition,
     imageUrl: primaryImage,
     image: primaryImage,
     images: mergedImages,

@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import "./ProductCard.mobile.css";
 import { FaEye, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
 import ProductTilt from "./ProductTilt";
-import { API_BASE_URL } from "../utils/api";
+import { getOptimizedImageUrl } from "../utils/api";
 
 const PLACEHOLDER_IMAGE = "https://via.placeholder.com/400x500?text=No+Image";
 
@@ -43,18 +43,9 @@ function ProductCard({
         ? `${product.stock} in stock`
         : "Ready to ship";
 
-  // Helper to get correct image URL
-  const getImageUrl = (img) => {
-    if (!img) return '';
-    if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:') || img.startsWith('blob:')) return img;
-    if (img.startsWith('/') && !img.startsWith('/uploads/')) return img;
-    if (img.startsWith('/uploads/')) return `${API_BASE_URL}${img}`;
-    if (img.startsWith('uploads/')) return `${API_BASE_URL}/${img}`;
-    // fallback: just a filename
-    return `${API_BASE_URL}/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
-  };
-
-  const [imgSrc, setImgSrc] = useState(getImageUrl(product.image));
+  const [imgSrc, setImgSrc] = useState(
+    getOptimizedImageUrl(product.image, { width: 720, height: 900 })
+  );
 
   return (
     <ProductTilt>

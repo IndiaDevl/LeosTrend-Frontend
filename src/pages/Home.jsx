@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import HeroSlider from "../components/HeroSlider";
 import HeroSliderMobile from "../components/HeroSlider.mobile";
 import TrustStrip from "../components/TrustStrip";
 import CategoryItems from "../components/CategoryItems";
 import CategoryItemsMobile from "../components/CategoryItems.mobile";
 import OfferBanner from "../components/OfferBanner";
+import OfferBannerMobile from "../components/OfferBanner.mobile";
 import TrendingNow from "../components/TrendingNow";
-import ProductCardGridMobile from "../components/ProductCardGridMobile";
 import TrendingNowMobileAutoSlider from "../components/TrendingNowMobileAutoSlider";
 import TrustTicker from "../components/TrustTicker";
 import BrandImpactStats from "../components/BrandImpactStats";
@@ -17,21 +17,43 @@ import Footer from "../components/Footer";
 import "./Home.css";
 import "./Home.mobile.css";
 
+const MOBILE_BREAKPOINT = 640;
+
+const getIsMobileViewport = () => {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
+};
+
 function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishlistPending }) {
   const [quickProduct, setQuickProduct] = useState(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
   const isWishlisted = (product) =>
     wishlist.some((item) => String(item.id) === String(product?.id));
 
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return undefined;
+    }
+
+    const mediaQuery = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`);
+    const handleChange = (event) => {
+      setIsMobileViewport(event.matches);
+    };
+
+    setIsMobileViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
   return (
     <div className="home-premium">
-      {/* Desktop version */}
-      <div className="mobile-hide">
-        <HeroSlider />
-      </div>
-      {/* Mobile version */}
-      <div className="mobile-show">
-        <HeroSliderMobile />
-      </div>
+      {isMobileViewport ? <HeroSliderMobile /> : <HeroSlider />}
 
       {/* TrustStrip is FULL WIDTH — outside the padded wrapper */}
       <TrustStrip />
@@ -45,38 +67,21 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
             Discover elevated essentials designed for modern everyday wear.
           </p>
         </div>
-        {/* Only render one version per device */}
-        <div className="mobile-hide">
-          <CategoryItems />
-        </div>
-        <div className="mobile-show">
-          <CategoryItemsMobile />
-        </div>
-        {/* Offer Banner Placement */}
-        <OfferBanner />
+          {isMobileViewport ? <CategoryItemsMobile /> : <CategoryItems />}
+          {isMobileViewport ? <OfferBannerMobile /> : <OfferBanner />}
       </section>
 
 
 
-{/* Desktop version */}
-<div className="mobile-hide">
-  <TrendingNow products={tshirts} onQuickView={setQuickProduct} />
-</div>
-      {/* Mobile version */}
-      <div className="mobile-show">
-        <TrendingNowMobileAutoSlider products={tshirts} onQuickView={setQuickProduct} />
-      </div>
+        {isMobileViewport ? (
+          <TrendingNowMobileAutoSlider products={tshirts} onQuickView={setQuickProduct} />
+        ) : (
+          <TrendingNow products={tshirts} onQuickView={setQuickProduct} />
+        )}
 
       <TrustTicker />
 
-      {/* Desktop version */}
-      <div className="mobile-hide">
-        <BrandImpactStats />
-      </div>
-      {/* Mobile version */}
-      <div className="mobile-show">
-        <BrandImpactStatsMobile />
-      </div>
+        {isMobileViewport ? <BrandImpactStatsMobile /> : <BrandImpactStats />}
 
       <CustomerReviews />
 

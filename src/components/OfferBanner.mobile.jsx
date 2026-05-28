@@ -1,6 +1,7 @@
 
 
 import React, { useEffect, useRef, useState } from "react";
+import { getOptimizedImageUrl } from "../utils/api";
 
 // Direct mobile offer banner code (replace with your actual banner JSX)
 export default function OfferBannerMobile(props) {
@@ -63,8 +64,10 @@ export default function OfferBannerMobile(props) {
       onTouchEnd={onTouchEnd}
     >
       <img
-        src={images[current]}
+        src={getOptimizedImageUrl(images[current], { width: 900, height: 420 })}
         alt={`Offer Slide ${current + 1}`}
+        loading="eager"
+        decoding="async"
         style={{ width: '100%', height: 180, objectFit: 'cover', display: 'block', transition: 'all 0.5s' }}
       />
     </div>
