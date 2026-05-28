@@ -47,6 +47,7 @@ function ProductCard({
   const getImageUrl = (img) => {
     if (!img) return '';
     if (img.startsWith('http://') || img.startsWith('https://') || img.startsWith('data:') || img.startsWith('blob:')) return img;
+    if (img.startsWith('/') && !img.startsWith('/uploads/')) return img;
     if (img.startsWith('/uploads/')) return `${API_BASE_URL}${img}`;
     if (img.startsWith('uploads/')) return `${API_BASE_URL}/${img}`;
     // fallback: just a filename

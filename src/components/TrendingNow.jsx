@@ -96,6 +96,7 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
                   const getImageUrl = (img) => {
                     if (!img) return '';
                     if (img.startsWith('http')) return img;
+                    if (img.startsWith('/')) return img;
                     // Change this to your backend URL if different
                     return `http://localhost:5000/uploads/products/${img.replace(/^.*[\\/]/, '')}`;
                   };
