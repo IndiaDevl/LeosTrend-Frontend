@@ -1,97 +1,154 @@
-import React, { useEffect, useRef } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { FaStar } from "react-icons/fa";
 import "./ReviewCarousel.css";
 
 const reviews = [
-  { name: "Arjun M.", location: "Mumbai", review: "Premium quality!", rating: 5, initials: "AM" },
-  { name: "Sneha V.", location: "Chennai", review: "Amazing experience!", rating: 5, initials: "SV" },
-  { name: "Rahul K.", location: "Delhi", review: "Luxury feel.", rating: 5, initials: "RK" },
-  { name: "Priya S.", location: "Hyderabad", review: "Worth it!", rating: 5, initials: "PS" }
+  {
+    name: "Arjun M.",
+    location: "Mumbai",
+    review: "Absolutely premium quality. The oversized tee fits perfectly and the fabric is super heavyweight. Will order again!",
+    rating: 5,
+    initials: "AM",
+    color: "#6366f1",
+  },
+  {
+    name: "Priya K.",
+    location: "Bengaluru",
+    review: "Loved the packaging and the hoodie. Feels like a luxury brand at a fair price. Fast delivery too!",
+    rating: 5,
+    initials: "PK",
+    color: "#ec4899",
+  },
+  {
+    name: "Rahul S.",
+    location: "Delhi",
+    review: "The zip sweatshirt is insane quality. Stitching is perfect and the spiritual design is unique. Highly recommend.",
+    rating: 5,
+    initials: "RS",
+    color: "#14b8a6",
+  },
+  {
+    name: "Sneha V.",
+    location: "Chennai",
+    review: "Got two pieces as gifts. Both recipients were amazed by the quality. LeosTrend is now our go-to brand.",
+    rating: 5,
+    initials: "SV",
+    color: "#f59e0b",
+  }
 ];
 
-// duplicate for loop
-const loopData = [...reviews, ...reviews];
+const AUTO_ADVANCE_DELAY = 3600;
+const SWIPE_THRESHOLD = 40;
 
 export default function ReviewCarousel() {
-  const trackRef = useRef(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartXRef = useRef(null);
+  const touchCurrentXRef = useRef(null);
+  const autoAdvanceRef = useRef(0);
 
- useEffect(() => {
+  const goTo = useCallback((index) => {
+    setActiveIndex(((index % reviews.length) + reviews.length) % reviews.length);
+  }, []);
 
-  if (window.innerWidth > 768) return;
+  const startAutoAdvance = useCallback(() => {
+    window.clearInterval(autoAdvanceRef.current);
+    autoAdvanceRef.current = window.setInterval(() => {
+      setActiveIndex((currentIndex) => (currentIndex + 1) % reviews.length);
+    }, AUTO_ADVANCE_DELAY);
+  }, []);
 
-  const track = trackRef.current;
+  useEffect(() => {
+    startAutoAdvance();
 
-  if (!track) return;
+    return () => {
+      window.clearInterval(autoAdvanceRef.current);
+    };
+  }, [startAutoAdvance]);
 
-  let position = 0;
+  const handleTouchStart = (event) => {
+    touchStartXRef.current = event.touches[0].clientX;
+    touchCurrentXRef.current = event.touches[0].clientX;
+    window.clearInterval(autoAdvanceRef.current);
+  };
 
-  const speed = 0.35;
+  const handleTouchMove = (event) => {
+    touchCurrentXRef.current = event.touches[0].clientX;
+  };
 
-  let animationFrame;
-
-  let isPaused = false;
-
-  const animate = () => {
-
-    if (!isPaused) {
-
-      position -= speed;
-
-      const loopWidth = track.scrollWidth / 2;
-
-      if (Math.abs(position) >= loopWidth) {
-        position = 0;
-      }
-
-      track.style.transform =
-        `translate3d(${position}px, 0, 0)`;
+  const handleTouchEnd = () => {
+    if (touchStartXRef.current === null || touchCurrentXRef.current === null) {
+      startAutoAdvance();
+      return;
     }
 
-    animationFrame = requestAnimationFrame(animate);
+    const swipeDistance = touchStartXRef.current - touchCurrentXRef.current;
+    if (Math.abs(swipeDistance) >= SWIPE_THRESHOLD) {
+      goTo(activeIndex + (swipeDistance > 0 ? 1 : -1));
+    }
+
+    touchStartXRef.current = null;
+    touchCurrentXRef.current = null;
+    startAutoAdvance();
   };
 
-  const pause = () => {
-    isPaused = true;
-  };
-
-  const resume = () => {
-    isPaused = false;
-  };
-
-  track.addEventListener("touchstart", pause, { passive: true });
-
-  track.addEventListener("touchend", resume, { passive: true });
-
-  animationFrame = requestAnimationFrame(animate);
-
-  return () => {
-
-    cancelAnimationFrame(animationFrame);
-
-    track.removeEventListener("touchstart", pause);
-
-    track.removeEventListener("touchend", resume);
-  };
-
-}, []);
   return (
-    <div className="reviews-wrapper">
-      <div className="reviews-track" ref={trackRef}>
-        {loopData.map((r, i) => (
-          <div className="review-card" key={i}>
-            <div className="stars">{'★'.repeat(r.rating)}</div>
+    <section className="review-carousel-section reviews-section">
+      <div className="home-section-head text-center observe-reveal" style={{ marginBottom: "32px" }}>
+        <p className="home-section-kicker">Customer Love</p>
+        <h2 className="home-section-title">What People Say</h2>
+        <p className="home-section-subtitle">Real orders. Real people. Real experiences.</p>
+      </div>
 
-            <p className="review-text">“{r.review}”</p>
+      <div
+        className="review-carousel-wrapper"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        <div
+          className="review-carousel-track"
+          style={{ transform: `translate3d(-${activeIndex * 100}%, 0, 0)` }}
+        >
+          {reviews.map((r) => (
+            <div className="review-carousel-slide" key={r.name}>
+              <article className="review-carousel-card">
+                <div className="review-carousel-stars" aria-label={`${r.rating} out of 5 stars`}>
+                  {Array.from({ length: r.rating }).map((_, starIndex) => (
+                    <FaStar key={starIndex} />
+                  ))}
+                </div>
 
-            <div className="user">
-              <div className="avatar">{r.initials}</div>
-              <div>
-                <div className="name">{r.name}</div>
-                <div className="location">{r.location}</div>
-              </div>
+                <p className="review-carousel-text">&ldquo;{r.review}&rdquo;</p>
+
+                <div className="review-carousel-user">
+                  <div className="review-carousel-avatar" style={{ background: r.color }}>{r.initials}</div>
+                  <div>
+                    <div className="review-carousel-name">{r.name}</div>
+                    <div className="review-carousel-location">{r.location}</div>
+                  </div>
+                </div>
+              </article>
             </div>
-          </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="review-carousel-dots" role="tablist" aria-label="Customer reviews">
+        {reviews.map((review, index) => (
+          <button
+            key={review.name}
+            type="button"
+            role="tab"
+            aria-selected={index === activeIndex}
+            aria-label={`Review ${index + 1}`}
+            className={`review-carousel-dot${index === activeIndex ? " is-active" : ""}`}
+            onClick={() => {
+              goTo(index);
+              startAutoAdvance();
+            }}
+          />
         ))}
       </div>
-    </div>
+    </section>
   );
 }

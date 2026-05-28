@@ -12,6 +12,7 @@ import TrustTicker from "../components/TrustTicker";
 import BrandImpactStats from "../components/BrandImpactStats";
 import BrandImpactStatsMobile from "../components/BrandImpactStats.mobile";
 import CustomerReviews from "../components/CustomerReviews";
+import ReviewCarousel from "../components/ReviewCarousel";
 import ProductQuickViewModal from "../components/ProductQuickViewModal";
 import Footer from "../components/Footer";
 import "./Home.css";
@@ -80,7 +81,7 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
 
         {isMobileViewport ? <BrandImpactStatsMobile /> : <BrandImpactStats />}
 
-      <CustomerReviews />
+      {isMobileViewport ? <ReviewCarousel /> : <CustomerReviews />}
 
       <ProductQuickViewModal
         product={quickProduct}

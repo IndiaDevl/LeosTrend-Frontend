@@ -36,48 +36,43 @@ const reviews = [
   },
 ];
 
-const marqueeReviews = [...reviews, ...reviews];
-
 function CustomerReviews() {
   return (
-    <section className="reviews-section reviews-marquee-section">
+    <section className="reviews-section">
       <div className="home-section-head text-center observe-reveal" style={{ marginBottom: "32px" }}>
         <p className="home-section-kicker">Customer Love</p>
         <h2 className="home-section-title">What People Say</h2>
         <p className="home-section-subtitle">Real orders. Real people. Real experiences.</p>
       </div>
 
-      <div className="reviews-marquee-row">
-        <div className="reviews-marquee-inner">
-          {marqueeReviews.map((r, i) => (
-            <article
-              key={r.name + '-' + i}
-              className="review-card observe-reveal"
-              style={{ "--reveal-delay": `${i * 100}ms` }}
-              aria-hidden={i >= reviews.length ? "true" : undefined}
-            >
-              <div className="review-stars" aria-label={`${r.rating} out of 5 stars`}>
-                {Array.from({ length: r.rating }).map((_, si) => (
-                  <FaStar key={si} />
-                ))}
+      <div className="reviews-grid">
+        {reviews.map((r, i) => (
+          <article
+            key={r.name}
+            className="review-card observe-reveal"
+            style={{ "--reveal-delay": `${i * 100}ms` }}
+          >
+            <div className="review-stars" aria-label={`${r.rating} out of 5 stars`}>
+              {Array.from({ length: r.rating }).map((_, si) => (
+                <FaStar key={si} />
+              ))}
+            </div>
+            <p className="review-text">&ldquo;{r.text}&rdquo;</p>
+            <div className="review-author">
+              <span
+                className="review-avatar"
+                style={{ background: r.color }}
+                aria-hidden="true"
+              >
+                {r.initials}
+              </span>
+              <div>
+                <p className="review-name">{r.name}</p>
+                <p className="review-location">{r.location}</p>
               </div>
-              <p className="review-text">&ldquo;{r.text}&rdquo;</p>
-              <div className="review-author">
-                <span
-                  className="review-avatar"
-                  style={{ background: r.color }}
-                  aria-hidden="true"
-                >
-                  {r.initials}
-                </span>
-                <div>
-                  <p className="review-name">{r.name}</p>
-                  <p className="review-location">{r.location}</p>
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
