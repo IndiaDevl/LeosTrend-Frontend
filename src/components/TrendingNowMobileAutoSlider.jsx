@@ -322,10 +322,6 @@ export default function TrendingNowMobileAutoSlider({ products = [], onQuickView
 					Trending Now
 				</h2>
 
-				<p className="home-section-subtitle">
-					Curated premium essentials from the latest drop
-				</p>
-
 			</div>
 
 			<div className="trending-now-stack trending-now-mobile-stack">

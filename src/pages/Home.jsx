@@ -63,9 +63,6 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
         <div className="home-section-head text-center observe-reveal">
           <p className="home-section-kicker">Curated Collections</p>
           <h2 className="home-section-title">Shop by Category</h2>
-          <p className="home-section-subtitle">
-            Discover elevated essentials designed for modern everyday wear.
-          </p>
         </div>
           {isMobileViewport ? <CategoryItemsMobile /> : <CategoryItems />}
           {isMobileViewport ? <OfferBannerMobile /> : <OfferBanner />}

@@ -46,9 +46,6 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
       <div className="home-section-head text-center observe-reveal">
         <p className="home-section-kicker">Editor Picks</p>
         <h2 className="home-section-title">Trending Now</h2>
-        <p className="home-section-subtitle">
-          Curated premium essentials from the latest drop
-        </p>
       </div>
 
       <div className="trending-now-stack">

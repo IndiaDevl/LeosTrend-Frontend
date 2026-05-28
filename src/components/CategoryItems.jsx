@@ -60,12 +60,11 @@ function CategoryItems() {
   return (
     <section className="category" ref={sectionRef}>
       <div className="category-track">
-        {categoryItems.map((cat, i) => (
+        {categoryItems.map((cat) => (
           <Link
             key={cat.key}
             to={`/collection/${cat.key}`}
             className="category-card"
-            style={{ transitionDelay: `${i * 80}ms` }}
             aria-label={`Shop ${cat.title}`}
           >
             <div className="category-img-wrap">
@@ -81,7 +80,6 @@ function CategoryItems() {
             </div>
 
             <div className="category-info">
-              <span className="category-num">0{i + 1}</span>
               <h3>{cat.title}</h3>
               <span className="category-arrow">Explore</span>
             </div>
