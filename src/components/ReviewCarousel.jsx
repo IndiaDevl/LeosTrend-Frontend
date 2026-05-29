@@ -42,9 +42,16 @@ const SWIPE_THRESHOLD = 40;
 
 export default function ReviewCarousel() {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isCarouselVisible, setIsCarouselVisible] = useState(true);
+  const [isDocumentVisible, setIsDocumentVisible] = useState(() => {
+    if (typeof document === "undefined") return true;
+    return document.visibilityState === "visible";
+  });
+  const sectionRef = useRef(null);
   const touchStartXRef = useRef(null);
   const touchCurrentXRef = useRef(null);
   const autoAdvanceRef = useRef(0);
+  const isAutoAdvanceEnabled = isCarouselVisible && isDocumentVisible;
 
   const goTo = useCallback((index) => {
     setActiveIndex(((index % reviews.length) + reviews.length) % reviews.length);
@@ -58,12 +65,42 @@ export default function ReviewCarousel() {
   }, []);
 
   useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+
+    const handleVisibilityChange = () => {
+      setIsDocumentVisible(document.visibilityState === "visible");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined" || !sectionRef.current) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsCarouselVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!isAutoAdvanceEnabled) {
+      window.clearInterval(autoAdvanceRef.current);
+      return undefined;
+    }
+
     startAutoAdvance();
 
     return () => {
       window.clearInterval(autoAdvanceRef.current);
     };
-  }, [startAutoAdvance]);
+  }, [isAutoAdvanceEnabled, startAutoAdvance]);
 
   const handleTouchStart = (event) => {
     touchStartXRef.current = event.touches[0].clientX;
@@ -77,7 +114,7 @@ export default function ReviewCarousel() {
 
   const handleTouchEnd = () => {
     if (touchStartXRef.current === null || touchCurrentXRef.current === null) {
-      startAutoAdvance();
+      if (isAutoAdvanceEnabled) startAutoAdvance();
       return;
     }
 
@@ -88,11 +125,11 @@ export default function ReviewCarousel() {
 
     touchStartXRef.current = null;
     touchCurrentXRef.current = null;
-    startAutoAdvance();
+    if (isAutoAdvanceEnabled) startAutoAdvance();
   };
 
   return (
-    <section className="review-carousel-section reviews-section">
+    <section className="review-carousel-section reviews-section" ref={sectionRef}>
       <div className="home-section-head text-center observe-reveal" style={{ marginBottom: "32px" }}>
         <p className="home-section-kicker">Customer Love</p>
         <h2 className="home-section-title">What People Say</h2>
@@ -144,7 +181,7 @@ export default function ReviewCarousel() {
             className={`review-carousel-dot${index === activeIndex ? " is-active" : ""}`}
             onClick={() => {
               goTo(index);
-              startAutoAdvance();
+                if (isAutoAdvanceEnabled) startAutoAdvance();
             }}
           />
         ))}

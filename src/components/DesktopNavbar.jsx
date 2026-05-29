@@ -1,7 +1,13 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { FaShoppingCart, FaHeart } from "react-icons/fa";
 import { FiSearch } from "react-icons/fi";
+
+const NAVBAR_LOGO_VIDEO_SOURCES = [
+  "/videos/leostrend-logo.mp4",
+  "/videos/leostrend-logo.mp4.mp4",
+  "/videos/leostrend-intro.mp4",
+];
 
 export default function DesktopNavbar({
   cartItemsCount,
@@ -11,10 +17,17 @@ export default function DesktopNavbar({
   wishlistCount,
   openWishlistPage,
 }) {
+  const [logoSourceIndex, setLogoSourceIndex] = useState(0);
+  const [logoReady, setLogoReady] = useState(false);
   const [collectionOpen, setCollectionOpen] = useState(false);
   const closeTimer = useRef(null);
   const location = useLocation();
   const showWishlist = location.pathname !== "/";
+  const logoSource = NAVBAR_LOGO_VIDEO_SOURCES[logoSourceIndex] ?? NAVBAR_LOGO_VIDEO_SOURCES[0];
+
+  useEffect(() => {
+    setLogoReady(false);
+  }, [logoSourceIndex]);
 
   const handleMenuEnter = () => {
     if (closeTimer.current) clearTimeout(closeTimer.current);
@@ -23,6 +36,14 @@ export default function DesktopNavbar({
 
   const handleMenuLeave = () => {
     closeTimer.current = setTimeout(() => setCollectionOpen(false), 180);
+  };
+
+  const handleLogoError = () => {
+    setLogoReady(false);
+    setLogoSourceIndex((currentIndex) => {
+      if (currentIndex >= NAVBAR_LOGO_VIDEO_SOURCES.length - 1) return currentIndex;
+      return currentIndex + 1;
+    });
   };
 
   return (
@@ -69,7 +90,23 @@ export default function DesktopNavbar({
 
       {/* CENTER — Logo */}
       <Link to="/" className="desktop-brand" aria-label="LeosTrend home">
-        <span className="brand-title">LEOS TREND</span>
+        <span className="navbar-logo-container desktop-logo-container">
+          <span className={`navbar-logo-fallback${logoReady ? " is-hidden" : ""}`} aria-hidden="true">
+            LEOSTREND
+          </span>
+          <video
+            className={`navbar-logo-video${logoReady ? " is-ready" : ""}`}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            onLoadedData={() => setLogoReady(true)}
+            onError={handleLogoError}
+          >
+            <source src={logoSource} type="video/mp4" />
+          </video>
+        </span>
       </Link>
 
       {/* RIGHT — Actions */}

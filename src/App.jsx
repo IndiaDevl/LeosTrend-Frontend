@@ -41,6 +41,12 @@ import "./App.css";
 
 const CART_STORAGE_KEY = "leostrend_cart";
 const SEARCH_STORAGE_KEY = "leostrend_recent_searches";
+const NAVBAR_MOBILE_MEDIA_QUERY = "(max-width: 992px)";
+
+const getIsMobileNavbarViewport = () => {
+  if (typeof window === "undefined") return false;
+  return window.matchMedia(NAVBAR_MOBILE_MEDIA_QUERY).matches;
+};
 
 const formatCategoryLabel = (category = "") => {
   if (category === "zip") return "Zip Sweatshirts";
@@ -783,6 +789,21 @@ const isWishlistPending = () => false;
 
 const AppShell = () => {
   const [checkoutStep, setCheckoutStep] = useState(2);
+  const [isMobileNavbarViewport, setIsMobileNavbarViewport] = useState(getIsMobileNavbarViewport);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(NAVBAR_MOBILE_MEDIA_QUERY);
+    const handleViewportChange = (event) => {
+      setIsMobileNavbarViewport(event.matches);
+    };
+
+    setIsMobileNavbarViewport(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handleViewportChange);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleViewportChange);
+    };
+  }, []);
 
   const handleOrderSuccess = () => {
     setCart([]);
@@ -834,32 +855,33 @@ return(
 )}
 
 <div className="navbar-top">
-  {/* Desktop only */}
-  <DesktopNavbar
-    cartItemsCount={cartItemsCount}
-    badgePulse={badgePulse}
-    openCartPage={openCartPage}
-    openSearchOverlay={openSearchOverlay}
-    wishlistCount={wishlist.length}
-    openWishlistPage={openWishlistPage}
-  />
-  {/* Mobile only */}
-  <MobileNavbar
-    menuOpen={menuOpen}
-    openMobileMenu={openMobileMenu}
-    closeMobileMenu={closeMobileMenu}
-    mobileMenuTab={mobileMenuTab}
-    setMobileMenuTab={setMobileMenuTab}
-    megaOpen={megaOpen}
-    toggleMegaMenu={toggleMegaMenu}
-    setMegaOpen={setMegaOpen}
-    megaTriggerRef={megaTriggerRef}
-    cartItemsCount={cartItemsCount}
-    badgePulse={badgePulse}
-    openCartPage={openCartPage}
-    openSearchOverlay={openSearchOverlay}
-    openWishlistPage={openWishlistPage}
-  />
+  {isMobileNavbarViewport ? (
+    <MobileNavbar
+      menuOpen={menuOpen}
+      openMobileMenu={openMobileMenu}
+      closeMobileMenu={closeMobileMenu}
+      mobileMenuTab={mobileMenuTab}
+      setMobileMenuTab={setMobileMenuTab}
+      megaOpen={megaOpen}
+      toggleMegaMenu={toggleMegaMenu}
+      setMegaOpen={setMegaOpen}
+      megaTriggerRef={megaTriggerRef}
+      cartItemsCount={cartItemsCount}
+      badgePulse={badgePulse}
+      openCartPage={openCartPage}
+      openSearchOverlay={openSearchOverlay}
+      openWishlistPage={openWishlistPage}
+    />
+  ) : (
+    <DesktopNavbar
+      cartItemsCount={cartItemsCount}
+      badgePulse={badgePulse}
+      openCartPage={openCartPage}
+      openSearchOverlay={openSearchOverlay}
+      wishlistCount={wishlist.length}
+      openWishlistPage={openWishlistPage}
+    />
+  )}
 </div>
 
 </header>

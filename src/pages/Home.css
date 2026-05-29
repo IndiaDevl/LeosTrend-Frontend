@@ -26,6 +26,16 @@
   background: #ffffff;
 }
 
+@supports (content-visibility: auto) {
+  .home-section-block,
+  .trending-now-section,
+  .brand-impact-section,
+  .reviews-section {
+    content-visibility: auto;
+    contain-intrinsic-size: 1px 720px;
+  }
+}
+
 /* ══ Scroll-reveal observer system ══════════════════════════════════ */
 .observe-reveal {
   opacity: 1;

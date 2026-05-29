@@ -4,6 +4,12 @@ import { FaShoppingCart, FaChevronDown } from "react-icons/fa";
 import { FiSearch, FiX } from "react-icons/fi";
 import useRipple from "../utils/useRipple";
 
+const NAVBAR_LOGO_VIDEO_SOURCES = [
+  "/videos/leostrend-logo.mp4",
+  "/videos/leostrend-logo.mp4.mp4",
+  "/videos/leostrend-intro.mp4",
+];
+
 export default function MobileNavbar({
   menuOpen,
   openMobileMenu,
@@ -23,6 +29,13 @@ export default function MobileNavbar({
   const location = useLocation();
   const showCartWishlist = location.pathname !== "/";
   const ripple = useRipple();
+  const [logoSourceIndex, setLogoSourceIndex] = React.useState(0);
+  const [logoReady, setLogoReady] = React.useState(false);
+  const logoSource = NAVBAR_LOGO_VIDEO_SOURCES[logoSourceIndex] ?? NAVBAR_LOGO_VIDEO_SOURCES[0];
+
+  React.useEffect(() => {
+    setLogoReady(false);
+  }, [logoSourceIndex]);
 
   const mainLinks = [
     { to: "/",        label: "Home"       },
@@ -47,6 +60,14 @@ export default function MobileNavbar({
     ]},
   ];
 
+  const handleLogoError = () => {
+    setLogoReady(false);
+    setLogoSourceIndex((currentIndex) => {
+      if (currentIndex >= NAVBAR_LOGO_VIDEO_SOURCES.length - 1) return currentIndex;
+      return currentIndex + 1;
+    });
+  };
+
   return (
     <>
       {/* ── TOP BAR ── */}
@@ -67,7 +88,23 @@ export default function MobileNavbar({
         </button>
 
         <Link to="/" className="mobile-brand" aria-label="LeosTrend home">
-          <span className="brand-title">LEOS TREND</span>
+          <span className="navbar-logo-container mobile-logo-container">
+            <span className={`navbar-logo-fallback${logoReady ? " is-hidden" : ""}`} aria-hidden="true">
+              LEOSTREND
+            </span>
+            <video
+              className={`navbar-logo-video${logoReady ? " is-ready" : ""}`}
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              onLoadedData={() => setLogoReady(true)}
+              onError={handleLogoError}
+            >
+              <source src={logoSource} type="video/mp4" />
+            </video>
+          </span>
         </Link>
 
         <div className="mobile-nav-right">
@@ -83,7 +120,25 @@ export default function MobileNavbar({
 
           {/* close strip */}
           <div className="pmenu-head">
-            <span className="pmenu-brand">LEOS TREND</span>
+            <div className="pmenu-brand" aria-label="LeosTrend logo">
+              <span className="navbar-logo-container pmenu-logo-container">
+                <span className={`navbar-logo-fallback${logoReady ? " is-hidden" : ""}`} aria-hidden="true">
+                  LEOSTREND
+                </span>
+                <video
+                  className={`navbar-logo-video${logoReady ? " is-ready" : ""}`}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  onLoadedData={() => setLogoReady(true)}
+                  onError={handleLogoError}
+                >
+                  <source src={logoSource} type="video/mp4" />
+                </video>
+              </span>
+            </div>
             <button className="pmenu-close" onClick={closeMobileMenu} aria-label="Close menu" onPointerDown={ripple}>
               <FiX />
             </button>

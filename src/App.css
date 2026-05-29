@@ -323,19 +323,22 @@ padding-inline:40px !important;
 
 /* ===== DESKTOP NAVBAR ===== */
 .desktop-navbar{
-display:grid;
-grid-template-columns:1fr auto 1fr;
+display:flex;
 align-items:center;
+justify-content:space-between;
 height:var(--navbar-height);
 padding-inline:40px;
 width:100%;
+position:relative;
+gap:24px;
 }
 
 .desktop-nav-links{
-grid-column:1;
 display:flex;
 align-items:center;
 gap:28px;
+flex:1 1 0;
+min-width:0;
 }
 
 .desktop-nav-links a{
@@ -366,19 +369,24 @@ transition:width .22s ease;
 .desktop-nav-links a:hover::after{ width:100%; }
 
 .desktop-brand{
-grid-column:2;
 display:flex;
 align-items:center;
 justify-content:center;
 text-decoration:none;
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%, -50%);
+z-index:1;
 }
 
 .desktop-nav-right{
-grid-column:3;
 display:flex;
 align-items:center;
 gap:14px;
-justify-self:end;
+justify-content:flex-end;
+flex:1 1 0;
+min-width:0;
 }
 
 .desktop-search-btn{
@@ -388,15 +396,17 @@ display:grid;
 place-items:center;
 background:#ffffff;
 border:1px solid #e8e8e8;
-border-radius:0;
+border-radius:999px;
 cursor:pointer;
 color:#0a0a0a;
-transition:background .2s, border-color .2s, color .2s;
+box-shadow:none;
+transition:background .2s, border-color .2s, color .2s, transform .2s;
 }
 .desktop-search-btn:hover{
 background:#0a0a0a;
 border-color:#0a0a0a;
 color:#ffffff;
+ transform:translateY(-1px);
 }
 .desktop-search-icon{
 font-size:16px;
@@ -410,24 +420,25 @@ cursor:pointer;
 position:relative;
 width:40px;
 height:40px;
-border-radius:0;
+border-radius:999px;
 display:grid;
 place-items:center;
 color:#ffffff;
 box-shadow:none;
-transition:background .2s, border-color .2s, color .2s;
+ transition:background .2s, border-color .2s, color .2s, transform .2s;
 }
 
 .desktop-wishlist-btn:hover{
 background:#ffffff;
 border-color:#0a0a0a;
 color:#0a0a0a;
+ transform:translateY(-1px);
 }
 
 .desktop-wishlist-btn .cart-count{
-background:#ffffff;
-border:1.5px solid #0a0a0a;
-color:#0a0a0a;
+ background:#ffffff;
+ border:1.5px solid rgba(15,23,42,.2);
+ color:#111827;
 }
 
 @keyframes wishlistFadeIn{
@@ -519,16 +530,88 @@ position:relative;
 
 .mobile-brand{
 text-decoration:none;
-font-family:"Cinzel", serif;
-font-size:13px;
-font-weight:700;
-letter-spacing:.22em;
-text-transform:uppercase;
-color:#0a0a0a;
+display:flex;
+align-items:center;
+justify-content:center;
 position:absolute;
 left:50%;
 transform:translateX(-50%);
 white-space:nowrap;
+width:min(300px, calc(100vw - 112px));
+}
+
+.navbar-logo-container{
+display:flex;
+align-items:center;
+justify-content:center;
+position:relative;
+height:clamp(28px, 3.4vw, 40px);
+width:clamp(208px, 28vw, 288px);
+overflow:hidden;
+pointer-events:none;
+background:transparent;
+}
+
+.navbar-logo-fallback{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%, -50%);
+font-family:"Cinzel", serif;
+font-size:clamp(10px, 1vw, 12px);
+font-weight:700;
+letter-spacing:.08em;
+color:#111111;
+opacity:1;
+transition:opacity .18s ease;
+white-space:nowrap;
+}
+
+.navbar-logo-fallback.is-hidden{
+opacity:0;
+}
+
+.navbar-logo-video{
+display:block;
+height:100%;
+width:auto;
+max-width:100%;
+object-fit:contain;
+object-position:center;
+background:transparent;
+mix-blend-mode:normal;
+filter:none;
+transform:scale(1.5);
+transform-origin:center;
+opacity:0;
+transition:opacity .18s ease;
+}
+
+.navbar-logo-video.is-ready{
+opacity:1;
+}
+
+.desktop-logo-container .navbar-logo-video{
+transform:scale(1.48);
+}
+
+.mobile-logo-container .navbar-logo-video{
+transform:scale(1.7);
+}
+
+.mobile-logo-container{
+height:clamp(36px, 7.8vw, 50px);
+width:min(300px, calc(100vw - 112px));
+max-width:100%;
+}
+
+.pmenu-logo-container{
+height:clamp(30px, 3.8vw, 42px);
+width:clamp(218px, 29vw, 298px);
+}
+
+.pmenu-logo-container .navbar-logo-video{
+transform:scale(1.48);
 }
 
 .mobile-nav-right{
@@ -821,14 +904,7 @@ line-height:1;
 }
 
 .brand-title{
-font-family:"Cinzel", var(--font-display), serif;
-font-size:26px;
-font-weight:600;
-letter-spacing:.26em;
-line-height:1;
-text-transform:uppercase;
-color:#111111;
-text-shadow:none;
+display:none;
 }
 
 .brand-ornament{
@@ -4340,12 +4416,7 @@ min-height:54px;
 
 /* Dark mode toast */
 
-
-
-
-/* ═══════════════════════════════════════════════════════════════════
-   BADGE PULSE ANIMATION
-═══════════════════════════════════════════════════════════════════ */
+/* Badge pulse animation */
 
 .badge-pulse {
   animation: badgePulseAnim 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;

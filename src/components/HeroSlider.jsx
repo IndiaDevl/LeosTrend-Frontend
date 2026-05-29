@@ -16,9 +16,16 @@ export default function HeroSlider() {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(max-width: 640px)").matches;
   });
+  const [isHeroVisible, setIsHeroVisible] = useState(true);
+  const [isDocumentVisible, setIsDocumentVisible] = useState(() => {
+    if (typeof document === "undefined") return true;
+    return document.visibilityState === "visible";
+  });
+  const sectionRef = useRef(null);
   const stripRef = useRef(null);
   const panelImgRef = useRef(null);
   const timerRef = useRef(null);
+  const isAutoPlayEnabled = isHeroVisible && isDocumentVisible;
 
   useEffect(() => {
     if (typeof window === "undefined") return undefined;
@@ -29,6 +36,31 @@ export default function HeroSlider() {
     setIsMobileViewport(mediaQuery.matches);
     mediaQuery.addEventListener("change", handleChange);
     return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof document === "undefined") return undefined;
+
+    const handleVisibilityChange = () => {
+      setIsDocumentVisible(document.visibilityState === "visible");
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === "undefined" || !sectionRef.current) return undefined;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeroVisible(entry.isIntersecting);
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(sectionRef.current);
+    return () => observer.disconnect();
   }, []);
 
   const getHeroImage = (img, width) => getOptimizedImageUrl(img, { width, height: 1000 });
@@ -68,18 +100,25 @@ export default function HeroSlider() {
   };
 
   useEffect(() => {
+    if (!isAutoPlayEnabled) {
+      clearInterval(timerRef.current);
+      return undefined;
+    }
+
     resetStrip();
     startAuto();
     return () => clearInterval(timerRef.current);
-  }, []);
+  }, [isAutoPlayEnabled]);
 
   useEffect(() => {
-    resetStrip();
-  }, [current]);
+    if (isAutoPlayEnabled) {
+      resetStrip();
+    }
+  }, [current, isAutoPlayEnabled]);
 
   const handleNav = (dir) => {
     goTo(current + dir);
-    startAuto();
+    if (isAutoPlayEnabled) startAuto();
   };
 
   const handleShopNow = () => {
@@ -92,7 +131,7 @@ export default function HeroSlider() {
   };
 
   return (
-    <section className="hero">
+    <section className="hero" ref={sectionRef}>
 
       {/* ── Slides ── */}
       <div className="hero-slider">
