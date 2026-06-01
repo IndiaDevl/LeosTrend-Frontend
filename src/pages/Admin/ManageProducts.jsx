@@ -122,7 +122,9 @@ function ManageProducts() {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(PRODUCTS_API_URL);
+      const response = await axios.get(PRODUCTS_API_URL, {
+        params: { view: "full" },
+      });
       setProducts(response.data.map(normalizeProduct));
       setError("");
     } catch (err) {

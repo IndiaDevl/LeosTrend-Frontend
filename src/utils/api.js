@@ -32,6 +32,7 @@ const getApiBaseUrl = () => {
 
 export const API_BASE_URL = getApiBaseUrl();
 export const PRODUCTS_API_URL = `${API_BASE_URL}/api/products`;
+export const getProductDetailApiUrl = (productId) => `${PRODUCTS_API_URL}/${encodeURIComponent(String(productId || '').trim())}`;
 export const ORDERS_API_URL = `${API_BASE_URL}/api/orders`;
 export const CREATE_ORDER_API_URL = `${API_BASE_URL}/api/create-order`;
 export const HEALTH_API_URL = `${API_BASE_URL}/api/health`;

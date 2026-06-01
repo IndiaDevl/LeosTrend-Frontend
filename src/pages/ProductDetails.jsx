@@ -1,7 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import axios from "axios";
 import { Link, useParams } from "react-router-dom";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import useBodyScrollLock from "../utils/useBodyScrollLock";
+import { getProductDetailApiUrl, normalizeProduct } from "../utils/api";
 import "./ProductDetails.css";
 
 function ProductDetails({
@@ -15,10 +17,12 @@ function ProductDetails({
 const { id } = useParams();
 const decodedId = decodeURIComponent(id || "");
 
-const product = useMemo(
+const summaryProduct = useMemo(
 () => tshirts.find((item) => String(item.id) === decodedId),
 [decodedId, tshirts]
 );
+const [product, setProduct] = useState(summaryProduct || null);
+const [detailLoading, setDetailLoading] = useState(false);
 
 const [quantity, setQuantity] = useState(1);
 const [selectedSize, setSelectedSize] = useState("M");
@@ -34,8 +38,43 @@ const lightboxDragRef = useRef({ startX: 0, startY: 0, panX: 0, panY: 0 });
 
 useBodyScrollLock(lightboxOpen, "product-lightbox-open");
 
+useEffect(() => {
+  setProduct(summaryProduct || null);
+}, [summaryProduct]);
+
+useEffect(() => {
+  let isMounted = true;
+
+  const loadProductDetails = async () => {
+    if (!decodedId) return;
+
+    setDetailLoading(true);
+
+    try {
+      const response = await axios.get(getProductDetailApiUrl(decodedId));
+      if (isMounted && response?.data) {
+        setProduct(normalizeProduct(response.data));
+      }
+    } catch (error) {
+      if (isMounted && !summaryProduct) {
+        setProduct(null);
+      }
+    } finally {
+      if (isMounted) {
+        setDetailLoading(false);
+      }
+    }
+  };
+
+  loadProductDetails();
+
+  return () => {
+    isMounted = false;
+  };
+}, [decodedId, summaryProduct]);
+
 if (!product) {
-if (productsLoading) {
+if (productsLoading || detailLoading) {
 return (
 <section className="product-details-page">
 <div className="container details-shell">

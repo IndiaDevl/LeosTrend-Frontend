@@ -733,7 +733,7 @@ border-color:#d1d5db;
 .pmenu-nav{
   display:flex;
   flex-direction:column;
-  background:#f8f8f5;
+  background:#fff;
   flex:1;
 }
 .pmenu-link{
@@ -757,7 +757,7 @@ width:100%;
 
 position: relative;
 z-index: 5;
-background:#f8f8f5;
+background:#fff;
 
 animation:pmenuLinkIn .42s cubic-bezier(.22,1,.36,1) both;
 animation-delay:calc(var(--i, 0) * 55ms + 60ms);
@@ -788,7 +788,7 @@ transform:rotate(180deg);
 .pmenu-collection{
 display:flex;
 flex-direction:column;
-background:#fafafa;
+background:#fff;
 border-bottom:1px solid #f3f4f6;
 padding:4px 0 12px;
 animation:pmenuCollectionIn .25s cubic-bezier(.22,1,.36,1) both;
@@ -4444,7 +4444,7 @@ min-height:54px;
   position: fixed;
   inset: 0;
   z-index: 999999999;
-  background: #f8f8f5;
+  background: #fff;
   display: flex;
   flex-direction: column;
   width: 100%;
