@@ -6,7 +6,7 @@ import "./CategoryItems.css";
 const categoryItems = [
   {
     key: "oversized",
-    title: "Oversized",
+    title: "TEST123",
     badge: "T-Shirts",
     image:
       "https://res.cloudinary.com/dppuhxbti/image/upload/v1782810854/ChatGPT_Image_Jun_30_2026_02_33_21_PM_v5swa7.png",
