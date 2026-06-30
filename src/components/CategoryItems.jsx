@@ -9,28 +9,28 @@ const categoryItems = [
     title: "Oversized",
     badge: "T-Shirts",
     image:
-      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777570621/WhatsApp_Image_2026-04-30_at_11.04.02_PM_v6emxj.jpg",
+      "https://res.cloudinary.com/dppuhxbti/image/upload/v1782810854/ChatGPT_Image_Jun_30_2026_02_33_21_PM_v5swa7.png",
   },
   {
     key: "sweatshirts",
     title: "Sweatshirts",
     badge: "Graphic",
     image:
-      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777560139/ChatGPT_Image_Apr_28_2026_10_01_30_PM_mga6ky.png",
+      "https://res.cloudinary.com/dzb32pohu/image/upload/f_auto,q_auto,dpr_auto,c_limit,w_760,h_950/v1777560140/ChatGPT_Image_Apr_28_2026_10_01_22_PM_vtihtm.png",
   },
   {
     key: "zip",
     title: "Zip",
     badge: "Tops",
     image:
-      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777560186/ChatGPT_Image_Apr_28_2026_10_05_17_PM_bqjydm.png",
+      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777574766/ChatGPT_Image_May_1_2026_12_12_28_AM_oh3zcm.png",
   },
   {
     key: "hoodies",
     title: "Hoodies",
     badge: "Essentials",
     image:
-      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777657279/WhatsApp_Image_2026-05-01_at_11.08.51_PM_qqdw8u.jpg",
+      "https://res.cloudinary.com/dzb32pohu/image/upload/v1777658981/WhatsApp_Image_2026-05-01_at_11.26.29_PM_xnj157.jpg",
   },
 ];
 
@@ -38,10 +38,9 @@ function CategoryItems() {
   const sectionRef = useRef(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
-    const cards = Array.from(
-      sectionRef.current.querySelectorAll(".category-card")
-    );
+    if (!sectionRef.current) return undefined;
+
+    const cards = Array.from(sectionRef.current.querySelectorAll(".category-card"));
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -53,40 +52,40 @@ function CategoryItems() {
       },
       { threshold: 0.08, rootMargin: "0px 0px -20px 0px" }
     );
-    cards.forEach((c) => observer.observe(c));
+
+    cards.forEach((card) => observer.observe(card));
     return () => observer.disconnect();
   }, []);
 
   return (
     <section className="category" ref={sectionRef}>
       <div className="category-track">
-        {categoryItems.map((cat) => (
+        {categoryItems.map((category) => (
           <Link
-            key={cat.key}
-            to={`/collection/${cat.key}`}
+            key={category.key}
+            to={`/collection/${category.key}`}
             className="category-card"
-            aria-label={`Shop ${cat.title}`}
+            aria-label={`Shop ${category.title}`}
           >
             <div className="category-img-wrap">
               <span className="category-badge" aria-hidden="true">
-                {cat.badge}
+                {category.badge}
               </span>
               <img
-                src={getOptimizedImageUrl(cat.image, { width: 900, height: 1100 })}
-                alt={cat.title}
+                src={getOptimizedImageUrl(category.image, { width: 900, height: 1100 })}
+                alt={category.title}
                 loading="lazy"
                 draggable="false"
               />
             </div>
 
             <div className="category-info">
-              <h3>{cat.title}</h3>
+              <h3>{category.title}</h3>
               <span className="category-arrow">Explore</span>
             </div>
           </Link>
         ))}
       </div>
-
     </section>
   );
 }
