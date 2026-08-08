@@ -299,7 +299,7 @@ function TrendingNowMobileCarouselRow({ group, groupIndex, navigate, getImageUrl
 	);
 }
 
-export default function TrendingNowMobileAutoSlider({ products = [], onQuickView }) {
+export default function TrendingNowMobileAutoSlider({ products = [] }) {
 	const navigate = useNavigate();
 
 	const groupedProducts = useMemo(() => buildTrendingGroups(products), [products]);

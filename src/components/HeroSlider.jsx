@@ -132,6 +132,10 @@ export default function HeroSlider() {
 
   return (
     <section className="hero" ref={sectionRef}>
+      <div className="hero-bg-noise" aria-hidden="true" />
+      <div className="hero-bg-grid" aria-hidden="true" />
+      <div className="hero-bg-vignette" aria-hidden="true" />
+      <div className="hero-bg-sheen" aria-hidden="true" />
 
       {/* ── Slides ── */}
       <div className="hero-slider">
@@ -158,15 +162,15 @@ export default function HeroSlider() {
 
           <div className="hero-eyebrow">
             <div className="eyebrow-line" />
-            <p className="hero-kicker">New Arrivals</p>
+            <p className="hero-kicker">LeosTrend Black Label</p>
           </div>
 
           <h1 className="hero-title">
-            Easy Tees,<br /><em>Everyday Wear</em>
+            Black and White,<br /><em>Built for Everyday</em>
           </h1>
 
           <p className="hero-subtitle">
-            Soft oversized tees for daily wear.
+            Clean silhouettes, premium fabric, and bold minimal energy.
           </p>
 
           <div className="hero-actions">
@@ -184,7 +188,7 @@ export default function HeroSlider() {
             </div>
             <div className="stat-item">
               <span className="stat-num">48hr</span>
-              <span className="stat-label">Fast Dispatch</span>
+              <span className="stat-label">Quick Dispatch</span>
             </div>
             <div className="stat-item">
               <span className="stat-num">100%</span>
@@ -237,9 +241,9 @@ export default function HeroSlider() {
 
       {/* ── Float tags ── */}
       <div className="hero-float-tags">
-        <span className="float-tag">Limited Drops</span>
-        <span className="float-tag">Premium Fabric</span>
-        <span className="float-tag">Fast Delivery</span>
+        <span className="float-tag">Mono Edition</span>
+        <span className="float-tag">Sharp Fit</span>
+        <span className="float-tag">Street Luxury</span>
       </div>
 
     </section>

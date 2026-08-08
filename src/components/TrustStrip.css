@@ -168,17 +168,117 @@
   .ts-card { padding: 32px 24px; }
 }
 
-/* MOBILE — show marquee, hide desktop grid */
-@media (max-width: 640px) {
+/* MOBILE/TABLET — show marquee, hide desktop grid earlier to avoid cramped cards */
+@media (max-width: 900px) {
   .ts-inner-desktop { display: none; }
   .ts-marquee-wrapper { display: block; }
+  .ts-marquee-track { animation-duration: 22s; }
+  .ts-marquee-track .ts-card {
+    flex: 0 0 280px;
+    width: 280px;
+  }
+}
+
+@media (max-width: 640px) {
   .ts-marquee-track .ts-title { font-size: 13px; }
   .ts-marquee-track .ts-text { font-size: 10px; line-height: 1.45; }
   .ts-marquee-track .ts-icon-wrap { width: 36px; height: 36px; }
   .ts-marquee-track .ts-svg { width: 14px; height: 14px; }
+  .ts-marquee-track .ts-card {
+    flex: 0 0 250px;
+    width: 250px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ts-card { opacity: 1; transform: none; transition: none; }
   .ts-marquee-track { animation: none; }
+}
+
+/* ── Monochrome Premium Override ─────────────────────────────────── */
+.ts-section {
+  background: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.ts-card {
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.01));
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ts-card::before {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.65);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .ts-card:hover {
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  }
+
+  .ts-card:hover .ts-icon-wrap {
+    background: #ffffff;
+    border-color: rgba(255, 255, 255, 0.92);
+  }
+
+  .ts-card:hover .ts-svg {
+    stroke: #0a0a0a;
+  }
+
+  .ts-card:hover .ts-num {
+    color: rgba(255, 255, 255, 0.62);
+  }
+
+  .ts-card:hover .ts-text {
+    color: rgba(255, 255, 255, 0.9);
+  }
+}
+
+.ts-icon-wrap {
+  border-color: rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ts-svg {
+  stroke: #ffffff;
+}
+
+.ts-num {
+  color: rgba(255, 255, 255, 0.38);
+  letter-spacing: 2px;
+}
+
+.ts-title {
+  font-family: "Space Grotesk", "Sora", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.ts-title::after {
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.ts-text {
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Manrope", "DM Sans", sans-serif;
+  font-weight: 400;
+  line-height: 1.62;
+}
+
+@media (max-width: 640px) {
+  .ts-marquee-track .ts-card {
+    background: linear-gradient(170deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .ts-marquee-track .ts-title {
+    font-size: 14px;
+  }
+
+  .ts-marquee-track .ts-text {
+    font-size: 11px;
+    line-height: 1.5;
+  }
 }

@@ -16,7 +16,9 @@ function loadScrollMap() {
 function saveScrollMap(map) {
   try {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify([...map]));
-  } catch {}
+  } catch {
+    // Ignore quota/serialization errors for non-critical UX persistence.
+  }
 }
 
 function ScrollManager() {

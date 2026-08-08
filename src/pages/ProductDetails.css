@@ -844,6 +844,21 @@
   color: #334155;
 }
 
+.bogo-purchase-note {
+  margin: 4px 0 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(212, 168, 67, 0.24);
+  background: linear-gradient(135deg, rgba(255, 249, 224, 0.95), rgba(255, 255, 255, 0.96));
+  color: #5f4200;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.bogo-purchase-note strong {
+  color: #9a6a00;
+}
+
 .qty-controls {
   display: inline-flex;
   align-items: center;
@@ -911,6 +926,11 @@
   cursor: pointer;
   width: 100%;
   transition: opacity 0.2s ease;
+}
+
+.add-btn.bogo-active {
+  background: linear-gradient(120deg, #0f172a 0%, #312e81 100%);
+  box-shadow: 0 16px 28px rgba(49, 46, 129, 0.18);
 }
 
 .add-btn::after {

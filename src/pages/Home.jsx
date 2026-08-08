@@ -14,6 +14,8 @@ import BrandImpactStatsMobile from "../components/BrandImpactStats.mobile";
 import CustomerReviews from "../components/CustomerReviews";
 import ReviewCarousel from "../components/ReviewCarousel";
 import ProductQuickViewModal from "../components/ProductQuickViewModal";
+import BogoOfferBanner from "../components/BogoOfferBanner";
+import BogoOfferPopup from "../components/BogoOfferPopup";
 import Footer from "../components/Footer";
 import "./Home.css";
 import "./Home.mobile.css";
@@ -28,7 +30,7 @@ const getIsMobileViewport = () => {
   return window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT}px)`).matches;
 };
 
-function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishlistPending }) {
+function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishlistPending, isBogoOfferActive = false }) {
   const [quickProduct, setQuickProduct] = useState(null);
   const [isMobileViewport, setIsMobileViewport] = useState(getIsMobileViewport);
   const isWishlisted = (product) =>
@@ -54,7 +56,9 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
 
   return (
     <div className="home-premium">
+      <BogoOfferPopup />
       {isMobileViewport ? <HeroSliderMobile /> : <HeroSlider />}
+      <BogoOfferBanner />
 
       {/* TrustStrip is FULL WIDTH — outside the padded wrapper */}
       <TrustStrip />
@@ -86,10 +90,11 @@ function Home({ tshirts = [], addToCart, wishlist = [], toggleWishlist, isWishli
       <ProductQuickViewModal
         product={quickProduct}
         onClose={() => setQuickProduct(null)}
-        onAddToCart={(product) => addToCart(product, "M")}
+        onAddToCart={(product) => addToCart(product, "M", 1)}
         isWishlisted={isWishlisted(quickProduct)}
         isWishlistLoading={Boolean(quickProduct && isWishlistPending?.(quickProduct))}
         onToggleWishlist={toggleWishlist}
+        isBogoOfferActive={isBogoOfferActive}
       />
         <Footer />
     </div>

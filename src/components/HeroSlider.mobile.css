@@ -20,8 +20,8 @@
     padding: 0 !important;
     overflow: hidden !important;
     min-height: 320px !important;
-    height: clamp(360px, 62svh, 500px) !important;
-    max-height: 500px !important;
+    height: clamp(340px, 58svh, 460px) !important;
+    max-height: 460px !important;
   }
 
   .hero-slider {
@@ -42,39 +42,57 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    object-position: center 24%;
   }
 
   .hero-content {
     width: 100%;
-    padding: 0 16px 22px !important;
+    padding: 0 16px 18px !important;
     align-items: flex-end !important;
     box-sizing: border-box;
   }
 
   .hero-content-inner {
-    max-width: min(100%, 320px);
+    max-width: min(100%, 286px);
     align-items: flex-start;
     text-align: left;
   }
 
+  .hero-eyebrow {
+    margin-bottom: 10px;
+  }
+
+  .hero-kicker {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  .hero-title {
+    font-size: clamp(25px, 8.2vw, 33px);
+    margin-bottom: 10px;
+    line-height: 1.06;
+  }
+
   .hero-subtitle {
-    font-size: 10.5px;
-    line-height: 1.55;
+    font-size: 11px;
+    line-height: 1.46;
     margin-bottom: 12px;
-    max-width: 90%;
+    max-width: 88%;
   }
 
   .hero-actions {
     gap: 10px;
     align-items: flex-start;
-    margin: 14px 0 0 !important;
+    margin: 0 !important;
   }
 
   .hero-btn.primary {
-    height: 36px;
-    font-size: 11px;
+    height: 38px;
+    font-size: 10px;
+    letter-spacing: 0.14em;
     padding: 0 16px;
-    border-radius: 16px;
-    max-width: 80%;
+    border-radius: 999px;
+    max-width: 74%;
+    box-shadow: 0 10px 20px rgba(255, 255, 255, 0.15);
   }
 }

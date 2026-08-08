@@ -60,6 +60,7 @@ function ProductDetails({
   toggleWishlist,
   isWishlistPending,
   productsLoading = false,
+  isBogoOfferActive = false,
 }) {
 const { id } = useParams();
 const decodedId = decodeURIComponent(id || "");
@@ -122,7 +123,7 @@ useEffect(() => {
       if (isMounted && response?.data) {
         setProduct(normalizeProduct(response.data));
       }
-    } catch (error) {
+    } catch {
       if (isMounted && !summaryProduct) {
         setProduct(null);
       }
@@ -176,42 +177,9 @@ useEffect(() => {
   loadReviews(1);
 }, [decodedId]);
 
-if (!product) {
-if (productsLoading || detailLoading) {
-return (
-<section className="product-details-page">
-<div className="container details-shell">
-<div className="product-details-card">
-<div className="details-skel-img skel" />
-<div className="details-skel-body">
-<div className="skel skel-line details-skel-brand" />
-<div className="skel skel-line details-skel-title" />
-<div className="skel skel-line details-skel-price" />
-<div className="skel skel-line details-skel-desc" />
-<div className="skel skel-line details-skel-desc" />
-<div className="skel skel-line details-skel-btn" />
-</div>
-</div>
-</div>
-</section>
-);
-}
-return (
-<section className="product-details-page">
-<div className="container details-shell">
-<div className="product-details-empty">
-<h2>Product not found</h2>
-<p>This item is unavailable or was removed.</p>
-<Link className="view-btn" to="/">Back to Home</Link>
-</div>
-</div>
-</section>
-);
-}
-
-const safeMrp = product.mrp || product.price || 1;
-const discount = Math.max(0, Math.round((1 - product.price / safeMrp) * 100));
-const availableSizes = Array.isArray(product.sizes) && product.sizes.length > 0 ? product.sizes : ["M"];
+const safeMrp = product?.mrp || product?.price || 1;
+const discount = Math.max(0, Math.round((1 - Number(product?.price || 0) / safeMrp) * 100));
+const availableSizes = Array.isArray(product?.sizes) && product.sizes.length > 0 ? product.sizes : ["M"];
 const sizeChartRows = availableSizes.map((sizeLabel) => {
   const normalizedSize = normalizeSizeKey(sizeLabel);
   const customMeasurement = Number(product?.sizeChart?.[normalizedSize]);
@@ -225,22 +193,26 @@ const sizeChartRows = availableSizes.map((sizeLabel) => {
   };
 });
 const selectedSizeChest = sizeChartRows.find((row) => normalizeSizeKey(row.size) === normalizeSizeKey(selectedSize))?.chest;
-const selectedSizeStock = getStockForSize(product, selectedSize);
+const selectedSizeStock = product ? getStockForSize(product, selectedSize) : 0;
 const outOfStock = selectedSizeStock <= 0;
 const lowStock = Number.isFinite(selectedSizeStock) && selectedSizeStock > 0 && selectedSizeStock < 5;
 const maxQuantity = selectedSizeStock === Number.POSITIVE_INFINITY ? 10 : Math.max(selectedSizeStock, 1);
-const availableColors = Array.isArray(product.colors) && product.colors.length > 0 ? product.colors : ["Signature"];
-const totalPrice = product.price * quantity;
-const productImages = Array.isArray(product.images) && product.images.length > 0
+const availableColors = Array.isArray(product?.colors) && product.colors.length > 0 ? product.colors : ["Signature"];
+const totalPrice = Number(product?.price || 0) * quantity;
+const displayPrice = Number(product?.price || 0);
+const displayMrp = Number(product?.mrp || 0);
+const displaySavings = Math.max((displayMrp || displayPrice) - displayPrice, 0);
+const productImages = Array.isArray(product?.images) && product.images.length > 0
 ? product.images
-: [product.image].filter(Boolean);
-const isWishlisted = wishlist.some((item) => String(item.id) === String(product.id));
-const isWishlistLoading = Boolean(isWishlistPending?.(product));
-const reviewCount = Number(product.reviewCount ?? reviewMeta.stats?.reviewCount ?? 0);
-const averageRating = Number(product.averageRating ?? reviewMeta.stats?.averageRating ?? 0);
+: [product?.image].filter(Boolean);
+const isWishlisted = wishlist.some((item) => String(item.id) === String(product?.id));
+const isWishlistLoading = Boolean(product && isWishlistPending?.(product));
+const reviewCount = Number(product?.reviewCount ?? reviewMeta.stats?.reviewCount ?? 0);
+const averageRating = Number(product?.averageRating ?? reviewMeta.stats?.averageRating ?? 0);
 const hasReviews = reviewCount > 0;
 
 useEffect(() => {
+if (!product) return;
 const firstAvailableSize = availableSizes.find((size) => getStockForSize(product, size) > 0) || availableSizes[0];
 setSelectedSize(firstAvailableSize);
 setQuantity(1);
@@ -290,6 +262,39 @@ return () => {
 document.removeEventListener("keydown", onKeyDown);
 };
 }, [lightboxOpen, activeMediaIndex, productImages.length]);
+
+if (!product) {
+if (productsLoading || detailLoading) {
+return (
+<section className="product-details-page">
+<div className="container details-shell">
+<div className="product-details-card">
+<div className="details-skel-img skel" />
+<div className="details-skel-body">
+<div className="skel skel-line details-skel-brand" />
+<div className="skel skel-line details-skel-title" />
+<div className="skel skel-line details-skel-price" />
+<div className="skel skel-line details-skel-desc" />
+<div className="skel skel-line details-skel-desc" />
+<div className="skel skel-line details-skel-btn" />
+</div>
+</div>
+</div>
+</section>
+);
+}
+return (
+<section className="product-details-page">
+<div className="container details-shell">
+<div className="product-details-empty">
+<h2>Product not found</h2>
+<p>This item is unavailable or was removed.</p>
+<Link className="view-btn" to="/">Back to Home</Link>
+</div>
+</div>
+</section>
+);
+}
 
 const increaseQty = () => setQuantity((prev) => Math.min(prev + 1, maxQuantity));
 const decreaseQty = () => setQuantity((prev) => Math.max(1, prev - 1));
@@ -663,14 +668,16 @@ aria-pressed={isWishlisted}
 <div className="price-row">
 
 <span className="price">
-₹{product.price}
+₹{displayPrice}
 </span>
 
+{displayMrp && (
 <span className="mrp">
-₹{product.mrp}
+₹{displayMrp}
 </span>
+)}
 
-<span className="savings-pill">Save ₹{Math.max((product.mrp || product.price) - product.price, 0)}</span>
+<span className="savings-pill">Save ₹{displaySavings}</span>
 
 </div>
 
@@ -738,13 +745,19 @@ disabled={getStockForSize(product, size) <= 0}
 </div>
 </div>
 
+{isBogoOfferActive && (
+  <div className="bogo-purchase-note">
+    <strong>Offer:</strong> Buy 2 items, pay for 1. Applied automatically in cart.
+  </div>
+)}
+
 <div className="total-row">
-<span>Total</span>
+<span>Item total</span>
 <strong>₹{totalPrice}</strong>
 </div>
 
 <button
-className={`add-btn ${outOfStock ? "is-disabled" : ""}`}
+className={`add-btn ${outOfStock ? "is-disabled" : ""} ${isBogoOfferActive ? "bogo-active" : ""}`}
 onClick={handleAddToCart}
 disabled={outOfStock}
 >
@@ -775,7 +788,7 @@ Back to {product.category}
 <article>
 <h4>Delivery</h4>
 <p>Dispatch in 24-48 hrs</p>
-<p>Free shipping above ₹999</p>
+<p>Shipping: Free for 1 item, ₹50 for 2+ items</p>
 <p>Secure packaging with quality seal</p>
 </article>
 </div>

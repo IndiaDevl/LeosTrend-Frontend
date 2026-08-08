@@ -7,13 +7,14 @@ import { getOptimizedImageUrl } from "../utils/api";
 import { navigateToPageStart } from "../utils/navigation";
 
 
-function TrendingNow({ products = [], onQuickView, gridRefs }) {
+function TrendingNow({ products = [], gridRefs }) {
   // DEBUG: Log all products, their category
   // console.log("TrendingNow products:", products);
   // products.forEach(p => console.log("Product:", p.name, "Category:", p.category));
 
   const navigate = useNavigate();
-  const rowRefs = gridRefs || useRef([]);
+  const internalRowRefs = useRef([]);
+  const rowRefs = gridRefs ?? internalRowRefs;
 
   const groupedProducts = useMemo(() => {
     return buildTrendingGroups(products);
@@ -39,7 +40,7 @@ function TrendingNow({ products = [], onQuickView, gridRefs }) {
     return () => {
       mediaQuery.removeEventListener("change", syncMode);
     };
-  }, [groupedProducts]);
+  }, [groupedProducts, rowRefs]);
 
   return (
     <section className="trending-now-section">

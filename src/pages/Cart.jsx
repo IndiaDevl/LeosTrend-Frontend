@@ -4,8 +4,11 @@ import "./Cart.css";
 
 function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
   const itemCount = cart.reduce((total, item) => total + item.quantity, 0);
+  const originalSubtotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const subtotal = calculateTotal();
-  const shipping = 0;
+  const savings = Math.max(0, originalSubtotal - subtotal);
+  const saleActive = subtotal < originalSubtotal;
+  const shipping = itemCount <= 1 ? 0 : 50;
   const finalTotal = subtotal + shipping;
 
   return (
@@ -39,6 +42,7 @@ function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
                   <p className="cart-brand-label">Leos Trend</p>
                   <h3>{item.name}</h3>
                   <p>Size: {item.size || "M"}</p>
+                  <p>{saleActive ? "Offer price" : "Unit price"}</p>
                   <p>₹{item.price} × {item.quantity}</p>
                   <p className="item-subtotal">₹{item.price * item.quantity}</p>
 
@@ -73,12 +77,29 @@ function Cart({ cart, removeFromCart, updateCartQuantity, calculateTotal }) {
 
             <div className="summary-row">
               <span>Items ({itemCount})</span>
+              <span>{cart.length} products</span>
+            </div>
+
+            <div className="summary-row">
+              <span>Original subtotal</span>
+              <span>₹{originalSubtotal}</span>
+            </div>
+
+            {savings > 0 && (
+              <div className="summary-row" style={{ color: "#0f766e" }}>
+                <span>Offer discount</span>
+                <span>-₹{savings}</span>
+              </div>
+            )}
+
+            <div className="summary-row">
+              <span>Discounted subtotal</span>
               <span>₹{subtotal}</span>
             </div>
 
             <div className="summary-row">
               <span>Shipping</span>
-              <span>Free</span>
+              <span>{shipping === 0 ? "Free" : `₹${shipping}`}</span>
             </div>
 
             <div className="summary-row grand-total">

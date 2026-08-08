@@ -108,6 +108,15 @@ function AdminSidebar() {
         >
           Reviews
         </NavLink>
+
+        <NavLink
+          to="/admin/bogo-offer"
+          className={({ isActive }) =>
+            `admin-link ${isActive ? "active" : ""}`
+          }
+        >
+          BOGO Offer
+        </NavLink>
       </nav>
 
       <button type="button" className="admin-logout" onClick={handleLogout}>

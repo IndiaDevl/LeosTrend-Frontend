@@ -17,6 +17,66 @@
     line-height: 1.5 !important;
   }
 }
+
+/* ══ Monochrome Home Override ══════════════════════════════════════ */
+.home-premium {
+  background: #050505;
+}
+
+.home-section-head {
+  margin-bottom: 26px;
+}
+
+.home-section-kicker {
+  font-family: "Space Grotesk", "Sora", sans-serif;
+  color: rgba(255, 255, 255, 0.66);
+  letter-spacing: 0.24em;
+}
+
+.home-section-kicker::before {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.home-section-title {
+  font-family: "Space Grotesk", "Sora", sans-serif;
+  color: #ffffff;
+  letter-spacing: -0.03em;
+}
+
+.home-section-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-family: "Manrope", "Sora", sans-serif;
+}
+
+.trust-ticker {
+  background: linear-gradient(180deg, #080808 0%, #050505 100%);
+  border-top: 1px solid rgba(255, 255, 255, 0.14);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.trust-ticker-row + .trust-ticker-row {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.trust-ticker-item {
+  color: rgba(255, 255, 255, 0.62);
+  font-family: "Space Grotesk", "Sora", sans-serif;
+}
+
+.trust-ticker-track--reverse .trust-ticker-item {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+@media (max-width: 640px) {
+  .home-section-title {
+    font-size: clamp(25px, 8.2vw, 40px);
+  }
+
+  .home-section-kicker {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+  }
+}
 /* ══ Premium LeosTrend Home ══════════════════════════════════════════ */
 
 /* ── Global page shell ── */

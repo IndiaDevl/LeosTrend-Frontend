@@ -50,8 +50,14 @@ function StateDropdown({ value, onChange }) {
 
 
 function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => {} }) {
-  const SHIPPING_FEE = 0;
+  const BASE_SHIPPING_FEE = 50;
   const { order, setOrder, clearOrder } = useCheckout();
+  const itemCount = cart.reduce((sum, item) => sum + Number(item.quantity || 0), 0);
+  const shippingFee = itemCount <= 1 ? 0 : BASE_SHIPPING_FEE;
+  const originalSubtotal = cart.reduce((sum, item) => sum + Number(item.price || 0) * Number(item.quantity || 0), 0);
+  const discountedSubtotal = calculateTotal();
+  const savings = Math.max(0, originalSubtotal - discountedSubtotal);
+  const saleActive = discountedSubtotal < originalSubtotal;
 
   const [step, setStep] = useState(2);
   const [loading, setLoading] = useState(false);
@@ -153,8 +159,7 @@ function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => 
       return;
     }
 
-    // Always include shipping in total
-    const totalAmount = (calculateTotal() + SHIPPING_FEE) * 100;
+    const totalAmount = (discountedSubtotal + shippingFee) * 100;
 
     let orderData;
 
@@ -210,7 +215,7 @@ function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => 
             color: item.color,
             image: item.image,
           })),
-          total: calculateTotal() + SHIPPING_FEE,
+          total: discountedSubtotal + shippingFee,
           payment: {
             razorpayPaymentId: response.razorpay_payment_id,
             razorpayOrderId: response.razorpay_order_id,
@@ -263,7 +268,7 @@ function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => 
         // All retries failed — payment backup is still in localStorage
         setLoading(false);
         setPaymentError(
-          "Payment of ₹" + (calculateTotal() + SHIPPING_FEE) + " was successful (Payment ID: " +
+          "Payment of ₹" + (discountedSubtotal + shippingFee) + " was successful (Payment ID: " +
             response.razorpay_payment_id +
             ") but we couldn't save your order. Don't worry — your payment is safe. " +
             "Please contact support with this Payment ID and we will process your order."
@@ -493,24 +498,33 @@ function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => 
               ))}
 
               <div className="summary-row">
-                <span>Subtotal</span>
+                <span>Original subtotal</span>
                 <span>
                   ₹
-                  {cart.reduce(
-                    (s, i) => s + i.price * i.quantity,
-                    0
-                  )}
+                  {originalSubtotal}
                 </span>
+              </div>
+
+              {savings > 0 && (
+                <div className="summary-row" style={{ color: "#0f766e" }}>
+                  <span>Offer discount</span>
+                  <span>-₹{savings}</span>
+                </div>
+              )}
+
+              <div className="summary-row">
+                <span>Discounted subtotal</span>
+                <span>₹{discountedSubtotal}</span>
               </div>
 
               <div className="summary-row">
                 <span>Shipping</span>
-                <span>Free</span>
+                <span>{shippingFee === 0 ? "Free" : `₹${shippingFee}`}</span>
               </div>
 
               <div className="summary-total">
                 <span>Total</span>
-                <strong>₹{calculateTotal() + SHIPPING_FEE}</strong>
+                <strong>₹{discountedSubtotal + shippingFee}</strong>
               </div>
             </div>
           </>

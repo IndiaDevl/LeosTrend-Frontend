@@ -1,0 +1,388 @@
+/* ── BOGO Offer Popup ───────────────────────────────────────────────── */
+.bogo-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.08), transparent 35%),
+    rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 20px;
+  backdrop-filter: blur(10px);
+  animation: bogoOverlayIn 0.28s ease;
+}
+
+@keyframes bogoOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.bogo-popup {
+  position: relative;
+  background: linear-gradient(160deg, #0a0a0a 0%, #020202 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 22px;
+  padding: clamp(30px, 5vw, 48px) clamp(24px, 5vw, 52px);
+  max-width: 520px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 26px 72px rgba(0, 0, 0, 0.74), 0 0 0 1px rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  animation: bogoPopupIn 0.42s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@keyframes bogoPopupIn {
+  from { opacity: 0; transform: scale(0.88) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.bogo-popup::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.1), transparent 42%);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.bogo-popup-grid,
+.bogo-popup-sheen,
+.bogo-popup-orb {
+  position: absolute;
+  pointer-events: none;
+}
+
+.bogo-popup-grid {
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.34;
+  mask-image: linear-gradient(165deg, #000 20%, transparent 88%);
+}
+
+.bogo-popup-sheen {
+  inset: -45% auto -45% -30%;
+  width: 60%;
+  background: linear-gradient(92deg, transparent 0%, rgba(255, 255, 255, 0.2) 48%, transparent 100%);
+  filter: blur(1px);
+  animation: bogoPopupSheen 7.2s linear infinite;
+}
+
+.bogo-popup-orb {
+  width: 230px;
+  height: 230px;
+  right: -120px;
+  top: -84px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 72%);
+  filter: blur(8px);
+}
+
+.bogo-popup-kicker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin: 0 auto 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: rgba(255, 255, 255, 0.82);
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s ease-out both;
+}
+
+.bogo-popup-close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.72);
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+  z-index: 2;
+}
+
+.bogo-popup-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  transform: scale(1.03);
+}
+
+.bogo-popup-tag {
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: rgba(255, 255, 255, 0.76);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.05s ease-out both;
+}
+
+.bogo-popup-title {
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: clamp(28px, 5vw, 40px);
+  font-weight: 700;
+  line-height: 1.04;
+  margin: 0 0 12px;
+  color: #fff;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.09s ease-out both;
+}
+
+.bogo-popup-subtitle {
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.8);
+  margin: 0 0 22px;
+  line-height: 1.56;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.13s ease-out both;
+}
+
+/* Countdown */
+.bogo-popup-countdown-wrap {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 16px 16px 14px;
+  margin-bottom: 22px;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.17s ease-out both;
+}
+
+.bogo-popup-expires-label {
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1.7px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.58);
+  margin: 0 0 12px;
+}
+
+.bogo-popup-countdown {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.bogo-popup-cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 56px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.bogo-popup:hover .bogo-popup-cd-unit {
+  transform: translateY(-1px);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.05));
+}
+
+.bogo-popup-cd-num {
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: 25px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+  line-height: 1;
+}
+
+.bogo-popup-cd-label {
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: rgba(255, 255, 255, 0.56);
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+
+.bogo-popup-cd-sep {
+  font-size: 22px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.64);
+  align-self: center;
+}
+
+/* Actions */
+.bogo-popup-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.21s ease-out both;
+}
+
+.bogo-popup-cta {
+  display: inline-block;
+  font-family: "Space Grotesk", "Sora", "Segoe UI", sans-serif;
+  background: #ffffff;
+  color: #060606;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 13px 36px;
+  border-radius: 999px;
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  box-shadow: 0 12px 28px rgba(255, 255, 255, 0.16);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.22s ease;
+}
+
+.bogo-popup-cta:hover {
+  transform: translateY(-2px);
+  background: #ececec;
+  box-shadow: 0 16px 34px rgba(255, 255, 255, 0.25);
+}
+
+.bogo-popup-skip {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px;
+  transition: color 0.2s ease;
+}
+
+.bogo-popup-skip:hover {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.bogo-popup-footnote {
+  margin: 18px 0 0;
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.52);
+  line-height: 1.5;
+  position: relative;
+  z-index: 1;
+  animation: bogoPopupLift 0.44s 0.25s ease-out both;
+}
+
+@keyframes bogoPopupSheen {
+  0% {
+    transform: translateX(-10%) rotate(-14deg);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.52;
+  }
+  60% {
+    opacity: 0.14;
+  }
+  100% {
+    transform: translateX(210%) rotate(-14deg);
+    opacity: 0;
+  }
+}
+
+@keyframes bogoPopupLift {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .bogo-popup {
+    border-radius: 12px;
+    padding: 28px 18px 22px;
+  }
+
+  .bogo-popup-countdown-wrap {
+    padding: 14px 12px;
+  }
+
+  .bogo-popup-cd-num {
+    font-size: 21px;
+  }
+
+  .bogo-popup-cd-unit {
+    min-width: 44px;
+    padding: 7px 8px;
+  }
+
+  .bogo-popup-title {
+    font-size: clamp(28px, 9vw, 34px);
+  }
+
+  .bogo-popup-subtitle {
+    font-size: 14px;
+  }
+
+  .bogo-popup-close {
+    top: 10px;
+    right: 10px;
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bogo-popup,
+  .bogo-popup-kicker,
+  .bogo-popup-tag,
+  .bogo-popup-title,
+  .bogo-popup-subtitle,
+  .bogo-popup-countdown-wrap,
+  .bogo-popup-actions,
+  .bogo-popup-footnote,
+  .bogo-popup-sheen {
+    animation: none;
+  }
+
+  .bogo-popup-cd-unit,
+  .bogo-popup-cta,
+  .bogo-popup-close,
+  .bogo-popup-skip {
+    transition: none;
+  }
+}

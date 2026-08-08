@@ -107,9 +107,12 @@ function OrderDetails() {
                   <div>
                     <h4>{item.name}</h4>
                     <p>Size: {item.size || "M"}</p>
-                    <p>Qty: {item.quantity}</p>
+                    <p>
+                      Qty: {item.quantity}
+                      {item.chargedQuantity != null && ` | Charged: ${item.chargedQuantity}`}
+                    </p>
                   </div>
-                  <strong>₹{item.price * item.quantity}</strong>
+                  <strong>₹{item.lineTotal ?? (item.price * item.quantity)}</strong>
                 </article>
               ))}
             </div>

@@ -56,26 +56,6 @@ const priceFilterLabels = {
 
 const isWishlisted = (productId) => wishlist.some((item) => String(item.id) === String(productId));
 
-const toggleFilter = (value, setState) => {
-setState((prev) =>
-prev.includes(value)
-? prev.filter((item) => item !== value)
-: [...prev, value]
-);
-};
-
-const inSelectedPriceRange = (price) => {
-if (priceFilters.length === 0) return true;
-
-const checks = {
-"500-1000": price >= 500 && price <= 1000,
-"1000-2000": price > 1000 && price <= 2000,
-"2000+": price > 2000
-};
-
-return priceFilters.some((range) => checks[range]);
-};
-
 const priceFilterSummary = priceFilters.length === 0
 ? "All ranges"
 : priceFilters.length === 1
@@ -144,7 +124,15 @@ const baseProducts = activeCategory === "all"
 : tshirts.filter((p) => String(p.category || "").trim().toLowerCase() === activeCategory);
 
 const withFilters = baseProducts.filter((product) => {
-const matchesPrice = inSelectedPriceRange(product.price);
+const price = Number(product.price || 0);
+const matchesPrice = priceFilters.length === 0
+? true
+: priceFilters.some((range) => {
+if (range === "500-1000") return price >= 500 && price <= 1000;
+if (range === "1000-2000") return price > 1000 && price <= 2000;
+if (range === "2000+") return price > 2000;
+return false;
+});
 
 return matchesPrice;
 });

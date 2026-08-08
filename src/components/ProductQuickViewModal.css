@@ -336,10 +336,26 @@ body.qv-open .mobile-bottom-nav {
   letter-spacing: .03em;
 }
 
+.qv-info-chip.qv-bogo-chip {
+  color: #9a6a00;
+  font-weight: 700;
+}
+
 .qv-info-chip:last-child {
   border-right: none;
   margin-right: 0;
   padding-right: 0;
+}
+
+.qv-bogo-note {
+  margin: 10px 0 2px;
+  color: #92400e;
+  font-size: 12px;
+  line-height: 1.55;
+  background: linear-gradient(135deg, rgba(255, 249, 224, 0.94), rgba(255, 255, 255, 0.96));
+  border: 1px solid rgba(212, 168, 67, 0.2);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
 
 @media (max-width: 1080px) {

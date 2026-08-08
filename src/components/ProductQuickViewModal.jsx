@@ -7,7 +7,7 @@ import { getOptimizedImageUrl } from "../utils/api";
 import { scrollToPageStart } from "../utils/navigation";
 import "./ProductQuickViewModal.css";
 
-function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = false, isWishlistLoading = false, onToggleWishlist }) {
+function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = false, isWishlistLoading = false, onToggleWishlist, isBogoOfferActive = false }) {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
   const [shareFeedback, setShareFeedback] = useState("");
@@ -273,6 +273,11 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
               <span className="qv-info-chip">
                 {isOutOfStock ? "Unavailable" : "Ready to ship"}
               </span>
+              {isBogoOfferActive && !isOutOfStock && (
+                <span className="qv-info-chip qv-bogo-chip">
+                  Buy 2 Pay 1
+                </span>
+              )}
               {product.rating && (
                 <span className="qv-info-chip">
                   {product.rating}
@@ -280,13 +285,19 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
               )}
             </div>
 
+            {isBogoOfferActive && !isOutOfStock && (
+              <p className="qv-bogo-note">
+                Add any 2 items. Discount applies automatically in cart.
+              </p>
+            )}
+
             <div className="qv-actions-row">
               <button
                 type="button"
                 disabled={isOutOfStock}
                 className="qv-primary-btn"
                 onClick={() => {
-                  onAddToCart(product);
+                  onAddToCart(product, 1);
                   onClose();
                 }}
               >

@@ -29,7 +29,8 @@ import AddProduct from "./pages/Admin/AddProduct";
 import ManageProducts from "./pages/Admin/ManageProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
 import AdminReviews from "./pages/Admin/AdminReviews";
-import { normalizeProduct, PRODUCTS_API_URL, PRODUCTS_UPDATED_EVENT } from "./utils/api";
+import AdminBogo from "./pages/Admin/AdminBogo";
+import { API_BASE_URL, normalizeProduct, PRODUCTS_API_URL, PRODUCTS_UPDATED_EVENT } from "./utils/api";
 
 import Loader from "./components/Loader";
 import ScrollManager from "./components/ScrollManager";
@@ -84,6 +85,37 @@ const getAvailableStock = (product, size = "") => {
 
   if (typeof product?.stock !== "number") return Number.POSITIVE_INFINITY;
   return product.stock;
+};
+
+const calculateCartSubtotal = (items = [], isBogoActive = false) => {
+  const normalizedItems = (Array.isArray(items) ? items : []).map((item, index) => ({
+    index,
+    price: Number(item?.price || 0),
+    quantity: Math.max(1, Math.trunc(Number(item?.quantity) || 1)),
+  }));
+
+  if (!isBogoActive) {
+    return normalizedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  }
+
+  const units = [];
+  normalizedItems.forEach((item) => {
+    for (let unitIndex = 0; unitIndex < item.quantity; unitIndex += 1) {
+      units.push({ index: item.index, price: item.price });
+    }
+  });
+
+  units.sort((left, right) => right.price - left.price || left.index - right.index);
+
+  const chargedCounts = new Array(normalizedItems.length).fill(0);
+
+  units.forEach((unit, unitIndex) => {
+    if (unitIndex % 2 === 0) {
+      chargedCounts[unit.index] += 1;
+    }
+  });
+
+  return normalizedItems.reduce((sum, item, index) => sum + (item.price * chargedCounts[index]), 0);
 };
 
 const getStoredArray = (key) => {
@@ -478,6 +510,7 @@ const [productsLoading,setProductsLoading]=useState(true);
 const [tshirts,setTshirts]=useState(()=>homeProducts.map(normalizeProduct));
 const [cart,setCart]=useState(()=>getStoredArray(CART_STORAGE_KEY).map(normalizeStoredCartItem).filter(Boolean));
 const [wishlist, setWishlist] = useState(getStoredWishlist());
+const [isBogoOfferActive, setIsBogoOfferActive] = useState(false);
 
 const [menuOpen,setMenuOpen]=useState(false);
 const [searchOpen,setSearchOpen]=useState(false);
@@ -512,6 +545,34 @@ setLoading(false);
 },2000);
 return ()=>clearTimeout(timer);
 },[]);
+
+useEffect(() => {
+  let isMounted = true;
+
+  const fetchBogoOffer = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/bogo-offer`, {
+        params: { _ts: Date.now() },
+      });
+
+      if (isMounted) {
+        setIsBogoOfferActive(Boolean(response.data?.is_active));
+      }
+    } catch {
+      if (isMounted) {
+        setIsBogoOfferActive(false);
+      }
+    }
+  };
+
+  fetchBogoOffer();
+  window.addEventListener("focus", fetchBogoOffer);
+
+  return () => {
+    isMounted = false;
+    window.removeEventListener("focus", fetchBogoOffer);
+  };
+}, []);
 
 useEffect(() => {
   const fetchProducts = async ({ forceFresh = false } = {}) => {
@@ -737,7 +798,7 @@ return { ...item, quantity: Math.min(nextQuantity, maxQuantity) };
 /* TOTAL */
 
 const calculateTotal=()=>{
-return cart.reduce((t,i)=>t+i.price*i.quantity,0);
+return calculateCartSubtotal(cart, isBogoOfferActive);
 };
 
 const cartItemsCount = cart.reduce((total,item)=>total+item.quantity,0);
@@ -942,6 +1003,7 @@ return(
           wishlist={wishlist}
           toggleWishlist={toggleWishlist}
           isWishlistPending={isWishlistPending}
+          isBogoOfferActive={isBogoOfferActive}
         />
       }
     />
@@ -970,6 +1032,7 @@ wishlist={wishlist}
 toggleWishlist={toggleWishlist}
 isWishlistPending={isWishlistPending}
 productsLoading={productsLoading}
+isBogoOfferActive={isBogoOfferActive}
 />
 }
 />
@@ -1059,6 +1122,15 @@ path="/admin/reviews"
 element={
 <AdminRoute>
 <AdminReviews/>
+</AdminRoute>
+}
+/>
+
+<Route
+path="/admin/bogo-offer"
+element={
+<AdminRoute>
+<AdminBogo/>
 </AdminRoute>
 }
 />

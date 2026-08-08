@@ -246,7 +246,9 @@ function AdminOrders() {
                                         {item.color && ` | Color: ${item.color}`}
                                       </p>
                                       <p className="admin-order-item-price">
-                                        {formatCurrency(item.price)} x {item.quantity}
+                                        Qty: {item.quantity}
+                                        {item.chargedQuantity != null && ` | Charged: ${item.chargedQuantity}`}
+                                        {item.lineTotal != null && ` | ${formatCurrency(item.lineTotal)}`}
                                       </p>
                                     </div>
                                   </div>
