@@ -6,7 +6,7 @@ import "./CategoryItems.css";
 const categoryItems = [
   {
     key: "oversized",
-    title: "TEST123",
+    title: "OVERSIZED",
     badge: "T-Shirts",
     image:
       "https://res.cloudinary.com/dppuhxbti/image/upload/v1782810854/ChatGPT_Image_Jun_30_2026_02_33_21_PM_v5swa7.png",
@@ -19,8 +19,8 @@ const categoryItems = [
       "https://res.cloudinary.com/dzb32pohu/image/upload/f_auto,q_auto,dpr_auto,c_limit,w_760,h_950/v1777560140/ChatGPT_Image_Apr_28_2026_10_01_22_PM_vtihtm.png",
   },
   {
-    key: "zip",
-    title: "Zip",
+    key: "raw-edge-sweatshirts",
+    title: "RAW EDGE SWEATSHIRTS",
     badge: "Tops",
     image:
       "https://res.cloudinary.com/dzb32pohu/image/upload/v1777574766/ChatGPT_Image_May_1_2026_12_12_28_AM_oh3zcm.png",

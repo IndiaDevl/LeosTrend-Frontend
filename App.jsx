@@ -42,7 +42,7 @@ const CART_STORAGE_KEY = "leostrend_cart";
 const SEARCH_STORAGE_KEY = "leostrend_recent_searches";
 
 const formatCategoryLabel = (category = "") => {
-  if (category === "zip") return "Zip Sweatshirts";
+  if (category === "RAW_EDGE_SWEATSHIRTS") return "Raw Edge Sweatshirts";
 
   return String(category)
     .replace(/[-_]+/g, " ")

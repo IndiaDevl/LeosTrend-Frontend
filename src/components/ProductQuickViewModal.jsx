@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
-import { FaArrowRight, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import { FaArrowRight, FaHeart, FaRegHeart, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 import useBodyScrollLock from "../utils/useBodyScrollLock";
 import { getOptimizedImageUrl } from "../utils/api";
 import { scrollToPageStart } from "../utils/navigation";
@@ -10,6 +10,7 @@ import "./ProductQuickViewModal.css";
 function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = false, isWishlistLoading = false, onToggleWishlist }) {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [zoomPosition, setZoomPosition] = useState({ x: 50, y: 50 });
+  const [shareFeedback, setShareFeedback] = useState("");
   const galleryTrackRef = useRef(null);
   const modalRef = useRef(null);
 
@@ -55,6 +56,13 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
     }
   }, [product]);
 
+  useEffect(() => {
+    if (!shareFeedback) return undefined;
+
+    const timer = window.setTimeout(() => setShareFeedback(""), 2200);
+    return () => window.clearTimeout(timer);
+  }, [shareFeedback]);
+
   if (!product) return null;
 
   const isOutOfStock = typeof product.stock === "number" && product.stock <= 0;
@@ -68,6 +76,38 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
   const activeImage = mediaSources[activeMediaIndex] || product.image;
   const getGalleryImage = (src, kind = "main") =>
     getOptimizedImageUrl(src, kind === "thumb" ? { width: 180, height: 180 } : { width: 1200, height: 1400 });
+
+  const handleShareProduct = async () => {
+    const productUrl = `${window.location.origin}/product/${encodeURIComponent(product.id)}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${product.name} | LeosTrend`,
+          text: `Check out ${product.name} on LeosTrend.`,
+          url: productUrl,
+        });
+        setShareFeedback("Shared");
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(productUrl);
+        setShareFeedback("Link copied");
+        return;
+      }
+
+      const tempInput = document.createElement("input");
+      tempInput.value = productUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      setShareFeedback("Link copied");
+    } catch {
+      setShareFeedback("Share unavailable");
+    }
+  };
 
   const handleGalleryScroll = () => {
     const track = galleryTrackRef.current;
@@ -269,6 +309,18 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
                 {isWishlistLoading ? "Saving..." : isWishlisted ? "Wishlisted" : "Wishlist"}
               </button>
 
+              <button
+                type="button"
+                className="qv-secondary-btn"
+                onClick={async () => {
+                  await handleShareProduct();
+                }}
+                aria-label="Share product"
+              >
+                <FaShareAlt />
+                Share
+              </button>
+
               <Link
                 to={`/product/${encodeURIComponent(product.id)}`}
                 className="qv-secondary-btn"
@@ -281,6 +333,8 @@ function ProductQuickViewModal({ product, onClose, onAddToCart, isWishlisted = f
                 <FaArrowRight />
               </Link>
             </div>
+
+            {shareFeedback && <p className="qv-share-feedback" aria-live="polite">{shareFeedback}</p>}
           </div>
         </div>
       </div>

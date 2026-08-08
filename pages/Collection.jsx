@@ -37,7 +37,7 @@ const categoryLabels = {
 oversized: "Oversized",
 sweatshirts: "Sweatshirts",
 hoodies: "Hoodies",
-zip: "Zip Sweatshirts"
+RAW_EDGE_SWEATSHIRTS: "Raw Edge Sweatshirts",
 };
 
 const categoryLabel = categoryLabels[activeCategory] || "Collection";

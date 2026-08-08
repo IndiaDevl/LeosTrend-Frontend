@@ -28,6 +28,7 @@ import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AddProduct from "./pages/Admin/AddProduct";
 import ManageProducts from "./pages/Admin/ManageProducts";
 import AdminOrders from "./pages/Admin/AdminOrders";
+import AdminReviews from "./pages/Admin/AdminReviews";
 import { normalizeProduct, PRODUCTS_API_URL, PRODUCTS_UPDATED_EVENT } from "./utils/api";
 
 import Loader from "./components/Loader";
@@ -49,7 +50,7 @@ const getIsMobileNavbarViewport = () => {
 };
 
 const formatCategoryLabel = (category = "") => {
-  if (category === "zip") return "Zip Sweatshirts";
+  if (category === "RAW_EDGE_SWEATSHIRTS") return "Raw Edge Sweatshirts";
 
   return String(category)
     .replace(/[-_]+/g, " ")
@@ -61,9 +62,28 @@ const getProductId = (product) => {
   return rawId == null ? "" : String(rawId);
 };
 
-const getAvailableStock = (product) => {
-	if (typeof product?.stock !== "number") return Number.POSITIVE_INFINITY;
-	return product.stock;
+const normalizeSizeKey = (value) => String(value || "").trim().toUpperCase();
+
+const getAvailableStock = (product, size = "") => {
+  const normalizedSize = normalizeSizeKey(size);
+  const sizeStock = product?.sizeStock;
+  const hasSizeStock = Boolean(
+    sizeStock &&
+    typeof sizeStock === "object" &&
+    !Array.isArray(sizeStock) &&
+    Object.keys(sizeStock).length > 0
+  );
+
+  if (normalizedSize && hasSizeStock) {
+    if (Object.prototype.hasOwnProperty.call(sizeStock, normalizedSize)) {
+      return Math.max(0, Math.trunc(Number(sizeStock[normalizedSize]) || 0));
+    }
+
+    return 0;
+  }
+
+  if (typeof product?.stock !== "number") return Number.POSITIVE_INFINITY;
+  return product.stock;
 };
 
 const getStoredArray = (key) => {
@@ -129,20 +149,21 @@ const reconcileCartItems = (items, products) => {
     const latestProduct = productMap.get(getProductId(storedItem));
     const baseProduct = latestProduct || storedItem;
 
-    const maxQuantity = getAvailableStock(baseProduct);
+    const itemSize = storedItem.size || "M";
+    const maxQuantity = getAvailableStock(baseProduct, itemSize);
     const nextQuantity = Math.max(1, Number(storedItem.quantity) || 1);
 		const finalQuantity = maxQuantity === Number.POSITIVE_INFINITY
 			? nextQuantity
 			: Math.min(nextQuantity, Math.max(maxQuantity, 1));
 
-		return [{
+    return [{
       ...storedItem,
       ...baseProduct,
-      size: storedItem.size || "M",
-			quantity: finalQuantity,
+      size: itemSize,
+      quantity: finalQuantity,
       cartKey: storedItem.cartKey || `${baseProduct.id}-${storedItem.size || "M"}`,
-		}];
-	});
+    }];
+  });
 };
 
 
@@ -493,9 +514,11 @@ return ()=>clearTimeout(timer);
 },[]);
 
 useEffect(() => {
-  const fetchProducts = async () => {
+  const fetchProducts = async ({ forceFresh = false } = {}) => {
     try {
-      const response = await axios.get(PRODUCTS_API_URL);
+      const response = await axios.get(PRODUCTS_API_URL, {
+        params: forceFresh ? { _ts: Date.now() } : undefined,
+      });
       if (Array.isArray(response.data)) {
         setTshirts(response.data.map(normalizeProduct));
       }
@@ -506,11 +529,15 @@ useEffect(() => {
     }
   };
 
-  fetchProducts();
-  window.addEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
+  const handleProductsUpdated = () => {
+    fetchProducts({ forceFresh: true });
+  };
+
+  fetchProducts({ forceFresh: true });
+  window.addEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
 
   return () => {
-    window.removeEventListener(PRODUCTS_UPDATED_EVENT, fetchProducts);
+    window.removeEventListener(PRODUCTS_UPDATED_EVENT, handleProductsUpdated);
   };
 }, []);
 
@@ -633,7 +660,7 @@ return <Loader/>
 
 /* ADD TO CART */
 
-const addToCart=(product,size="M",quantity=1)=>{
+const addToCart=(product,size="",quantity=1)=>{
 // Show toast
 clearTimeout(cartToastTimer.current);
 setCartToast({ name: product.name, image: product.image, price: product.price });
@@ -645,12 +672,13 @@ cartToastTimer.current = setTimeout(() => {
 
 setCart(prev=>{
 const quantityToAdd = Math.max(1, Number(quantity) || 1);
-const availableStock = getAvailableStock(product);
+const resolvedSize = normalizeSizeKey(size) || normalizeSizeKey(product?.sizes?.[0] || "M");
+const availableStock = getAvailableStock(product, resolvedSize);
 if (availableStock <= 0) {
 return prev;
 }
 
-const cartKey = `${product.id}-${size}`;
+const cartKey = `${product.id}-${resolvedSize}`;
 const existingItem = prev.find((item)=>item.cartKey===cartKey);
 
 if(existingItem){
@@ -678,7 +706,7 @@ const initialQuantity = availableStock === Number.POSITIVE_INFINITY
 ? quantityToAdd
 : Math.min(quantityToAdd, availableStock);
 
-return [...prev,{...product,size,quantity:initialQuantity,cartKey}];
+return [...prev,{...product,size:resolvedSize,quantity:initialQuantity,cartKey}];
 });
 };
 
@@ -694,7 +722,7 @@ setCart((prev)=>prev
 if (item.cartKey !== cartKey) return item;
 
 const nextQuantity = item.quantity + delta;
-const maxQuantity = getAvailableStock(item);
+const maxQuantity = getAvailableStock(item, item.size);
 
 if (maxQuantity === Number.POSITIVE_INFINITY) {
 return { ...item, quantity: nextQuantity };
@@ -1022,6 +1050,15 @@ path="/admin/orders"
 element={
 <AdminRoute>
 <AdminOrders/>
+</AdminRoute>
+}
+/>
+
+<Route
+path="/admin/reviews"
+element={
+<AdminRoute>
+<AdminReviews/>
 </AdminRoute>
 }
 />

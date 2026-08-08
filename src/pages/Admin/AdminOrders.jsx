@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AdminSidebar from "../../components/AdminSidebar";
-import { getAdminAuthHeaders, ORDERS_API_URL } from "../../utils/api";
+import { getAdminAuthHeaders, ORDERS_API_URL, resolveImageUrl } from "../../utils/api";
 import "./Admin.css";
 
 const ORDER_STATUSES = ["pending", "confirmed", "shipped", "delivered", "cancelled"];
@@ -15,6 +15,42 @@ const formatDate = (value) => {
   } catch {
     return value || "";
   }
+};
+
+const formatAddress = (address) => {
+  if (!address) {
+    return "N/A";
+  }
+
+  if (typeof address === "string") {
+    return address;
+  }
+
+  if (typeof address === "object") {
+    const parts = [
+      address.line1,
+      address.line2,
+      address.city,
+      address.state,
+      address.pincode,
+      address.country,
+    ]
+      .map((part) => String(part || "").trim())
+      .filter(Boolean);
+
+    return parts.length > 0 ? parts.join(", ") : "N/A";
+  }
+
+  return "N/A";
+};
+
+const formatCurrency = (value) => {
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) {
+    return "Rs 0.00";
+  }
+
+  return `Rs ${amount.toFixed(2)}`;
 };
 
 function AdminOrders() {
@@ -66,7 +102,10 @@ function AdminOrders() {
 
       if (updatedOrder) {
         setOrders((prev) =>
-          prev.map((item) => (String(item.id) === String(orderId) ? updatedOrder : item))
+          prev.map((item) => {
+            const itemId = item.id || item._id;
+            return String(itemId) === String(orderId) ? updatedOrder : item;
+          })
         );
       }
       setError("");
@@ -85,7 +124,7 @@ function AdminOrders() {
       <main className="admin-content">
         <header className="admin-head">
           <h1>Orders</h1>
-          <p>Track all customer orders and update lifecycle statuses from one panel.</p>
+          <p>Track customer orders and update each order status from one place.</p>
         </header>
 
         {error && <p className="error-msg">{error}</p>}
@@ -116,12 +155,15 @@ function AdminOrders() {
                   </tr>
                 )}
 
-                {orders.map((order) => (
-                  <React.Fragment key={order.id}>
-                    <tr>
+                {orders.map((order) => {
+                  const orderId = order.id || order._id;
+
+                  return (
+                    <React.Fragment key={String(orderId)}>
+                      <tr>
                       <td data-label="Order">
                         <div className="admin-order-cell">
-                          <strong>{order.orderNumber || `#${order.id}`}</strong>
+                          <strong>{order.orderNumber || `#${orderId}`}</strong>
                         </div>
                       </td>
                       <td data-label="Customer">
@@ -132,7 +174,7 @@ function AdminOrders() {
                       </td>
                       <td data-label="Phone">{order.phone}</td>
                       <td data-label="Items">{Array.isArray(order.items) ? order.items.length : 0}</td>
-                      <td data-label="Total">₹{order.total}</td>
+                      <td data-label="Total">{formatCurrency(order.total)}</td>
                       <td data-label="Payment">
                         <span style={{ textTransform: "capitalize" }}>
                           {order.payment?.method || order.payment?.gateway || "—"}
@@ -142,8 +184,8 @@ function AdminOrders() {
                         <select
                           className="admin-status-select"
                           value={order.status || "pending"}
-                          onChange={(event) => updateOrderStatus(order.id, event.target.value)}
-                          disabled={statusSavingId === String(order.id)}
+                          onChange={(event) => updateOrderStatus(orderId, event.target.value)}
+                          disabled={statusSavingId === String(orderId)}
                         >
                           {ORDER_STATUSES.map((status) => (
                             <option key={status} value={status}>
@@ -152,89 +194,71 @@ function AdminOrders() {
                           ))}
                         </select>
                       </td>
-                      <td data-label="Created">{formatDate(order.date)}</td>
-                      <td>
+                      <td data-label="Created">{formatDate(order.date || order.createdAt)}</td>
+                      <td data-label="Details">
                         <button
                           className="admin-expand-btn"
-                          onClick={() => toggleExpand(order.id)}
-                          style={{
-                            background: "none",
-                            border: "1px solid #ccc",
-                            borderRadius: 4,
-                            padding: "4px 10px",
-                            cursor: "pointer",
-                            fontSize: 13,
-                          }}
+                          onClick={() => toggleExpand(orderId)}
                         >
-                          {expandedId === order.id ? "Hide" : "View"}
+                          {expandedId === orderId ? "Hide" : "View"}
                         </button>
                       </td>
-                    </tr>
-
-                    {expandedId === order.id && (
-                      <tr>
-                        <td colSpan={9} style={{ background: "#f9fafb", padding: 16 }}>
-                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, fontSize: 14 }}>
-                            <div>
-                              <h4 style={{ margin: "0 0 8px" }}>Customer Info</h4>
-                              <p style={{ margin: "2px 0" }}><strong>Name:</strong> {order.customer}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Phone:</strong> {order.phone}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Email:</strong> {order.email || "N/A"}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Address:</strong> {order.shippingAddress || "N/A"}</p>
-                            </div>
-                            <div>
-                              <h4 style={{ margin: "0 0 8px" }}>Payment Info</h4>
-                              <p style={{ margin: "2px 0" }}><strong>Gateway:</strong> {order.payment?.gateway || "N/A"}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Method:</strong> {order.payment?.method || "N/A"}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Amount:</strong> ₹{order.payment?.amount || order.total}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Status:</strong> {order.payment?.status || "N/A"}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Payment ID:</strong> {order.payment?.razorpayPaymentId || "N/A"}</p>
-                              <p style={{ margin: "2px 0" }}><strong>Paid At:</strong> {order.payment?.paidAt ? formatDate(order.payment.paidAt) : "N/A"}</p>
-                            </div>
-                          </div>
-                          <div style={{ marginTop: 16 }}>
-                            <h4 style={{ margin: "0 0 8px" }}>Ordered Items</h4>
-                            <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
-                              {Array.isArray(order.items) && order.items.map((item, idx) => (
-                                <div
-                                  key={idx}
-                                  style={{
-                                    display: "flex",
-                                    gap: 10,
-                                    alignItems: "center",
-                                    background: "#fff",
-                                    border: "1px solid #e5e7eb",
-                                    borderRadius: 8,
-                                    padding: 10,
-                                    minWidth: 250,
-                                  }}
-                                >
-                                  {item.image && (
-                                    <img
-                                      src={item.image}
-                                      alt={item.name}
-                                      style={{ width: 50, height: 50, objectFit: "cover", borderRadius: 6 }}
-                                    />
-                                  )}
-                                  <div>
-                                    <p style={{ margin: 0, fontWeight: 600 }}>{item.name}</p>
-                                    <p style={{ margin: 0, fontSize: 12, color: "#666" }}>
-                                      {item.size && `Size: ${item.size}`}
-                                      {item.color && ` | Color: ${item.color}`}
-                                    </p>
-                                    <p style={{ margin: 0, fontSize: 13 }}>
-                                      ₹{item.price} × {item.quantity}
-                                    </p>
-                                  </div>
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </td>
                       </tr>
-                    )}
-                  </React.Fragment>
-                ))}
+
+                      {expandedId === orderId && (
+                        <tr className="admin-order-details-row">
+                          <td colSpan={9} className="admin-order-details-cell">
+                            <div className="admin-order-details-grid">
+                              <div className="admin-order-details-card">
+                                <h4>Customer Info</h4>
+                                <p><strong>Name:</strong> {order.customer || "N/A"}</p>
+                                <p><strong>Phone:</strong> {order.phone || "N/A"}</p>
+                                <p><strong>Email:</strong> {order.email || "N/A"}</p>
+                                <p><strong>Address:</strong> {formatAddress(order.shippingAddress)}</p>
+                              </div>
+                              <div className="admin-order-details-card">
+                                <h4>Payment Info</h4>
+                                <p><strong>Gateway:</strong> {order.payment?.gateway || "N/A"}</p>
+                                <p><strong>Method:</strong> {order.payment?.method || "N/A"}</p>
+                                <p><strong>Amount:</strong> {formatCurrency(order.payment?.amount || order.total)}</p>
+                                <p><strong>Status:</strong> {order.payment?.status || "N/A"}</p>
+                                <p><strong>Payment ID:</strong> {order.payment?.razorpayPaymentId || "N/A"}</p>
+                                <p><strong>Paid At:</strong> {order.payment?.paidAt ? formatDate(order.payment.paidAt) : "N/A"}</p>
+                              </div>
+                            </div>
+
+                            <div className="admin-order-items-section">
+                              <h4>Ordered Items</h4>
+                              <div className="admin-order-items-grid">
+                                {Array.isArray(order.items) && order.items.map((item, idx) => (
+                                  <div key={idx} className="admin-order-item-card">
+                                    {item.image && (
+                                      <img
+                                        src={resolveImageUrl(item.image)}
+                                        alt={item.name}
+                                        className="admin-order-item-image"
+                                      />
+                                    )}
+                                    <div>
+                                      <p className="admin-order-item-name">{item.name}</p>
+                                      <p className="admin-order-item-meta">
+                                        {item.size && `Size: ${item.size}`}
+                                        {item.color && ` | Color: ${item.color}`}
+                                      </p>
+                                      <p className="admin-order-item-price">
+                                        {formatCurrency(item.price)} x {item.quantity}
+                                      </p>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

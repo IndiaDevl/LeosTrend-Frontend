@@ -1,10 +1,40 @@
 ﻿import React from "react";
 import { Link } from "react-router-dom";
+import { FaShareAlt } from "react-icons/fa";
 import { scrollToPageStart } from "../utils/navigation";
 import "./Wishlist.css";
 
 
 function Wishlist({ wishlist = [], toggleWishlist, addToCart }) {
+  const handleShareProduct = async (item) => {
+    const productUrl = `${window.location.origin}/product/${encodeURIComponent(item.id)}`;
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `${item.name} | LeosTrend`,
+          text: `Check out ${item.name} on LeosTrend.`,
+          url: productUrl,
+        });
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(productUrl);
+        return;
+      }
+
+      const tempInput = document.createElement("input");
+      tempInput.value = productUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+    } catch {
+      // No visible toast here to keep the wishlist layout simple.
+    }
+  };
+
   return (
     <div className="wishlist-page container">
       <div className="wishlist-head">
@@ -66,6 +96,15 @@ function Wishlist({ wishlist = [], toggleWishlist, addToCart }) {
                     onClick={() => toggleWishlist?.(item)}
                   >
                     Remove
+                  </button>
+                  <button
+                    type="button"
+                    className="wishlist-share-btn"
+                    onClick={() => handleShareProduct(item)}
+                    aria-label={`Share ${item.name}`}
+                  >
+                    <FaShareAlt />
+                    Share
                   </button>
                 </div>
               </div>

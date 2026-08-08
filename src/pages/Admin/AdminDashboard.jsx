@@ -102,7 +102,7 @@ function AdminDashboard() {
           </div>
           {isFallbackStorage && (
             <div className="admin-status-item admin-status-warn-text">
-              Orders are now stored in MySQL and remain available across backend restarts.
+              Orders are currently stored in fallback file mode until database connectivity is restored.
             </div>
           )}
         </div>

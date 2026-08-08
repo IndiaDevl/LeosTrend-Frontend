@@ -33,10 +33,12 @@ const getApiBaseUrl = () => {
 export const API_BASE_URL = getApiBaseUrl();
 export const PRODUCTS_API_URL = `${API_BASE_URL}/api/products`;
 export const getProductDetailApiUrl = (productId) => `${PRODUCTS_API_URL}/${encodeURIComponent(String(productId || '').trim())}`;
+export const getProductReviewsApiUrl = (productId) => `${API_BASE_URL}/api/products/${encodeURIComponent(String(productId || '').trim())}/reviews`;
 export const ORDERS_API_URL = `${API_BASE_URL}/api/orders`;
 export const CREATE_ORDER_API_URL = `${API_BASE_URL}/api/create-order`;
 export const HEALTH_API_URL = `${API_BASE_URL}/api/health`;
 export const ADMIN_STATS_API_URL = `${API_BASE_URL}/api/admin/stats`;
+export const ADMIN_REVIEWS_API_URL = `${API_BASE_URL}/api/admin/reviews`;
 
 export const PRODUCTS_UPDATED_EVENT = "products:updated";
 
@@ -198,6 +200,46 @@ export const normalizeProduct = (product) => {
   const trendingPosition = Number.isInteger(rawTrendingPosition) && rawTrendingPosition >= 1 && rawTrendingPosition <= 4
     ? rawTrendingPosition
     : null;
+  const sizeStock = (() => {
+    const source = product.sizeStock || product.size_stock;
+    if (!source || typeof source !== "object" || Array.isArray(source)) {
+      return {};
+    }
+
+    const normalized = {};
+    Object.entries(source).forEach(([rawSize, rawQty]) => {
+      const size = String(rawSize || "").trim().toUpperCase();
+      const quantity = Math.trunc(Number(rawQty));
+
+      if (!size || !Number.isInteger(quantity) || quantity < 0) {
+        return;
+      }
+
+      normalized[size] = quantity;
+    });
+
+    return normalized;
+  })();
+  const sizeChart = (() => {
+    const source = product.sizeChart || product.size_chart;
+    if (!source || typeof source !== "object" || Array.isArray(source)) {
+      return {};
+    }
+
+    const normalized = {};
+    Object.entries(source).forEach(([rawSize, rawValue]) => {
+      const size = String(rawSize || "").trim().toUpperCase();
+      const measurement = Number(rawValue);
+
+      if (!size || !Number.isFinite(measurement) || measurement <= 0) {
+        return;
+      }
+
+      normalized[size] = Number(measurement.toFixed(2));
+    });
+
+    return normalized;
+  })();
 
   return {
     ...product,
@@ -208,6 +250,8 @@ export const normalizeProduct = (product) => {
     rating: product.rating || "New",
     isTrending: product.isTrending === true || product.isTrending === 1 || product.isTrending === "true",
     trendingPosition,
+    sizeStock,
+    sizeChart,
     imageUrl: primaryImage,
     image: primaryImage,
     images: mergedImages,

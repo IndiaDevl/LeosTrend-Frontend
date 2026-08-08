@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import "./ProductCard.mobile.css";
-import { FaEye, FaHeart, FaRegHeart, FaShoppingCart } from "react-icons/fa";
+import { FaEye, FaHeart, FaRegHeart, FaShareAlt, FaShoppingCart } from "react-icons/fa";
 import ProductTilt from "./ProductTilt";
 import { getOptimizedImageUrl } from "../utils/api";
 
@@ -32,6 +32,7 @@ function ProductCard({
 }) {
   const isOutOfStock = typeof product.stock === "number" && product.stock <= 0;
   const isLowStock = typeof product.stock === "number" && product.stock > 0 && product.stock < 5;
+  const [shareStatus, setShareStatus] = useState("");
   const sizeLabel = Array.isArray(product.sizes) && product.sizes.length
     ? product.sizes.join(" / ")
     : "M / L / XL";
@@ -46,6 +47,46 @@ function ProductCard({
   const [imgSrc, setImgSrc] = useState(
     getOptimizedImageUrl(product.image, { width: 720, height: 900 })
   );
+
+  const handleShareProduct = async () => {
+    const productUrl = `${window.location.origin}/product/${encodeURIComponent(product.id)}`;
+    const shareData = {
+      title: `${product.name} | LeosTrend`,
+      text: `Check out ${product.name} on LeosTrend.`,
+      url: productUrl,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+        setShareStatus("Shared");
+        return;
+      }
+
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(productUrl);
+        setShareStatus("Link copied");
+        return;
+      }
+
+      const tempInput = document.createElement("input");
+      tempInput.value = productUrl;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+      setShareStatus("Link copied");
+    } catch {
+      setShareStatus("Share unavailable");
+    }
+  };
+
+  React.useEffect(() => {
+    if (!shareStatus) return undefined;
+
+    const timer = window.setTimeout(() => setShareStatus(""), 2200);
+    return () => window.clearTimeout(timer);
+  }, [shareStatus]);
 
   return (
     <ProductTilt>
@@ -176,7 +217,23 @@ function ProductCard({
               <FaShoppingCart className="text-xs" />
               {isOutOfStock ? "Out of Stock" : "Add to Cart"}
             </button>
+
+            <button
+              type="button"
+              data-prevent-card-nav="true"
+              className="pointer-events-auto inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-950 shadow-sm transition hover:border-slate-300 hover:bg-slate-50"
+              onClick={async (event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                await handleShareProduct();
+              }}
+              aria-label={`Share ${product.name}`}
+            >
+              <FaShareAlt className="text-xs" />
+              Share
+            </button>
           </div>
+          {shareStatus && <p className="mt-2 text-xs font-semibold text-slate-500">{shareStatus}</p>}
         </div>
       </article>
     </ProductTilt>

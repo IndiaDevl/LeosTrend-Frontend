@@ -1,46 +1,86 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 function ProductTilt({ children }) {
+	const ref = useRef(null);
+	const frameRef = useRef(null);
+	const hoverableRef = useRef(false);
+	const [isHoverable, setIsHoverable] = useState(false);
 
-const ref = useRef(null);
+	useEffect(() => {
+		if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+			return undefined;
+		}
 
-function handleMove(e){
+		const media = window.matchMedia("(hover: hover) and (pointer: fine)");
+		const updateHoverability = () => {
+			hoverableRef.current = media.matches;
+			setIsHoverable(media.matches);
+		};
 
-const card = ref.current;
-const rect = card.getBoundingClientRect();
+		updateHoverability();
 
-const x = e.clientX - rect.left;
-const y = e.clientY - rect.top;
+		if (typeof media.addEventListener === "function") {
+			media.addEventListener("change", updateHoverability);
+			return () => media.removeEventListener("change", updateHoverability);
+		}
 
-const centerX = rect.width / 2;
-const centerY = rect.height / 2;
+		media.addListener(updateHoverability);
+		return () => media.removeListener(updateHoverability);
+	}, []);
 
-const rotateX = -(y - centerY) / 15;
-const rotateY = (x - centerX) / 15;
+	useEffect(() => {
+		return () => {
+			if (frameRef.current) {
+				cancelAnimationFrame(frameRef.current);
+			}
+		};
+	}, []);
 
-card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+	function handleMove(event) {
+		if (!hoverableRef.current) return;
 
-}
+		const card = ref.current;
+		if (!card) return;
 
-function reset(){
-ref.current.style.transform = "rotateX(0deg) rotateY(0deg)";
-}
+		if (frameRef.current) {
+			cancelAnimationFrame(frameRef.current);
+		}
 
-return(
+		frameRef.current = requestAnimationFrame(() => {
+			const rect = card.getBoundingClientRect();
+			const x = event.clientX - rect.left;
+			const y = event.clientY - rect.top;
+			const centerX = rect.width / 2;
+			const centerY = rect.height / 2;
+			const rotateX = -(y - centerY) / 18;
+			const rotateY = (x - centerX) / 18;
 
-<div
-ref={ref}
-className="tilt-card w-full"
-onMouseMove={handleMove}
-onMouseLeave={reset}
-style={{cursor:"pointer"}}
->
+			card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+		});
+	}
 
-{children}
+	function reset() {
+		if (frameRef.current) {
+			cancelAnimationFrame(frameRef.current);
+			frameRef.current = null;
+		}
 
-</div>
+		if (ref.current) {
+			ref.current.style.transform = "rotateX(0deg) rotateY(0deg)";
+		}
+	}
 
-);
+	return (
+		<div
+			ref={ref}
+			className="tilt-card w-full"
+			onMouseMove={handleMove}
+			onMouseLeave={reset}
+			style={{ cursor: isHoverable ? "pointer" : "default", willChange: isHoverable ? "transform" : "auto" }}
+		>
+			{children}
+		</div>
+	);
 
 }
 

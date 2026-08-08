@@ -58,7 +58,7 @@ function AdminSidebar() {
       {isTemporaryStorage && (
         <div className="admin-system-alert" role="status">
           <strong>Temporary Mode</strong>
-          <span>Orders are now persisted in MySQL. Use this panel to monitor and update live order data.</span>
+          <span>Orders are temporarily stored in fallback file storage until the database is back online.</span>
         </div>
       )}
 
@@ -98,6 +98,15 @@ function AdminSidebar() {
           }
         >
           Orders
+        </NavLink>
+
+        <NavLink
+          to="/admin/reviews"
+          className={({ isActive }) =>
+            `admin-link ${isActive ? "active" : ""}`
+          }
+        >
+          Reviews
         </NavLink>
       </nav>
 

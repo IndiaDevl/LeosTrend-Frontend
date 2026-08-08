@@ -1,7 +1,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { API_BASE_URL, ORDERS_API_URL } from "../utils/api";
+import { API_BASE_URL, ORDERS_API_URL, notifyProductsUpdated } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../context/CheckoutContext";
 import "./Checkout.css";
@@ -49,7 +49,7 @@ function StateDropdown({ value, onChange }) {
 }
 
 
-function Checkout({ cart = [], calculateTotal = () => 0 }) {
+function Checkout({ cart = [], calculateTotal = () => 0, onOrderSuccess = () => {} }) {
   const SHIPPING_FEE = 0;
   const { order, setOrder, clearOrder } = useCheckout();
 
@@ -240,6 +240,8 @@ function Checkout({ cart = [], calculateTotal = () => 0 }) {
               email: order.email
             }));
             clearOrder();
+            onOrderSuccess();
+            notifyProductsUpdated();
             setLoading(false);
 
             navigate("/order-success", {

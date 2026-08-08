@@ -30,16 +30,20 @@ const [priceFilterOpen, setPriceFilterOpen] = useState(false);
 const categoryAliases = {
 street: "oversized",
 graphic: "oversized",
-minimal: "hoodies"
+minimal: "hoodies",
+collection: "all",
+"raw-edge-sweatshirts": "zip"
 };
 
-const activeCategory = categoryAliases[category] || category;
+const normalizedRouteCategory = String(category || "").trim().toLowerCase();
+const activeCategory = categoryAliases[normalizedRouteCategory] || normalizedRouteCategory || "all";
 
 const categoryLabels = {
+all: "All",
 oversized: "Oversized",
 sweatshirts: "Sweatshirts",
 hoodies: "Hoodies",
-zip: "Zip Sweatshirts"
+zip: "Raw Edge Sweatshirts"
 };
 
 const categoryLabel = categoryLabels[activeCategory] || "Collection";
@@ -135,7 +139,9 @@ aria-controls={`${panelIdPrefix}-price-filter-options`}
 /* CATEGORY FILTER */
 
 const filteredProducts = useMemo(() => {
-const baseProducts = tshirts.filter((p) => p.category === activeCategory);
+const baseProducts = activeCategory === "all"
+? tshirts
+: tshirts.filter((p) => String(p.category || "").trim().toLowerCase() === activeCategory);
 
 const withFilters = baseProducts.filter((product) => {
 const matchesPrice = inSelectedPriceRange(product.price);

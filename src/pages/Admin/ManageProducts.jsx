@@ -10,6 +10,109 @@ import {
 } from "../../utils/api";
 import "./Admin.css";
 
+const parseSizesValue = (value) =>
+  String(value || "")
+    .split(",")
+    .map((size) => size.trim().toUpperCase())
+    .filter(Boolean);
+
+const parseSizeStockValue = (value) => {
+  if (!value) return {};
+
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return Object.entries(value).reduce((accumulator, [rawSize, rawQty]) => {
+      const size = String(rawSize || "").trim().toUpperCase();
+      const quantity = Math.trunc(Number(rawQty));
+      if (!size || !Number.isInteger(quantity) || quantity < 0) return accumulator;
+      accumulator[size] = quantity;
+      return accumulator;
+    }, {});
+  }
+
+  const raw = String(value || "").trim();
+  if (!raw) return {};
+
+  try {
+    return parseSizeStockValue(JSON.parse(raw));
+  } catch {
+    return raw.split(/[\n,]/).reduce((accumulator, entry) => {
+      const [rawSize, rawQty] = String(entry || "").split(":");
+      const size = String(rawSize || "").trim().toUpperCase();
+      const quantity = Math.trunc(Number(rawQty));
+      if (!size || !Number.isInteger(quantity) || quantity < 0) return accumulator;
+      accumulator[size] = quantity;
+      return accumulator;
+    }, {});
+  }
+};
+
+const serializeSizeStockValue = (sizeStockMap, sizes) => {
+  const allowedSizes = new Set((Array.isArray(sizes) ? sizes : []).map((size) => String(size).toUpperCase()));
+  const normalized = Object.entries(sizeStockMap || {}).reduce((accumulator, [rawSize, rawQty]) => {
+    const size = String(rawSize || "").trim().toUpperCase();
+    const quantity = Math.trunc(Number(rawQty));
+
+    if (!size || !allowedSizes.has(size) || !Number.isInteger(quantity) || quantity < 0) {
+      return accumulator;
+    }
+
+    accumulator[size] = quantity;
+    return accumulator;
+  }, {});
+
+  return Object.keys(normalized).length > 0 ? JSON.stringify(normalized) : "";
+};
+
+const sumSizeStockValue = (sizeStockMap) =>
+  Object.values(sizeStockMap || {}).reduce((sum, qty) => sum + Math.max(0, Math.trunc(Number(qty) || 0)), 0);
+
+const parseSizeChartValue = (value) => {
+  if (!value) return {};
+
+  if (typeof value === "object" && !Array.isArray(value)) {
+    return Object.entries(value).reduce((accumulator, [rawSize, rawValue]) => {
+      const size = String(rawSize || "").trim().toUpperCase();
+      const measurement = Number(rawValue);
+      if (!size || !Number.isFinite(measurement) || measurement <= 0) return accumulator;
+      accumulator[size] = Number(measurement.toFixed(2));
+      return accumulator;
+    }, {});
+  }
+
+  const raw = String(value || "").trim();
+  if (!raw) return {};
+
+  try {
+    return parseSizeChartValue(JSON.parse(raw));
+  } catch {
+    return raw.split(/[\n,]/).reduce((accumulator, entry) => {
+      const [rawSize, rawValue] = String(entry || "").split(":");
+      const size = String(rawSize || "").trim().toUpperCase();
+      const measurement = Number(rawValue);
+      if (!size || !Number.isFinite(measurement) || measurement <= 0) return accumulator;
+      accumulator[size] = Number(measurement.toFixed(2));
+      return accumulator;
+    }, {});
+  }
+};
+
+const serializeSizeChartValue = (sizeChartMap, sizes) => {
+  const allowedSizes = new Set((Array.isArray(sizes) ? sizes : []).map((size) => String(size).toUpperCase()));
+  const normalized = Object.entries(sizeChartMap || {}).reduce((accumulator, [rawSize, rawValue]) => {
+    const size = String(rawSize || "").trim().toUpperCase();
+    const measurement = Number(rawValue);
+
+    if (!size || !allowedSizes.has(size) || !Number.isFinite(measurement) || measurement <= 0) {
+      return accumulator;
+    }
+
+    accumulator[size] = Number(measurement.toFixed(2));
+    return accumulator;
+  }, {});
+
+  return Object.keys(normalized).length > 0 ? JSON.stringify(normalized) : "";
+};
+
 const initialDraft = {
   name: "",
   price: "",
@@ -18,6 +121,8 @@ const initialDraft = {
   category: "oversized",
   description: "",
   sizes: "",
+  sizeStock: "",
+  sizeChart: "",
   colors: "",
   stock: "",
   material: "",
@@ -42,6 +147,11 @@ function ManageProducts() {
   const [galleryPreviews, setGalleryPreviews] = useState([]);
   const [searchTerm, setSearchTerm] = useState(() => localStorage.getItem("admin_searchTerm") || "");
   const [categoryFilter, setCategoryFilter] = useState(() => localStorage.getItem("admin_categoryFilter") || "all");
+
+  const draftSizes = useMemo(() => parseSizesValue(draft.sizes), [draft.sizes]);
+  const draftSizeStock = useMemo(() => parseSizeStockValue(draft.sizeStock), [draft.sizeStock]);
+  const draftSizeChart = useMemo(() => parseSizeChartValue(draft.sizeChart), [draft.sizeChart]);
+  const draftHasSizeStockEntries = Object.keys(draftSizeStock).length > 0;
 
   useEffect(() => {
     localStorage.setItem("admin_searchTerm", searchTerm);
@@ -163,6 +273,8 @@ function ManageProducts() {
       category: product.category,
       description: product.description || "",
       sizes: Array.isArray(product.sizes) ? product.sizes.join(",") : "",
+      sizeStock: serializeSizeStockValue(product.sizeStock || {}, parseSizesValue(product.sizes?.join(",") || "")),
+      sizeChart: serializeSizeChartValue(product.sizeChart || {}, parseSizesValue(product.sizes?.join(",") || "")),
       colors: Array.isArray(product.colors) ? product.colors.join(",") : "",
       stock: String(product.stock),
       material: product.material || "",
@@ -191,7 +303,77 @@ function ManageProducts() {
 
   const handleDraftChange = (event) => {
     const { name, value, type, checked } = event.target;
-    setDraft((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+    setDraft((prev) => {
+      const nextValue = type === "checkbox" ? checked : value;
+
+      if (name !== "sizes") {
+        return { ...prev, [name]: nextValue };
+      }
+
+      const nextSizes = parseSizesValue(nextValue);
+      const nextSizeStock = serializeSizeStockValue(parseSizeStockValue(prev.sizeStock), nextSizes);
+      const nextSizeChart = serializeSizeChartValue(parseSizeChartValue(prev.sizeChart), nextSizes);
+
+      return {
+        ...prev,
+        sizes: nextValue,
+        sizeStock: nextSizeStock,
+        sizeChart: nextSizeChart,
+      };
+    });
+  };
+
+  const updateDraftSizeStock = (size, rawValue) => {
+    setDraft((prev) => {
+      const nextMap = { ...parseSizeStockValue(prev.sizeStock) };
+      const normalizedSize = String(size || "").trim().toUpperCase();
+
+      if (!normalizedSize) {
+        return prev;
+      }
+
+      if (rawValue === "") {
+        delete nextMap[normalizedSize];
+      } else {
+        nextMap[normalizedSize] = Math.max(0, Math.trunc(Number(rawValue) || 0));
+      }
+
+      const normalizedSizeStock = serializeSizeStockValue(nextMap, parseSizesValue(prev.sizes));
+      const normalizedMap = parseSizeStockValue(normalizedSizeStock);
+      const totalFromSizes = sumSizeStockValue(normalizedMap);
+
+      return {
+        ...prev,
+        sizeStock: normalizedSizeStock,
+        stock: Object.keys(normalizedMap).length > 0 ? String(totalFromSizes) : prev.stock,
+      };
+    });
+  };
+
+  const updateDraftSizeChart = (size, rawValue) => {
+    setDraft((prev) => {
+      const nextMap = { ...parseSizeChartValue(prev.sizeChart) };
+      const normalizedSize = String(size || "").trim().toUpperCase();
+
+      if (!normalizedSize) {
+        return prev;
+      }
+
+      if (rawValue === "") {
+        delete nextMap[normalizedSize];
+      } else {
+        const nextValue = Number(rawValue);
+        if (!Number.isFinite(nextValue) || nextValue <= 0) {
+          return prev;
+        }
+        nextMap[normalizedSize] = Number(nextValue.toFixed(2));
+      }
+
+      return {
+        ...prev,
+        sizeChart: serializeSizeChartValue(nextMap, parseSizesValue(prev.sizes)),
+      };
+    });
   };
 
   const handleImageChange = (event) => {
@@ -210,6 +392,11 @@ function ManageProducts() {
 
   const saveEdit = async () => {
     try {
+      const normalizedSizeStock = serializeSizeStockValue(draftSizeStock, draftSizes);
+      const normalizedSizeStockMap = parseSizeStockValue(normalizedSizeStock);
+      const totalFromSizes = sumSizeStockValue(normalizedSizeStockMap);
+      const normalizedSizeChart = serializeSizeChartValue(draftSizeChart, draftSizes);
+
       const formData = new FormData();
       formData.append("name", draft.name);
       formData.append("price", draft.price);
@@ -218,8 +405,10 @@ function ManageProducts() {
       formData.append("category", draft.category);
       formData.append("description", draft.description);
       formData.append("sizes", draft.sizes);
+      formData.append("sizeStock", normalizedSizeStock);
+      formData.append("sizeChart", normalizedSizeChart);
       formData.append("colors", draft.colors);
-      formData.append("stock", draft.stock);
+      formData.append("stock", Object.keys(normalizedSizeStockMap).length > 0 ? String(totalFromSizes) : draft.stock);
       formData.append("material", draft.material);
       formData.append("fit", draft.fit);
       formData.append("careInstructions", draft.careInstructions);
@@ -391,6 +580,49 @@ function ManageProducts() {
                               onChange={handleDraftChange}
                               placeholder="Sizes (S,M,L)"
                             />
+                            <div className="full-width">
+                              <label style={{ display: "block", marginBottom: 8 }}>Size-wise Stock</label>
+                              <div className="edit-fields-grid" style={{ marginBottom: 0 }}>
+                                {draftSizes.map((size) => (
+                                  <label key={`edit-size-stock-${size}`}>
+                                    {size} Stock
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={
+                                        Object.prototype.hasOwnProperty.call(draftSizeStock, size)
+                                          ? String(draftSizeStock[size])
+                                          : ""
+                                      }
+                                      onChange={(event) => updateDraftSizeStock(size, event.target.value)}
+                                      placeholder="0"
+                                    />
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                            <div className="full-width">
+                              <label style={{ display: "block", marginBottom: 8 }}>Size Chart (Chest in inches)</label>
+                              <div className="edit-fields-grid" style={{ marginBottom: 0 }}>
+                                {draftSizes.map((size) => (
+                                  <label key={`edit-size-chart-${size}`}>
+                                    {size} Chest
+                                    <input
+                                      type="number"
+                                      min="1"
+                                      step="0.5"
+                                      value={
+                                        Object.prototype.hasOwnProperty.call(draftSizeChart, size)
+                                          ? String(draftSizeChart[size])
+                                          : ""
+                                      }
+                                      onChange={(event) => updateDraftSizeChart(size, event.target.value)}
+                                      placeholder="39"
+                                    />
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
                             <input
                               name="colors"
                               value={draft.colors}
@@ -573,6 +805,7 @@ function ManageProducts() {
                             name="stock"
                             value={draft.stock}
                             onChange={handleDraftChange}
+                            readOnly={draftHasSizeStockEntries}
                           />
                         ) : (
                           <span
